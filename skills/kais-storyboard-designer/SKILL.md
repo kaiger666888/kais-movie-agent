@@ -1,11 +1,23 @@
 ---
 name: kais-storyboard-designer
-description: "激活条件：用户提到 分镜、storyboard、镜头设计、视觉预览、分镜脚本、镜头列表 等关键词时激活。"
+description: "分镜设计系统，将剧本转化为完整分镜脚本。触发词：分镜/storyboard/镜头设计/视觉预览/分镜脚本/镜头列表/镜头规划/画面分镜/shot design/shot list/storyboard design/镜头语言/分镜表/逐镜头设计/shot breakdown/分镜创作/镜头编排/画面拆解/visual planning。"
 ---
 
 # kais-storyboard-designer — 分镜设计
 
-激活条件：用户提到 分镜、storyboard、镜头设计、视觉预览、分镜脚本、镜头列表 等关键词时激活。
+## 触发词
+
+**中文**：分镜、镜头设计、视觉预览、分镜脚本、镜头列表、镜头规划、画面分镜、镜头语言、分镜表、逐镜头设计、分镜创作、镜头编排、画面拆解
+**英文**：storyboard、shot design、shot list、storyboard design、shot breakdown、visual planning、shot planning、storyboard creation
+
+## 触发场景
+
+1. 用户已有剧本/场景设计，需要规划具体镜头和画面
+2. 用户说"帮我画分镜"、"做个分镜脚本"
+3. 用户在视频/短片项目中进入"分镜"阶段
+4. 用户需要将文字剧本拆解为逐镜头的视觉描述
+5. 用户讨论镜头语言、景别、运镜等分镜层面的问题
+6. 用户需要为每个镜头定义角色动作、机位、时长等参数
 
 ## 定位
 

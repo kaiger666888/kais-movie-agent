@@ -1,11 +1,23 @@
 ---
 name: kais-art-direction
-description: "激活条件：用户提到 艺术指导、art direction、风格定义、视觉风格、色调、色彩方案、画面风格 等关键词时激活。"
+description: "艺术指导与全局视觉风格系统。触发词：艺术指导/art direction/风格定义/视觉风格/色调/色彩方案/画面风格/整体风格/视觉调性/mood board/视觉基调/美术风格/art style/color palette/visual identity/moodboard/look and feel/色彩搭配/质感定义/光影风格。"
 ---
 
 # kais-art-direction — 艺术指导/风格系统
 
-激活条件：用户提到 艺术指导、art direction、风格定义、视觉风格、色调、色彩方案、画面风格 等关键词时激活。
+## 触发词
+
+**中文**：艺术指导、风格定义、视觉风格、色调、色彩方案、画面风格、整体风格、视觉调性、美术风格、色彩搭配、质感定义、光影风格
+**英文**：art direction、art style、color palette、visual identity、moodboard、mood board、look and feel、visual tone、color scheme、visual style、aesthetic
+
+## 触发场景
+
+1. 用户在开始视频/短片项目时，要求先定义整体视觉风格
+2. 用户说"帮我定个风格"、"这个项目用什么色调"
+3. 用户要求制作 mood board 或参考图来统一视觉基调
+4. 用户讨论色彩搭配、光影质感等美术层面的问题
+5. 用户在已有剧本后，进入"定风格"阶段
+6. 用户提到某个影视作品的画面风格并想参考
 
 ## 定位
 

@@ -1,6 +1,6 @@
 ---
 name: kais-scene-designer
-description: "空间设计师。将 StoryDNA + ArtDirection 转化为 SceneDesign（场景布局、机位图、氛围时间线）。"
+description: "空间设计师。将 StoryDNA + ArtDirection 转化为 SceneDesign（场景布局、机位图、氛围时间线）。激活条件：用户提到'场景设计'、'scene design'、'场景布局'、'机位'、'镜头布局'、'场景图'、'氛围'、'scene'、'环境设计'、'空间设计'、'分场景'、'场景描述'、'场景参考'、'场景概念'、'场景搭建'时激活。"
 ---
 
 # kais-scene-designer — 场景设计

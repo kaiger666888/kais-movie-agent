@@ -1,15 +1,24 @@
 ---
 name: kais-shooting-script
-description: "将分镜脚本转换为完整的视频生成参数，对接即梦 API。"
+description: "将分镜脚本转换为视频生成参数，对接即梦API。触发词：拍摄脚本/shooting script/生成参数/视频参数/视频prompt/prompt工程/prompt生成/镜头参数/video prompt/生成配置/即梦参数/API参数/prompt拼接/画面生成参数/shot parameter/prompt engineering for video。"
 ---
 
 # kais-shooting-script — 拍摄脚本生成器
 
 将分镜脚本转换为完整的视频生成参数，对接即梦 API。
 
-## 激活条件
+## 触发词
 
-用户提到 "拍摄脚本"、"shooting script"、"生成参数"、"视频参数"、"视频prompt" 时激活。
+**中文**：拍摄脚本、生成参数、视频参数、视频prompt、prompt工程、prompt生成、镜头参数、生成配置、即梦参数、API参数、prompt拼接、画面生成参数
+**英文**：shooting script、video prompt、shot parameter、prompt engineering for video、generation config、API parameters、prompt generation
+
+## 触发场景
+
+1. 用户已完成分镜设计，需要将分镜转化为可执行的生成参数
+2. 用户提到"把分镜转成prompt"、"生成视频参数"
+3. 用户需要为即梦API准备 prompt、seed 等参数
+4. 用户讨论视频生成的 prompt 拼接和参数调优
+5. 用户在 AI 漫剧/短片工作流中，处于分镜→生成环节
 
 ## 数据契约
 
