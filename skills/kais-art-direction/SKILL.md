@@ -1,6 +1,6 @@
 ---
 name: kais-art-direction
-description: "艺术指导与全局视觉风格系统。触发词：艺术指导/art direction/风格定义/视觉风格/色调/色彩方案/画面风格/整体风格/视觉调性/mood board/视觉基调/美术风格/art style/color palette/visual identity/moodboard/look and feel/色彩搭配/质感定义/光影风格。"
+description: "艺术指导与全局视觉风格系统。触发词：'艺术指导'、'art direction'、'风格定义'、'视觉风格'、'色调'、'色彩方案'、'画面风格'、'整体风格'、'视觉调性'、'mood board'、'视觉基调'、'美术风格'、'art style'、'color palette'、'visual identity'、'moodboard'、'look and feel'、'色彩搭配'、'质感定义'、'光影风格'。当用户需要定义视频/短剧的视觉风格时激活，如设置色调、光影、质感等美术方向。"
 ---
 
 # kais-art-direction — 艺术指导/风格系统

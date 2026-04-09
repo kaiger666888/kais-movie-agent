@@ -1,6 +1,6 @@
 ---
 name: kais-storyboard-designer
-description: "分镜设计系统，将剧本转化为完整分镜脚本。触发词：分镜/storyboard/镜头设计/视觉预览/分镜脚本/镜头列表/镜头规划/画面分镜/shot design/shot list/storyboard design/镜头语言/分镜表/逐镜头设计/shot breakdown/分镜创作/镜头编排/画面拆解/visual planning。"
+description: "分镜设计系统，将剧本转化为完整分镜脚本。触发词：'分镜'、'storyboard'、'镜头设计'、'视觉预览'、'分镜脚本'、'镜头列表'、'镜头规划'、'画面分镜'、'shot design'、'shot list'、'storyboard design'、'镜头语言'、'分镜表'、'逐镜头设计'、'shot breakdown'、'分镜创作'、'镜头编排'、'画面拆解'、'visual planning'。当用户需要将剧本/故事转化为可视化镜头序列时激活。"
 ---
 
 # kais-storyboard-designer — 分镜设计

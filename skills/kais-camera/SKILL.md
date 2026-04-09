@@ -1,6 +1,6 @@
 ---
 name: kais-camera
-description: "视频生成执行层。基于拍摄脚本批量生成视频片段，支持Seedance异步生成、4级降级策略、静态图fallback。触发词：生成视频、拍摄、视频生成、制作视频、批量生成、AI视频、镜头生成、视频制作、generate video、camera、video production、shoot、render、executeShot。触发场景：用户提供拍摄脚本后需要批量生成视频、需要将分镜/脚本转化为视频片段、需要AI视频批量渲染、用户说'帮我拍/生成/制作视频'。"
+description: "视频生成执行层。基于拍摄脚本批量生成视频片段，支持Seedance异步生成、4级降级策略、静态图fallback。触发词：'生成视频'、'拍摄'、'视频生成'、'制作视频'、'批量生成'、'AI视频'、'镜头生成'、'视频制作'、'generate video'、'camera'、'video production'、'shoot'、'render'、'executeShot'。触发场景：用户提供拍摄脚本后需要批量生成视频、需要将分镜/脚本转化为视频片段、需要AI视频批量渲染、用户说'帮我拍/生成/制作视频'。"
 ---
 
 # kais-camera — 摄像机（视频生成执行层）
