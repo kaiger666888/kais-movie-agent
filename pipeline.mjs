@@ -17,6 +17,7 @@ import { join, resolve } from "node:path";
 import { execSync, exec as execCb } from "node:child_process";
 import { promisify } from "node:util";
 import { JimengClient } from "./lib/jimeng-client.js";
+import { EvolutionPipeline } from "./lib/evolution-pipeline.js";
 
 const execAsync = promisify(execCb);
 
@@ -75,6 +76,7 @@ function parseArgs() {
     if (key === "--ratio" && next) { args.ratio = next; i++; }
     if (key === "--style" && next) { args.style = next; i++; }
     if (key === "--interactive") args.interactive = true;
+    if (key === "--evolution") args.evolution = true;
     if (key === "--choice" && next) { args.choice = next; i++; }
     if (!key.startsWith("--")) args._.push(key);
   }
@@ -97,7 +99,19 @@ class MoviePipeline {
       ratio: config.ratio || "9:16",
       style: config.style || null,
       popSize: 1, // MVP: no evolution
+      evolution: config.evolution || false,
     };
+    this.evolutionPipeline = null;
+  }
+
+  /** Initialize evolution pipeline if --evolution mode */
+  #initEvolution() {
+    if (this.evolutionPipeline) return;
+    this.evolutionPipeline = new EvolutionPipeline({
+      stateDir: join(this.projectDir, "evolution"),
+      maxGenerations: 3,
+      populationSizes: { text: 5, visual: 3, execution: 1 },
+    });
   }
 
   /** Get skill path (existing or new) */
@@ -197,6 +211,25 @@ class MoviePipeline {
 
     // For skills that need AI execution, we mark as pending and return
     // The agent (OpenClaw) will read the SKILL.md and execute
+
+    // ── Evolution mode: if enabled and step is evolvable ──
+    if (this.config.evolution && this.evolutionPipeline?.isEvolvable(stepId)) {
+      const evoConfig = this.evolutionPipeline.getStepConfig(stepId);
+      if (evoConfig && evoConfig.populationSize > 1) {
+        log(`  Evolution mode: pop=${evoConfig.populationSize}, strategy=${evoConfig.selection}`, "🧬");
+        this.state.evolutionRequired = {
+          stepId,
+          skill: stepDef.skill,
+          config: evoConfig,
+        };
+        this.state.inputHints = this.buildInputHints(stepId);
+        this.state.outputPath = outputPath;
+        this.saveCheckpoint();
+        log(`  → EVOLUTION_PENDING: 需要进化式执行 ${stepDef.skill}`, "🧬");
+        return null;
+      }
+    }
+
     this.state.skillRequired = stepDef.skill;
     this.state.inputHints = this.buildInputHints(stepId);
     this.state.outputPath = outputPath;
@@ -519,6 +552,11 @@ class MoviePipeline {
     const { resume = false, fromStep = null, dryRun = false, interactive = false } = options;
     this.interactive = interactive;
 
+    if (this.config.evolution) {
+      this.#initEvolution();
+      log("Evolution mode enabled — population-based skill execution", "🧬");
+    }
+
     await this.initProject(topic, resume, fromStep);
 
     const startIdx = fromStep
@@ -688,6 +726,7 @@ async function main() {
     duration: args.duration,
     ratio: args.ratio,
     style: args.style,
+    evolution: args.evolution,
   });
 
   switch (cmd) {
@@ -782,14 +821,18 @@ async function main() {
     default:
       console.log(`Movie Pipeline V3
 Usage:
-  node pipeline.mjs run <topic> [--interactive] [--resume] [--from <step>] [--dry-run]
+  node pipeline.mjs run <topic> [--interactive] [--evolution] [--resume] [--from <step>] [--dry-run]
   node pipeline.mjs complete <projectId>
   node pipeline.mjs approve <projectId> --choice <选项>
   node pipeline.mjs resume [projectId]
   node pipeline.mjs status [projectId]
   node pipeline.mjs list
 
-Steps: ${STEPS.map(s => s.id).join(" → ")}`);
+Steps: ${STEPS.map(s => s.id).join(" → ")}
+
+Modes:
+  --interactive  Enable approval gates between steps
+  --evolution    Enable population-based evolution (Pop=5→3→2 for text, Pop=3 for visual)`);
   }
 }
 
