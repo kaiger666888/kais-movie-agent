@@ -13,7 +13,7 @@ Phase 2: 美术方向 (kais-art-direction)     → 📌 git checkpoint
   ↓
 Phase 3: 角色设计 (kais-character-designer) → 📌 git checkpoint
   ↓
-Phase 4: 剧本编写 (kais-scenario-writer)   → 📌 git checkpoint
+Phase 4: 剧本编写 (kais-scenario-writer + kais-emotion 对白注入)   → 📌 git checkpoint
   ↓
 Phase 5: 场景图生成 (kais-scene-designer)   → 📌 git checkpoint
   ↓
@@ -169,7 +169,7 @@ python3 lib/scripts/scene-evaluator.py --mode render spec.json assets/scenes/
 |-------|-------|------|
 | kais-art-direction | 2 | 美术方向/视觉风格定义 |
 | kais-character-designer | 3 | 角色设计 + 参考图生成 |
-| kais-scenario-writer | 4 | 剧本/分镜编写 |
+| kais-scenario-writer | 4 | 剧本/分镜编写（对白情感注入） |
 | kais-scene-designer | 5 | 场景图生成 |
 | kais-cinematography-planner | 5.7 | 拍摄手法批量映射（Coverage Map） |
 | kais-anatomy-guard | - | 肢体解剖修复守卫（三级防御） |
