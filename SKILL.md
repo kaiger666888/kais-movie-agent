@@ -22,6 +22,8 @@ Phase 5.3: 线稿生成                         → 📌 git checkpoint
 Phase 5.4: 线稿审核 (FAIL → 回滚到 5.3)
   ↓
 Phase 5.5: 基于线稿渲染（四维锚定注入） → 📌 git checkpoint
+  ↓ anatomy-guard 预防检测（negative_prompt + 参考图骨骼注入）
+  ↓ anatomy-guard 验证修复（GLM-4V 检测 + prompt 重试）
   ↓
 Phase 5.6: 渲染审核 (FAIL → 回滚到 5.5)
   ↓
@@ -169,6 +171,7 @@ python3 lib/scripts/scene-evaluator.py --mode render spec.json assets/scenes/
 | kais-scenario-writer | 4 | 剧本/分镜编写 |
 | kais-scene-designer | 5 | 场景图生成 |
 | kais-cinematography-planner | 5.7 | 拍摄手法批量映射（Coverage Map） |
+| kais-anatomy-guard | - | 肢体解剖修复守卫（三级防御） |
 | kais-storyboard-designer | 6 | 分镜板设计 |
 | kais-camera | 7 | 视频生成 + 合成 |
 | kais-shooting-script | - | 拍摄脚本生成 |
@@ -179,12 +182,12 @@ python3 lib/scripts/scene-evaluator.py --mode render spec.json assets/scenes/
 |------|------|------|
 | sketch-generator.py | lib/scripts/ | 线稿生成 |
 | sketch-to-render.py | lib/scripts/ | 线稿→渲染（四维锚定融合：--style-ref/--lighting/--depth）|
-| scene-evaluator.py | lib/scripts/ | 场景图评价（sketch/render/default + 深度层次检查）|
+| scene-evaluator.py | lib/scripts/ | 场景图评价（sketch/render/default + 肢体检查 + 深度层次检查）|
+| anatomy-validator.py | lib/scripts/ | 解剖质量检测（GLM-4V，hands/face/body/full）|
 | jimeng-client.js | lib/ | 即梦 API 客户端（Node.js）|
 | cost-scheduler.js | lib/ | 积分/成本调度 |
+| guard.js | skills/kais-anatomy-guard/lib/ | 肢体解剖修复守卫（negative_prompt + GLM-4V 检测 + 修复）|
 | git-stage-manager.js | lib/ | Git 阶段版本管理（checkpoint/rollback/diff）|
-
-## 底层依赖
 - **文生图**: 即梦 API (jimeng-5.0)
 - **视频生成**: Seedance 2.0
 - **评价**: 智谱 GLM-4V-Flash
@@ -193,3 +196,27 @@ python3 lib/scripts/scene-evaluator.py --mode render spec.json assets/scenes/
 ## 环境变量
 - `JIMENG_SESSION_ID`: 即梦 session ID
 - `JIMENG_API_URL`: 即梦 API 地址（默认 http://localhost:8000）
+
+## 肢体解剖守卫（kais-anatomy-guard）
+
+三级防御机制，集成在 Phase 5.5 渲染管线中：
+
+### 预防层（已集成）
+`sketch-generator.py` 和 `sketch-to-render.py` 的 negative_prompt 已追加 anatomy 排除词：
+```
+bad anatomy, deformed, mutated hands, missing/extra/fused fingers,
+extra/missing limbs, bad proportions, distorted/asymmetric face, ...
+```
+
+### 检测层（按需调用）
+渲染完成后使用 GLM-4V-Flash 检测解剖问题：
+```bash
+python3 lib/scripts/anatomy-validator.py render.png --mode full --threshold 0.6
+```
+返回 JSON 报告（`<image>.anatomy.json`），包含 score、issues、negative_boost。
+
+### 修复层（检测失败时）
+基于检测结果增强 negative_prompt + 降低 sample_strength 重试（最多 3 次）。
+仍失败则降级：角度调整 / 景深模糊 / 构图裁切。
+
+详见 `skills/kais-anatomy-guard/SKILL.md`。
