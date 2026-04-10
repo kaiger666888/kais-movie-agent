@@ -158,7 +158,12 @@ def render_from_sketch(sketch_path, prompt, ref_images, model, ratio,
     # 注入空间层次参数
     render_prompt = inject_depth_prompt(render_prompt, depth_str)
 
-    negative = "线稿, sketch, lineart, 草图, draft, 线条, 粗糙, rough, unfinished, 黑白, monochrome, wireframe"
+    negative = (
+        "线稿, sketch, lineart, 草图, draft, 线条, 粗糙, rough, unfinished, 黑白, monochrome, wireframe, "
+        "bad anatomy, deformed, distorted, disfigured, mutated hands, missing fingers, extra fingers, "
+        "fused fingers, too many fingers, bad hands, extra limbs, missing limbs, bad proportions, "
+        "distorted face, asymmetric face, long neck, malformed limbs, unnatural pose"
+    )
 
     # images: 四维锚定顺序已在外部构建
     images = list(ref_images)  # 直接使用已排序的 images

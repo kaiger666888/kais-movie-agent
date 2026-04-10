@@ -50,7 +50,12 @@ def generate_sketch(prompt, space_constraints, ref_images, model, ratio, sample_
     
     sketch_prompt += f"纯黑白线稿，清晰轮廓线，漫画分镜风格，没有颜色，没有灰度"
     
-    negative = "彩色, 上色, 渲染, 阴影, 光影, gradient, colored, rendered, shaded, 油画, 水彩, 照片, 3D, realistic, photo"
+    negative = (
+        "彩色, 上色, 渲染, 阴影, 光影, gradient, colored, rendered, shaded, 油画, 水彩, 照片, 3D, realistic, photo, "
+        "bad anatomy, deformed, distorted, disfigured, mutated hands, missing fingers, extra fingers, "
+        "fused fingers, too many fingers, bad hands, extra limbs, missing limbs, bad proportions, "
+        "distorted face, asymmetric face, long neck, malformed limbs, unnatural pose"
+    )
     
     body = {
         "model": model,
