@@ -49,6 +49,123 @@ function simplifyPrompt(prompt, level) {
   return prompt;
 }
 
+/**
+ * 时序锚定运动类型到中文描述的映射
+ * 用于构建增强的 Seedance prompt
+ */
+const MOTION_TYPE_MAP = {
+  "slow-push-in":      "缓慢推进镜头",
+  "slow-pull-out":     "缓慢拉远镜头",
+  "slow-pan-left":     "缓慢左摇镜头",
+  "slow-pan-right":    "缓慢右摇镜头",
+  "slow-tilt-up":      "缓慢上摇镜头",
+  "slow-tilt-down":    "缓慢下摇镜头",
+  "slow-zoom-in":      "缓慢缩放进入",
+  "slow-zoom-out":     "缓慢缩放拉远",
+  "fast-push-in":      "快速推进镜头",
+  "fast-pull-out":     "快速拉远镜头",
+  "fast-pan-left":     "快速左摇镜头",
+  "fast-pan-right":    "快速右摇镜头",
+  "fast-tilt-up":      "快速上摇镜头",
+  "fast-tilt-down":    "快速下摇镜头",
+  "orbit-left":        "环绕左转镜头",
+  "orbit-right":       "环绕右转镜头",
+  "static":            "固定镜头",
+  "handheld":          "手持晃动镜头",
+  "dolly-zoom":        "滑动变焦",
+  "crane-up":          "摇臂上升镜头",
+  "crane-down":        "摇臂下降镜头",
+  "tracking":          "跟踪镜头",
+  "tracking-left":     "向左跟踪镜头",
+  "tracking-right":    "向右跟踪镜头",
+  "whip-pan":          "甩镜头",
+  "dutch-roll":        "荷兰角旋转",
+};
+
+/**
+ * 将速度数值映射为中文速度描述
+ * @param {number} speed - 0.0~1.0 速度值
+ * @returns {string} 中文速度描述
+ */
+function speedToDescription(speed) {
+  if (speed <= 0.2) return "极慢";
+  if (speed <= 0.4) return "缓慢";
+  if (speed <= 0.6) return "中速";
+  if (speed <= 0.8) return "较快";
+  return "极速";
+}
+
+/**
+ * 将 motion_strength (0~1) 映射到 Seedance 1-5 scale
+ * @param {number} strength - 0.0~1.0 强度值
+ * @returns {number} 1-5 的整数
+ */
+function strengthToSeedanceScale(strength) {
+  const clamped = Math.min(1, Math.max(0, strength));
+  return Math.max(1, Math.min(5, Math.round(clamped * 5)));
+}
+
+/**
+ * 从 shot.anchoring.temporal 构建增强的 Seedance prompt 后缀
+ *
+ * 输入示例: { motion_type: "slow-push-in", motion_speed: 0.3, camera_movement: "聚焦角色面部" }
+ * 输出示例: "缓慢推进镜头，聚焦角色面部，运动平滑自然，电影级运镜"
+ *
+ * @param {object} temporal - 时序锚定配置
+ * @returns {string|null} 增强的 prompt 片段，无有效 temporal 时返回 null
+ */
+function buildTemporalPrompt(temporal) {
+  if (!temporal) return null;
+
+  // 检查是否有实际可用的参数（enabled 不是必须的，有 motion_type 即视为有效）
+  const motionType = temporal.motion_type;
+  if (!motionType && !temporal.camera_movement) return null;
+
+  // 如果显式 enabled: false，则跳过
+  if (temporal.enabled === false) return null;
+
+  const parts = [];
+
+  // 1. motion_type → 运动描述
+  if (motionType) {
+    const motionLabel = MOTION_TYPE_MAP[motionType];
+    if (motionLabel) {
+      parts.push(motionLabel);
+    } else {
+      // 未知 motion_type，直接使用原始值作为运动描述
+      parts.push(motionType.replace(/[-_]/g, " "));
+    }
+  }
+
+  // 2. camera_movement → 自定义运镜描述（直接追加）
+  if (temporal.camera_movement) {
+    parts.push(temporal.camera_movement);
+  }
+
+  // 3. motion_speed → 速度描述
+  if (temporal.motion_speed != null) {
+    const speedDesc = speedToDescription(temporal.motion_speed);
+    parts.push(`${speedDesc}节奏`);
+  }
+
+  // 4. 运动质量标签
+  parts.push("运动平滑自然");
+  parts.push("电影级运镜");
+
+  return parts.join("，");
+}
+
+/**
+ * 从 shot.anchoring.temporal 提取 Seedance motion_strength (1-5 scale)
+ * @param {object} temporal - 时序锚定配置
+ * @returns {number|null} 1-5 整数，无配置时返回 null
+ */
+function extractSeedanceStrength(temporal) {
+  if (!temporal || temporal.motion_strength == null) return null;
+  if (temporal.enabled === false) return null;
+  return strengthToSeedanceScale(temporal.motion_strength);
+}
+
 export class CameraOperator {
   /**
    * @param {import('./jimeng-client.js').JimengClient} jimengClient
@@ -81,15 +198,30 @@ export class CameraOperator {
     let lastError = null;
     let result = null;
 
+    // ── 时序锚定：从 shot.anchoring.temporal 构建增强 prompt ──
+    const temporal = shot.anchoring?.temporal;
+    const temporalSuffix = buildTemporalPrompt(temporal);
+    const temporalStrength = extractSeedanceStrength(temporal);
+
     // 确保输出目录存在
     await mkdir(this.outputDir, { recursive: true });
 
     // 尝试视频生成（L1 → L2 → L3）
     for (let attempt = 0; attempt < this.maxRetries; attempt++) {
       attempts++;
-      const params = attempt === 0 ? apiParams : applyRetryStrategy(shot, attempt);
+      let params = attempt === 0 ? apiParams : applyRetryStrategy(shot, attempt);
 
       try {
+        // ── 时序锚定增强：在 Seedance prompt 中注入运动描述 ──
+        if (temporalSuffix && attempt === 0) {
+          // 仅首次尝试注入完整 temporal，重试时降级策略已简化 prompt
+          const originalPrompt = params.prompt || "";
+          // 避免重复注入（如果 prompt 已包含 temporal 内容）
+          if (!originalPrompt.includes(temporalSuffix)) {
+            params = { ...params, prompt: `${originalPrompt}，${temporalSuffix}` };
+          }
+        }
+
         if (dryRun) {
           result = {
             shot_id: shotId,
@@ -99,6 +231,7 @@ export class CameraOperator {
             attempts,
             duration: params.duration || 4,
             cost: 0.05,
+            temporal_enhanced: !!temporalSuffix,
           };
           break;
         }
@@ -121,11 +254,17 @@ export class CameraOperator {
 
         // 生成视频
         if (params.model?.includes("seedance") || filePaths.length > 0) {
-          const videoUrl = await this.generateSeedanceVideo(params.prompt, filePaths, {
+          // 构建 Seedance options，注入 temporal strength
+          const seedanceOptions = {
             model: params.model || "jimeng-video-seedance-2.0-fast",
             ratio: params.ratio || "16:9",
             duration: params.duration || 4,
-          });
+          };
+          if (temporalStrength != null) {
+            seedanceOptions.motion_strength = temporalStrength;
+          }
+
+          const videoUrl = await this.generateSeedanceVideo(params.prompt, filePaths, seedanceOptions);
 
           // 下载到本地
           const localPath = join(this.outputDir, `${shotId}.mp4`);
@@ -139,6 +278,7 @@ export class CameraOperator {
             attempts,
             duration: params.duration || 4,
             cost: 0.05 * attempts,
+            temporal_enhanced: !!temporalSuffix,
           };
           this._costs.push({ shot_id: shotId, cost: 0.05, attempts });
           break;

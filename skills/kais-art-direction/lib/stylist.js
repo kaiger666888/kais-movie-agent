@@ -5,8 +5,8 @@
  * 负责：风格生成、锁定、下游适配、一致性校验
  */
 
-import { readFileSync, writeFileSync, existsSync } from 'node:fs';
-import { join } from 'node:path';
+import { readFileSync, writeFileSync, existsSync, mkdirSync } from 'node:fs';
+import { join, dirname } from 'node:path';
 
 // ─── 内置风格库 ───────────────────────────────────────────────
 
@@ -189,6 +189,137 @@ export function getLockedStyle(workspace = process.cwd()) {
   return JSON.parse(readFileSync(lockPath, 'utf-8'));
 }
 
+// ─── 光影参考图默认值 ───────────────────────────────────────────
+
+const LIGHTING_DEFAULTS = {
+  direction: 'upper-left',
+  intensity: 0.5,
+  color_temp: '5500K',
+  mood: 'neutral',
+};
+
+/**
+ * 风格 → 光影参数映射
+ * 根据风格 ID 推断默认光影配置
+ */
+const STYLE_LIGHTING_MAP = {
+  'film_analog': {
+    direction: 'upper-left',
+    intensity: 0.6,
+    color_temp: '3200K',
+    mood: 'warm, soft-diffusion, film-grain',
+  },
+  'cyberpunk': {
+    direction: 'lower-right',
+    intensity: 0.85,
+    color_temp: '8000K',
+    mood: 'dramatic, neon-rim, volumetric, high-contrast',
+  },
+  'japanese_clean': {
+    direction: 'behind',
+    intensity: 0.5,
+    color_temp: '6500K',
+    mood: 'soft-backlight, airy, natural-diffusion',
+  },
+  'dark_gothic': {
+    direction: 'upper-right',
+    intensity: 0.9,
+    color_temp: '2700K',
+    mood: 'chiaroscuro, candlelight, volumetric-dust',
+  },
+  'documentary_realism': {
+    direction: 'front',
+    intensity: 0.4,
+    color_temp: '5600K',
+    mood: 'natural, ambient, handheld',
+  },
+  'dreamy_surreal': {
+    direction: 'multi-source',
+    intensity: 0.7,
+    color_temp: '7000K',
+    mood: 'prismatic, halo, multi-glow, ethereal',
+  },
+};
+
+/**
+ * 生成光影参考图
+ *
+ * 基于已锁定的 art_direction.json 中的风格信息，
+ * 生成一张"标准光照场景"参考图，作为渲染阶段的光影锚定。
+ *
+ * @param {object} artDirection - 已锁定的 ArtDirection 对象（须含 style_id）
+ * @param {string} workspace - 工作目录路径（默认当前）
+ * @returns {Promise<object>} lighting 字段对象
+ */
+export async function generateLightingRef(artDirection, workspace = process.cwd()) {
+  // 1. 确定光影参数：优先用已有的 lighting 字段，其次根据 style_id 查表，最后用默认值
+  const styleId = artDirection.style_id || null;
+  const mappedLighting = styleId ? STYLE_LIGHTING_MAP[styleId] : null;
+
+  const lighting = {
+    direction: artDirection.lighting?.direction || mappedLighting?.direction || LIGHTING_DEFAULTS.direction,
+    intensity: artDirection.lighting?.intensity ?? mappedLighting?.intensity ?? LIGHTING_DEFAULTS.intensity,
+    color_temp: artDirection.lighting?.color_temp || mappedLighting?.color_temp || LIGHTING_DEFAULTS.color_temp,
+    mood: artDirection.lighting?.mood || mappedLighting?.mood || LIGHTING_DEFAULTS.mood,
+    reference_image: 'assets/art-direction/lighting_ref.png',
+  };
+
+  // 2. 构建 prompt
+  const styleName = artDirection.style_name || 'unknown';
+  const lightQuality = artDirection.light_quality || '';
+  const colorPalette = (artDirection.color_palette || []).join(', ');
+
+  const promptParts = [
+    'Cinematic lighting reference sheet, pure lighting study,',
+    `style: ${styleName},`,
+    `light direction: ${lighting.direction},`,
+    `color temperature: ${lighting.color_temp},`,
+    `intensity: ${Math.round(lighting.intensity * 100)}%,`,
+    `mood: ${lighting.mood},`,
+    `light quality: ${lightQuality},`,
+    `color palette: ${colorPalette},`,
+    'showing a neutral geometric scene with spheres and planes to demonstrate light and shadow distribution,',
+    'no characters, no text, no watermark,',
+    'ultra high quality, 16:9, professional lighting diagram feel',
+  ];
+  const prompt = promptParts.join(' ');
+
+  // 3. 调用即梦 API 生成图片
+  const outputDir = join(workspace, 'assets', 'art-direction');
+  const outputPath = join(outputDir, 'lighting_ref.png');
+
+  try {
+    mkdirSync(outputDir, { recursive: true });
+
+    const data = await jimeng.generateImage(prompt, { ratio: '16:9' });
+    const imageUrl = data?.[0]?.url || null;
+
+    if (imageUrl) {
+      // 下载到本地
+      await jimeng.download(imageUrl, outputPath);
+      console.log(`[kais-art-direction] 光影参考图已保存: ${outputPath}`);
+    } else {
+      console.warn('[kais-art-direction] 即梦 API 未返回图片 URL，跳过下载');
+    }
+  } catch (e) {
+    console.error('[kais-art-direction] 光影参考图生成失败:', e.message);
+  }
+
+  // 4. 更新锁文件中的 lighting 字段
+  const lockPath = join(workspace, '.art-direction-lock.json');
+  if (existsSync(lockPath)) {
+    try {
+      const lockData = JSON.parse(readFileSync(lockPath, 'utf-8'));
+      lockData.lighting = lighting;
+      writeFileSync(lockPath, JSON.stringify(lockData, null, 2), 'utf-8');
+    } catch (e) {
+      console.error('[kais-art-direction] 更新锁文件 lighting 字段失败:', e.message);
+    }
+  }
+
+  return lighting;
+}
+
 /**
  * 获取指定 Skill 维度的风格指南
  * @param {string} skillType - 'character', 'scene', 'storyboard', 'generation'
@@ -204,6 +335,7 @@ export function getStyleGuideForSkill(skillType, workspace = process.cwd()) {
       color_palette: locked.color_palette,
       texture: locked.texture,
       light_quality: locked.light_quality,
+      lighting: locked.lighting || null,
       notes: `角色配色须在 ${locked.style_name} 色彩体系内，服装质感遵循「${locked.texture}」`,
     },
     scene: {
@@ -211,12 +343,14 @@ export function getStyleGuideForSkill(skillType, workspace = process.cwd()) {
       light_quality: locked.light_quality,
       texture: locked.texture,
       composition_rules: locked.composition_rules,
+      lighting: locked.lighting || null,
       notes: `场景整体氛围须匹配「${locked.style_name}」，光效遵循「${locked.light_quality}」`,
     },
     storyboard: {
       color_palette: locked.color_palette,
       composition_rules: locked.composition_rules,
       light_quality: locked.light_quality,
+      lighting: locked.lighting || null,
       notes: `分镜构图遵循「${locked.composition_rules.join('、')}」，保持风格统一`,
     },
     generation: {
@@ -225,6 +359,7 @@ export function getStyleGuideForSkill(skillType, workspace = process.cwd()) {
       texture: locked.texture,
       composition_rules: locked.composition_rules,
       style_name: locked.style_name,
+      lighting: locked.lighting || null,
       notes: `文生图/视频 prompt 须包含风格关键词，确保与「${locked.style_name}」一致`,
     },
   };

@@ -30,7 +30,7 @@ type: style_system
 population_size: 3
 aspect_orientation: "16:9"
 output: ArtDirection
-capabilities: color_palette, light_quality, texture, composition
+capabilities: color_palette, light_quality, texture, composition, lighting
 ```
 
 ## 输入输出
@@ -56,9 +56,18 @@ capabilities: color_palette, light_quality, texture, composition
   "light_quality": "高对比度霓虹灯+湿润路面反射",
   "texture": "金属锈蚀+玻璃+全息投影",
   "composition_rules": ["三分法", "引导线透视", "前景框架"],
-  "reference_images": ["https://..."]
+  "reference_images": ["https://..."],
+  "lighting": {
+    "direction": "upper-left",
+    "intensity": 0.7,
+    "color_temp": "4500K",
+    "mood": "dramatic, rim-light, volumetric",
+    "reference_image": "assets/art-direction/lighting_ref.png"
+  }
 }
 ```
+
+> **向后兼容**：`lighting` 字段为可选。无此字段时，下游 Skill 使用默认光照参数（`direction: "upper-left"`, `intensity: 0.5`, `color_temp: "5500K"`, `mood: "neutral"`）。
 
 ## 工作流程
 
@@ -75,6 +84,18 @@ capabilities: color_palette, light_quality, texture, composition
 ### 3. 下游适配
 - 其他 Skill 调用 `getStyleGuideForSkill(skillType)` 获取该 Skill 维度的风格约束
 - 调用 `validateConsistency(artifact)` 检查产出是否符合锁定风格
+
+### 3.5 生成光影参考图（Lighting Reference）
+- 风格锁定后，调用 `generateLightingRef(artDirection, workspace)` 生成光影参考图
+- 基于已锁定的 `art_direction.json` 中的 `light_quality`、风格关键词等信息
+- 生成一张"标准光照场景"参考图，展示该风格下的典型光影布局：
+  - 光照方向（direction）
+  - 色温（color_temp）
+  - 光影氛围（mood）
+  - 风格关键词
+- 参考图保存到 `{workspace}/assets/art-direction/lighting_ref.png`
+- 写入 `ArtDirection.lighting` 字段，包含 `direction`、`intensity`、`color_temp`、`mood`、`reference_image`
+- **作用**：作为渲染阶段的光影锚定（Lighting Anchor），确保角色设计、场景设计、分镜生成等下游 Skill 在光影维度保持一致性。下游 Skill 可将此参考图作为 img2img 输入或 prompt 参考。
 
 ## 内置风格库
 
@@ -100,10 +121,15 @@ capabilities: color_palette, light_quality, texture, composition
 ```
 StoryDNA → [kais-art-direction] → ArtDirection (locked)
                                         ↓
+                                ┌──── Step 3.5 ────┐
+                                ↓                   ↓
+                        lighting_ref.png    lighting 字段
+                                ↓                   ↓
                     ┌───────────────────┼───────────────────┐
                     ↓                   ↓                   ↓
             角色设计 Skill        场景设计 Skill         分镜 Skill
             (遵守风格锁)         (遵守风格锁)          (遵守风格锁)
+            (光影锚定)           (光影锚定)            (光影锚定)
 ```
 
 ## 文件结构

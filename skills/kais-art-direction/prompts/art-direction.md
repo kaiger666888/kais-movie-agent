@@ -14,6 +14,22 @@
 | `{light_desc}` | 光效描述 | 高对比度霓虹灯，湿润路面反射 |
 | `{texture_desc}` | 质感描述 | 金属锈蚀，玻璃反射，全息投影 |
 | `{composition_desc}` | 构图描述 | 引导线透视，前景框架遮挡 |
+| `{light_direction}` | 光照方向 | upper-left, lower-right, behind, front, multi-source |
+| `{light_intensity}` | 光照强度 | 0.0 - 1.0 |
+| `{color_temp}` | 色温 | 2700K (暖) - 8000K (冷) |
+| `{light_mood}` | 光影氛围 | dramatic, soft-backlight, chiaroscuro, prismatic |
+
+## 变量定义（光影参考图专用）
+
+| 变量 | 说明 | 示例 |
+|------|------|------|
+| `{light_direction}` | 主光方向 | upper-left, lower-right, behind, front, multi-source |
+| `{light_intensity_pct}` | 光照强度百分比 | 60%, 85%, 50% |
+| `{color_temp}` | 色温值 | 3200K, 6500K, 8000K |
+| `{light_mood}` | 光影氛围描述 | dramatic, rim-light, volumetric, soft-diffusion |
+| `{style_name}` | 已锁定风格名称 | 霓虹废墟, 胶片暖阳 |
+| `{light_quality}` | 已锁定光效描述 | 高对比度霓虹灯+湿润路面反射 |
+| `{color_palette_str}` | 色彩方案字符串 | #0a0e17, #1a3a5c, #ff6b35 |
 
 ## 参考图生成 Prompt
 
@@ -26,6 +42,34 @@ Composition: {composition_desc}.
 Theme: {theme}. Mood: {tone}. Keywords: {mood_keywords}.
 Ultra high quality, 16:9 aspect ratio, reference sheet, multiple angles, no text, no watermark.
 ```
+
+## 光影参考图生成 Prompt（Lighting Reference）
+
+> 用途：在风格锁定后（Step 3.5），生成一张纯光照研究参考图，作为渲染阶段的光影锚定。
+
+```
+Cinematic lighting reference sheet, pure lighting study, style: {style_name}.
+Light direction: {light_direction}.
+Color temperature: {color_temp}.
+Intensity: {light_intensity_pct}.
+Mood: {light_mood}.
+Light quality: {light_quality}.
+Color palette: {color_palette_str}.
+Showing a neutral geometric scene with spheres and planes to demonstrate light and shadow distribution across surfaces.
+No characters, no text, no watermark.
+Ultra high quality, 16:9 aspect ratio, professional lighting diagram feel.
+```
+
+### 各风格默认光影参数
+
+| 风格 | direction | intensity | color_temp | mood |
+|------|-----------|-----------|------------|------|
+| 电影胶片感 | upper-left | 0.6 | 3200K | warm, soft-diffusion, film-grain |
+| 赛博朋克 | lower-right | 0.85 | 8000K | dramatic, neon-rim, volumetric, high-contrast |
+| 日系清新 | behind | 0.5 | 6500K | soft-backlight, airy, natural-diffusion |
+| 暗黑哥特 | upper-right | 0.9 | 2700K | chiaroscuro, candlelight, volumetric-dust |
+| 纪录片写实 | front | 0.4 | 5600K | natural, ambient, handheld |
+| 梦幻超现实 | multi-source | 0.7 | 7000K | prismatic, halo, multi-glow, ethereal |
 
 ## 风格详细定义
 

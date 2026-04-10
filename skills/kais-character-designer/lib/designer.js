@@ -21,6 +21,16 @@ const PROMPTS = {
   restyle: (vars) => `Character design of ${vars.character_name}, maintaining exact same face, body proportions, and features. ${vars.appearance}. NEW art style: ${vars.new_style}. ${vars.new_art_direction}. Same character, different artistic interpretation. Consistent with reference images provided.`,
 };
 
+// ── 多视角参考图 Prompt 模板 ──
+
+const MULTIVIEW_PROMPTS = {
+  front: (vars) => `${vars.style_prefix}, front view portrait of ${vars.character_name}, ${vars.appearance}, ${vars.personality} mood, front-facing, eyes looking at camera, symmetrical composition, upper body, clean white background, professional character reference sheet, high detail, studio lighting, identity anchor view`,
+
+  three_quarter: (vars) => `${vars.style_prefix}, 3/4 view of ${vars.character_name}, ${vars.appearance}, ${vars.personality} mood, head turned 45 degrees, showing depth and volume of face and body, upper body, clean white background, professional character reference sheet, high detail, soft lighting, identity anchor view`,
+
+  side: (vars) => `${vars.style_prefix}, side profile view of ${vars.character_name}, ${vars.appearance}, ${vars.personality} mood, perfect side profile, head and shoulders, clean outline showing nose bridge and jawline, clean white background, professional character reference sheet, high detail, silhouette clear, identity anchor view`,
+};
+
 // ── 即梦 API 调用 ──
 
 async function generateImage(prompt, { seed, ratio = '3:4', resolution = '2k', images } = {}) {
@@ -31,7 +41,6 @@ async function generateImage(prompt, { seed, ratio = '3:4', resolution = '2k', i
     console.error('[kais-character-designer] 即梦 API 失败:', e.message);
     return null;
   }
-}
 }
 
 // ── 核心函数 ──
@@ -77,9 +86,11 @@ export async function generateVariants(character, artDirection, count = 3) {
  * @param {object} selectedVariant - generateVariants 返回的选定变体
  * @param {object} character - 角色信息
  * @param {object} artDirection - 美术指令
+ * @param {object} [options] - { generateMultiView: boolean, assetsDir: string }
  * @returns {Promise<CharacterBible>}
  */
-export async function lockConsistency(selectedVariant, character, artDirection) {
+export async function lockConsistency(selectedVariant, character, artDirection, options = {}) {
+  const { generateMultiView = true, assetsDir = null } = options;
   const seed = selectedVariant.images[0].seed;
   const referenceImages = selectedVariant.images.map(img => img.url);
 
@@ -101,9 +112,10 @@ export async function lockConsistency(selectedVariant, character, artDirection) 
 
   const characterId = `char_${character.name.toLowerCase().replace(/\s+/g, '_')}`;
 
-  return {
+  // 构建基础 CharacterBible
+  const bible = {
     type: 'CharacterBible',
-    version: '1.0.0',
+    version: '2.0.0',
     character_id: characterId,
     name: character.name,
     appearance: character.appearance,
@@ -116,6 +128,29 @@ export async function lockConsistency(selectedVariant, character, artDirection) 
       frozen_fields: ['appearance', 'seed'],
     },
   };
+
+  // 生成多视角参考图
+  if (generateMultiView) {
+    try {
+      const referenceImageForMulti = selectedVariant.images[0]?.url || null;
+      const multiViewResult = await generateMultiViewReference(character, artDirection, {
+        referenceImage: referenceImageForMulti,
+        assetsDir,
+      });
+
+      bible.references = multiViewResult.references;
+
+      // 将多视角图信息记录到 consistency_lock
+      bible.consistency_lock.multi_view_generated = true;
+      bible.consistency_lock.multi_view_images = multiViewResult.images;
+    } catch (e) {
+      console.warn('[kais-character-designer] 多视角参考图生成失败，继续使用单参考图模式:', e.message);
+      // 向后兼容：失败时不设置 references，下游使用原有 reference_images
+      bible.consistency_lock.multi_view_generated = false;
+    }
+  }
+
+  return bible;
 }
 
 /**
@@ -153,6 +188,106 @@ export async function regenerateOnStyleChange(characterBible, newArtDirection) {
   };
 }
 
+/**
+ * 生成多视角参考图（正面、3/4、侧面）
+ *
+ * 为角色生成 3 张不同视角的参考图，用于 4D 身份锚定。
+ * 每张图的 prompt 包含：角色描述 + 视角指定 + 风格前缀。
+ * 使用即梦 API 图生图（以 turnaround 或已有参考图作为输入）。
+ *
+ * @param {object} character - { name, appearance, personality }
+ * @param {object} artDirection - { style, color_palette, era, mood, reference_notes, style_prefix }
+ * @param {object} [options] - { referenceImage, sampleStrength, assetsDir }
+ * @returns {Promise<{character_id: string, references: {front: string, three_quarter: string, side: string}}>}
+ */
+export async function generateMultiViewReference(character, artDirection, options = {}) {
+  const {
+    referenceImage = null,     // 用于图生图的参考图路径（turnaround 等）
+    sampleStrength = 0.35,     // 参考图影响强度
+    assetsDir = null,          // 资产保存目录
+  } = options;
+
+  const stylePrefix = artDirection.style_prefix || buildStylePrefix(artDirection);
+
+  const vars = {
+    character_name: character.name,
+    appearance: character.appearance,
+    personality: character.personality || '',
+    style_prefix: stylePrefix,
+  };
+
+  const characterId = `char_${character.name.toLowerCase().replace(/\s+/g, '_')}`;
+
+  // 三视角配置
+  const views = [
+    { key: 'front',         filename: 'front-source.png',   promptFn: MULTIVIEW_PROMPTS.front },
+    { key: 'three_quarter', filename: '3q-source.png',      promptFn: MULTIVIEW_PROMPTS.three_quarter },
+    { key: 'side',          filename: 'side-source.png',    promptFn: MULTIVIEW_PROMPTS.side },
+  ];
+
+  const references = {};
+  const imagesMeta = {};
+
+  for (const view of views) {
+    const prompt = view.promptFn(vars);
+
+    const genOptions = {
+      ratio: '3:4',
+      resolution: '2k',
+    };
+
+    // 如果有参考图，使用图生图模式
+    if (referenceImage) {
+      genOptions.images = [referenceImage];
+      genOptions.seed = undefined; // 图生图不强制 seed
+    }
+
+    const result = await generateImage(prompt, genOptions);
+
+    if (result && result.length > 0) {
+      const url = result[0].url;
+      // 如果有资产目录，构建本地路径
+      const localPath = assetsDir
+        ? `${assetsDir}/${characterId}/${view.filename}`
+        : `assets/characters/${characterId}/${view.filename}`;
+
+      references[view.key] = localPath;
+      imagesMeta[view.key] = { url, seed: result[0].seed, localPath };
+    } else {
+      // 生成失败时记录空路径，保持结构完整
+      const fallbackPath = assetsDir
+        ? `${assetsDir}/${characterId}/${view.filename}`
+        : `assets/characters/${characterId}/${view.filename}`;
+      references[view.key] = fallbackPath;
+      imagesMeta[view.key] = null;
+      console.warn(`[kais-character-designer] ${view.key} 视角参考图生成失败`);
+    }
+  }
+
+  return {
+    character_id: characterId,
+    references,
+    images: imagesMeta,           // 原始 API 返回的 url/seed 元数据
+    style_prefix: stylePrefix,    // 记录使用的风格前缀
+    sample_strength: sampleStrength,
+  };
+}
+
+/**
+ * 构建 STYLE_PREFIX（从 ArtDirection 提取）
+ * @param {object} artDirection
+ * @returns {string}
+ */
+function buildStylePrefix(artDirection) {
+  const parts = [];
+  if (artDirection.style) parts.push(artDirection.style);
+  if (artDirection.era) parts.push(`${artDirection.era} era`);
+  if (artDirection.mood) parts.push(`${artDirection.mood} mood`);
+  if (artDirection.color_palette?.length) parts.push(`palette: ${artDirection.color_palette.join('/')}`);
+  if (artDirection.reference_notes) parts.push(artDirection.reference_notes);
+  return parts.join(', ');
+}
+
 // ── 工具函数 ──
 
 function buildArtDirection(artDirection) {
@@ -177,7 +312,10 @@ if (process.argv[1] === new URL(import.meta.url).pathname) {
         .catch(e => { console.error(e); process.exit(1); });
       break;
     case 'lock':
-      lockConsistency(input.variant, input.character, input.artDirection)
+      lockConsistency(input.variant, input.character, input.artDirection, {
+        generateMultiView: input.generateMultiView !== false,
+        assetsDir: input.assetsDir || null,
+      })
         .then(v => { console.log(JSON.stringify(v, null, 2)); process.exit(0); })
         .catch(e => { console.error(e); process.exit(1); });
       break;
@@ -186,8 +324,17 @@ if (process.argv[1] === new URL(import.meta.url).pathname) {
         .then(v => { console.log(JSON.stringify(v, null, 2)); process.exit(0); })
         .catch(e => { console.error(e); process.exit(1); });
       break;
+    case 'multiview':
+      generateMultiViewReference(input.character, input.artDirection, {
+        referenceImage: input.referenceImage || null,
+        sampleStrength: input.sampleStrength || 0.35,
+        assetsDir: input.assetsDir || null,
+      })
+        .then(v => { console.log(JSON.stringify(v, null, 2)); process.exit(0); })
+        .catch(e => { console.error(e); process.exit(1); });
+      break;
     default:
-      console.error('用法: designer.js <generate|lock|restyle> <json-input>');
+      console.error('用法: designer.js <generate|lock|restyle|multiview> <json-input>');
       process.exit(1);
   }
 }

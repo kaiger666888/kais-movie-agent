@@ -60,15 +60,33 @@ consistency_mechanism: turnaround_image + reference_images + style_prefix + samp
     "assets/characters/char_wuji/expression-calm.png",
     "assets/characters/char_wuji/action-typing.png"
   ],
+  "references": {
+    "front": "assets/characters/char_wuji/front-source.png",
+    "three_quarter": "assets/characters/char_wuji/3q-source.png",
+    "side": "assets/characters/char_wuji/side-source.png"
+  },
   "style_prefix": "Arcane Fortiche animation style, 2D anime, oil painting on canvas texture, ...完整风格描述...",
   "sample_strength": 0.35,
   "consistency_lock": {
     "locked": true,
     "lock_version": 1,
-    "frozen_fields": ["appearance", "style_prefix", "sample_strength"]
+    "frozen_fields": ["appearance", "style_prefix", "sample_strength"],
+    "multi_view_generated": true
   }
 }
 ```
+
+### references 字段说明
+
+`references` 字段是 **4D 身份锚定** 的核心，包含 3 张多视角参考图：
+
+| Key | 视角 | 用途 | 对应 images 索引 |
+|-----|------|------|-----------------|
+| `front` | 正面 | 身份锚定基准面，用于正面镜头和表情参考 | images[1] |
+| `three_quarter` | 3/4 视角 | 最常用视角，用于大多数场景镜头的身份锚定 | images[2] |
+| `side` | 侧面 | 轮廓锚定，用于侧脸、剪影等镜头 | images[3] |
+
+**向后兼容**：如果 `references` 字段不存在（如旧版 CharacterBible 或多视角生成失败），下游应使用 `reference_images[0]` 作为唯一参考图。
 
 ## 流程
 
@@ -127,7 +145,7 @@ consistency_mechanism: turnaround_image + reference_images + style_prefix + samp
 3. 提供确认按钮或让用户反馈修改意见
 4. 等待用户确认
 
-### Phase 4: 锁定一致性
+### Phase 4: 锁定一致性 + 多视角参考图
 
 用户确认后：
 
@@ -135,9 +153,14 @@ consistency_mechanism: turnaround_image + reference_images + style_prefix + samp
 2. **记录转面图路径** — `turnaround_image_path`
 3. **收集所有参考图路径** — `reference_images` 列表
 4. **固定 sample_strength** — 默认 0.35
-5. 将所有锁定信息写入 CharacterBible
-6. 设置 `consistency_lock.locked = true`
-7. 冻结 `frozen_fields`：`["appearance", "style_prefix", "sample_strength"]`
+5. **生成多视角参考图** — 调用 `generateMultiViewReference()` 生成 3 张身份锚定图：
+   - `front-source.png`：正面视角
+   - `3q-source.png`：3/4 视角
+   - `side-source.png`：侧面视角
+   - 写入 `references` 字段
+6. 将所有锁定信息写入 CharacterBible
+7. 设置 `consistency_lock.locked = true`
+8. 冻结 `frozen_fields`：`["appearance", "style_prefix", "sample_strength"]`
 
 ### Phase 5: 风格变更重生成
 

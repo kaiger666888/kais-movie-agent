@@ -60,6 +60,9 @@ export function storyboardToShootingScript(storyboard, characters, artDirection,
     const duration = Math.round(shot.duration || 4);
     const filePaths = shot.reference_image ? [shot.reference_image] : [];
 
+    // 提取时序锚定配置（从 storyboard shot 的 anchoring.temporal）
+    const temporal = shot.anchoring?.temporal || null;
+
     return {
       shot_id: shot.shot_id,
       seed,
@@ -72,6 +75,8 @@ export function storyboardToShootingScript(storyboard, characters, artDirection,
         ratio: aspectRatio,
         duration,
         file_paths: filePaths,
+        // 时序锚定参数（供 CameraOperator 读取）
+        ...(temporal ? { temporal } : {}),
       },
       // 降级方案（纯文本模型）
       fallback: {
@@ -84,6 +89,8 @@ export function storyboardToShootingScript(storyboard, characters, artDirection,
       character_refs: shot.character_refs || [],
       scene_ref: shot.scene_ref || '',
       camera: shot.camera || {},
+      // 保留完整的 anchoring 配置，供 CameraOperator 的 executeShot 直接读取
+      ...(shot.anchoring ? { anchoring: shot.anchoring } : {}),
       mode: 'video',
       attempt: 1,
     };
