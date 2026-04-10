@@ -196,19 +196,22 @@ python3 lib/scripts/scene-evaluator.py --mode render spec.json assets/scenes/
 
 ## 延长链引擎（Extension Chain）
 
-即梦 API 不支持视频延长，采用**首尾帧桥接**模拟连续性：
-1. 种子片段：首个镜头图生视频生成
-2. 末帧桥接：提取上一镜头末帧 → 作为下一镜头的参考图
-3. 连续延长：逐镜头生成，视觉连续性由桥接帧保证
-4. 音频预绑定：TTS 完整生成 → 按镜头切分 → 最终合并
-5. 断点续传：支持从任意镜头重新生成，无需从头开始
+即梦 Seedance **全能参考模式**：上传上一段视频作为参考，prompt 中描述延长内容。
+
+核心流程：
+1. **种子片段**：首个镜头图生视频（参考图 from storyboard）
+2. **延长生成**：每个后续镜头以上一段视频为参考 + 延长 prompt
+3. **音频预绑定**：TTS 完整生成 → 按镜头切分 → 最终合并
+4. **断点续传**：支持从任意镜头重新生成
+
+延长 prompt 模板：`继续之前的动作和场景，{描述}，保持视觉风格和角色外观一致`
 
 重生成粒度：
-- `single` — 只重生成一个镜头
+- `single` — 只重生成一个镜头（以上一段视频为参考）
 - `breakpoint` — 从某镜头开始重新延长（保留之前的）
 - `full` — 全链重新生成
 
-核心模块：`lib/extension-chain.js`（extractFrame / executeChain / assembleFinal / resumeFromBreakpoint）
+核心模块：`lib/extension-chain.js`（buildChainPlan / executeChain / resumeFromBreakpoint / assembleFinal）
 
 ## 环境变量
 - `JIMENG_SESSION_ID`: 即梦 session ID
