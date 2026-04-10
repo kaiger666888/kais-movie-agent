@@ -196,21 +196,28 @@ python3 lib/scripts/scene-evaluator.py --mode render spec.json assets/scenes/
 
 ## 延长链引擎（Extension Chain）
 
-即梦 Seedance **全能参考模式**，每个镜头的多参考输入：
+即梦 Seedance **全能参考模式**，prompt 中用 `@1 @2 @3` 正确描述参考物关系：
 
 ```
-段1: 首帧 + 目标尾帧 + TTS段 + BGM段 → 生成视频
-段2: 段1视频 + 段2目标尾帧 + TTS段 + BGM段 → 生成视频
-段N: 段N-1视频 + 段N目标尾帧 + TTS段 + BGM段 → 生成视频
+段1: @1首帧 + @2目标尾帧 + @3TTS段 + @4BGM段
+     prompt: "@1作为画面起点，@2作为画面终点。从@1开始，{运动}，最终过渡到@2。"
+
+段2: @1段1视频 + @2段2目标尾帧 + @3TTS段 + @4BGM段
+     prompt: "@1是上一段视频，从@1的结尾画面开始自然延续，{运动}，最终过渡到@2。"
+
+段N: @1段N-1视频 + @2段N目标尾帧 + @3TTS段 + @4BGM段
+     prompt: "@1是上一段视频，从@1的结尾画面开始{风格}，{运动}，最终过渡到@2。"
 ```
 
-- **目标尾帧**来自分镜图（storyboard），确保每个镜头有明确的视觉终点
-- **上一段视频**作为连续性参考，保持视觉风格和角色一致
-- **TTS/BGM** 按镜头时间切分预绑定，最终合并时音频自然连续
-- 延长 prompt：`继续之前的动作和场景，{描述}，保持视觉风格和角色外观一致`
+- **目标尾帧**来自分镜图，确保视觉终点
+- **上一段视频**保持连续性
+- **TTS/BGM** 按镜头时间切分预绑定
 
-重生成粒度：`single`（单镜头）/ `breakpoint`（断点重延长）/ `full`（全链）
 核心模块：`lib/extension-chain.js`
+- `buildChainPlan()` — 构建执行计划
+- `buildFilePaths()` — 构建 file_paths（顺序与 @1@2@3 对应）
+- `buildSeedPrompt()` / `buildExtensionPrompt()` — 构建带参考关系描述的 prompt
+- `executeChain()` / `resumeFromBreakpoint()` / `assembleFinal()`
 
 ## 环境变量
 - `JIMENG_SESSION_ID`: 即梦 session ID
