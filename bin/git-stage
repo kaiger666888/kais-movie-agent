@@ -1,0 +1,17 @@
+#!/usr/bin/env node
+// CLI shortcut for git-stage-manager
+import { GitStageManager } from '../lib/git-stage-manager.js';
+
+// Re-export and run CLI
+const args = process.argv.slice(2);
+const command = args[0];
+const workdir = args.find((a, i) => i > 0 && !a.startsWith('-') && a !== command) || process.cwd();
+
+if (!command) {
+  console.log('Usage: git-stage <log|rollback|diff|init|stages> [workdir] [options]');
+  process.exit(0);
+}
+
+// Minimal CLI routing (full logic is in git-stage-manager.js main)
+process.argv = ['node', 'git-stage-manager.js', ...args];
+await import('../lib/git-stage-manager.js');
