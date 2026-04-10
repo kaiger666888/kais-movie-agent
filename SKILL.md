@@ -9,6 +9,7 @@
 Phase 1: 需求确认
   ↓
 Phase 2: 美术方向 (kais-art-direction)     → 📌 git checkpoint
+  ↓ Step 3.5: 生成光影参考图 (lighting_ref.png) → 四维锚定-光影
   ↓
 Phase 3: 角色设计 (kais-character-designer) → 📌 git checkpoint
   ↓
@@ -20,7 +21,7 @@ Phase 5.3: 线稿生成                         → 📌 git checkpoint
   ↓
 Phase 5.4: 线稿审核 (FAIL → 回滚到 5.3)
   ↓
-Phase 5.5: 基于线稿渲染                     → 📌 git checkpoint
+Phase 5.5: 基于线稿渲染（四维锚定注入） → 📌 git checkpoint
   ↓
 Phase 5.6: 渲染审核 (FAIL → 回滚到 5.5)
   ↓
@@ -28,7 +29,7 @@ Phase 5.7: 拍摄手法规划 (kais-cinematography-planner) → 📌 git checkpo
   ↓
 Phase 6: 分镜板 (kais-storyboard-designer)  → 📌 git checkpoint
   ↓
-Phase 7: 视频生成 (kais-camera)             → 📌 git checkpoint
+Phase 7: 视频生成 (kais-camera + 时序锚定) → 📌 git checkpoint
   ↓
 Phase 8: 后期合成 + 交付                     → 📌 git checkpoint
 ```
@@ -154,8 +155,10 @@ python3 lib/scripts/scene-evaluator.py --mode render spec.json assets/scenes/
 | resolution | 2k | 2k | 2k |
 | sample_strength | 0.35 | 0.25 | 0.35 |
 | negative_prompt | 彩色/渲染/阴影/渐变 | 线稿/草图/粗糙/黑白 | - |
-| images | 角色参考图 | [线稿, 角色参考图] | 角色参考图 |
-| 审核 | --mode sketch | --mode render | --mode default |
+| images | 角色参考图 | [线稿, 角色正面, 角色3/4, 风格/光影参考] | 角色参考图 |
+| 审核 | --mode sketch | --mode render（含深度层次检查） | --mode default |
+| 光影锚定 | - | --style-ref + --lighting | - |
+| 深度锚定 | - | --depth | - |
 
 ## 子 Skill 列表
 
@@ -175,8 +178,8 @@ python3 lib/scripts/scene-evaluator.py --mode render spec.json assets/scenes/
 | 工具 | 路径 | 功能 |
 |------|------|------|
 | sketch-generator.py | lib/scripts/ | 线稿生成 |
-| sketch-to-render.py | lib/scripts/ | 线稿→渲染 |
-| scene-evaluator.py | lib/scripts/ | 场景图评价（支持 sketch/render/default 模式）|
+| sketch-to-render.py | lib/scripts/ | 线稿→渲染（四维锚定融合：--style-ref/--lighting/--depth）|
+| scene-evaluator.py | lib/scripts/ | 场景图评价（sketch/render/default + 深度层次检查）|
 | jimeng-client.js | lib/ | 即梦 API 客户端（Node.js）|
 | cost-scheduler.js | lib/ | 积分/成本调度 |
 | git-stage-manager.js | lib/ | Git 阶段版本管理（checkpoint/rollback/diff）|

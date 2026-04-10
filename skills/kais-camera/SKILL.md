@@ -45,6 +45,14 @@ kais-shooting-script → [ShootingScript] → kais-camera → [VideoClip[]] → 
 - 实时回调 `onProgress(current, total, shot_id)`
 - 单镜头完成回调 `onShotComplete(clip)`
 
+### 5. 时序锚定（Temporal Anchoring）
+- 从 `shot.anchoring.temporal` 读取结构化运动参数
+- `buildTemporalPrompt()` 构建 Seedance 增强 prompt（motion_type → 运动描述）
+- `extractSeedanceStrength()` 将 motion_strength 转为 1-5 scale
+- 仅首次尝试注入，重试不重复
+- 支持字段：`motion_type`, `motion_speed`, `camera_movement`, `motion_strength`, `fps`
+- 无 anchoring.temporal 时行为完全不变（向后兼容）
+
 ## 执行流程
 
 ### Step 1: 解析 ShootingScript

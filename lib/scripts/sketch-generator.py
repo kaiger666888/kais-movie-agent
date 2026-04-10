@@ -34,7 +34,7 @@ def img_to_base64(path):
     return f"data:{mime};base64,{b64}"
 
 
-def generate_sketch(prompt, space_constraints, ref_images, model, ratio, sample_strength):
+def generate_sketch(prompt, space_constraints, ref_images, model, ratio, sample_strength, depth_constraints=""):
     """调用即梦 API 生成线稿"""
     
     # 构建线稿专用 prompt
@@ -42,8 +42,13 @@ def generate_sketch(prompt, space_constraints, ref_images, model, ratio, sample_
         f"黑白漫画风格线稿，简洁干净的线条，无阴影无渐变。\n"
         f"{prompt}\n"
         f"空间约束：{space_constraints}\n"
-        f"纯黑白线稿，清晰轮廓线，漫画分镜风格，没有颜色，没有灰度"
     )
+    
+    # 注入深度层次约束
+    if depth_constraints:
+        sketch_prompt += f"深度层次：{depth_constraints}\n"
+    
+    sketch_prompt += f"纯黑白线稿，清晰轮廓线，漫画分镜风格，没有颜色，没有灰度"
     
     negative = "彩色, 上色, 渲染, 阴影, 光影, gradient, colored, rendered, shaded, 油画, 水彩, 照片, 3D, realistic, photo"
     
@@ -88,6 +93,7 @@ def main():
     parser = argparse.ArgumentParser(description="线稿生成器")
     parser.add_argument("--prompt", required=True, help="场景描述")
     parser.add_argument("--space", default="", help="S.P.A.C.E 空间约束")
+    parser.add_argument("--depth", default="", help="深度层次约束 (foreground=...;midground=...;background=...)")
     parser.add_argument("--ref", nargs="*", default=[], help="角色参考图路径（可多张）")
     parser.add_argument("--output", required=True, help="输出线稿路径")
     parser.add_argument("--model", default="jimeng-5.0", help="模型版本")
@@ -116,7 +122,8 @@ def main():
             print(f"🎨 生成线稿 (尝试 {attempt + 1}/{args.retry + 1})...", flush=True)
             url = generate_sketch(
                 args.prompt, args.space, ref_images,
-                args.model, args.ratio, args.sample_strength
+                args.model, args.ratio, args.sample_strength,
+                args.depth
             )
             
             # 确保输出目录存在
