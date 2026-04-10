@@ -30,9 +30,11 @@ Phase 5.7: 拍摄手法规划 (kais-cinematography-planner) → 📌 git checkpo
   ↓
 Phase 6: 分镜板 (kais-storyboard-designer)  → 📌 git checkpoint
   ↓
-Phase 7: 视频生成 (kais-camera + 时序锚定) → 📌 git checkpoint
+Phase 7: 视频生成 (kais-camera + 时序锚定 + 延长链) → 📌 git checkpoint
+  ↓ 延长链：种子片段 → 末帧桥接 → 连续延长
+  ↓ 断点续传：支持从任意镜头重新延长
   ↓
-Phase 8: 后期合成 + 交付                     → 📌 git checkpoint
+Phase 8: 后期合成 + 交付（音频预绑定合并） → 📌 git checkpoint
 ```
 
 ## Git 版本管理（每个 Phase 自动 checkpoint）
@@ -191,6 +193,22 @@ python3 lib/scripts/scene-evaluator.py --mode render spec.json assets/scenes/
 - **视频生成**: Seedance 2.0
 - **评价**: 智谱 GLM-4V-Flash
 - **合成**: FFmpeg
+
+## 延长链引擎（Extension Chain）
+
+即梦 API 不支持视频延长，采用**首尾帧桥接**模拟连续性：
+1. 种子片段：首个镜头图生视频生成
+2. 末帧桥接：提取上一镜头末帧 → 作为下一镜头的参考图
+3. 连续延长：逐镜头生成，视觉连续性由桥接帧保证
+4. 音频预绑定：TTS 完整生成 → 按镜头切分 → 最终合并
+5. 断点续传：支持从任意镜头重新生成，无需从头开始
+
+重生成粒度：
+- `single` — 只重生成一个镜头
+- `breakpoint` — 从某镜头开始重新延长（保留之前的）
+- `full` — 全链重新生成
+
+核心模块：`lib/extension-chain.js`（extractFrame / executeChain / assembleFinal / resumeFromBreakpoint）
 
 ## 环境变量
 - `JIMENG_SESSION_ID`: 即梦 session ID
