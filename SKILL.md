@@ -8,28 +8,81 @@
 ```
 Phase 1: 需求确认
   ↓
-Phase 2: 美术方向 (kais-art-direction)
+Phase 2: 美术方向 (kais-art-direction)     → 📌 git checkpoint
   ↓
-Phase 3: 角色设计 (kais-character-designer)
+Phase 3: 角色设计 (kais-character-designer) → 📌 git checkpoint
   ↓
-Phase 4: 剧本编写 (kais-scenario-writer)
+Phase 4: 剧本编写 (kais-scenario-writer)   → 📌 git checkpoint
   ↓
-Phase 5: 场景图生成 (kais-scene-designer)
+Phase 5: 场景图生成 (kais-scene-designer)   → 📌 git checkpoint
   ↓
-Phase 5.3: 线稿生成 ← NEW: sketch-generator.py
+Phase 5.3: 线稿生成                         → 📌 git checkpoint
   ↓
-Phase 5.4: 线稿审核 ← NEW: scene-evaluator.py --mode sketch
+Phase 5.4: 线稿审核 (FAIL → 回滚到 5.3)
   ↓
-Phase 5.5: 基于线稿渲染 ← NEW: sketch-to-render.py
+Phase 5.5: 基于线稿渲染                     → 📌 git checkpoint
   ↓
-Phase 5.6: 渲染审核 ← NEW: scene-evaluator.py --mode render
+Phase 5.6: 渲染审核 (FAIL → 回滚到 5.5)
   ↓
-Phase 6: 分镜板 (kais-storyboard-designer)
+Phase 6: 分镜板 (kais-storyboard-designer)  → 📌 git checkpoint
   ↓
-Phase 7: 视频生成 (kais-camera)
+Phase 7: 视频生成 (kais-camera)             → 📌 git checkpoint
   ↓
-Phase 8: 后期合成 + 交付
+Phase 8: 后期合成 + 交付                     → 📌 git checkpoint
 ```
+
+## Git 版本管理（每个 Phase 自动 checkpoint）
+
+每个 Phase 完成后自动创建 git checkpoint，支持回滚到任意阶段。
+
+### 使用方式
+```js
+import { GitStageManager } from './lib/git-stage-manager.js';
+
+const git = new GitStageManager('/path/to/project');
+await git.init();  // 首次调用初始化
+
+// Phase 完成后
+await git.checkpoint('art-direction', {
+  description: '赛博朋克风格，霓虹色调',
+  metrics: { moodBoardCount: 5 }
+});
+
+// 查看历史
+await git.log();
+
+// 回滚到指定阶段（如审核不通过）
+await git.rollback('art-direction');
+
+// 比较两个阶段
+await git.diff('art-direction', 'character');
+```
+
+### CLI
+```bash
+node lib/git-stage-manager.js init <workdir>              # 初始化
+node lib/git-stage-manager.js checkpoint <workdir> <phase> # 手动 checkpoint
+node lib/git-stage-manager.js log <workdir>               # 查看历史
+node lib/git-stage-manager.js rollback <workdir> <phase>   # 回滚
+node lib/git-stage-manager.js diff <workdir> <A> <B>       # 比较
+node lib/git-stage-manager.js current <workdir>            # 当前阶段
+node lib/git-stage-manager.js stages                       # 列出所有阶段
+```
+
+### Phase 与 Git Stage 映射
+
+| Stage Name | Phase | 产出文件 |
+|------------|-------|---------|
+| `requirement` | 1 | requirement.json, brief.md |
+| `art-direction` | 2 | art_direction.json, mood_board.png, color_palette.json |
+| `character` | 3 | characters.json, assets/characters/*.png |
+| `scenario` | 4 | scenario.json, story_bible.json |
+| `scene` | 5 | assets/scenes/*.png, scene_design.json |
+| `sketch` | 5.3 | assets/sketches/*.png |
+| `render` | 5.5 | assets/scenes/*.png (渲染版) |
+| `storyboard` | 6 | storyboard.json, shots.json |
+| `camera` | 7 | video_tasks.json, output/*.mp4, rough_cut.mp4 |
+| `delivery` | 8 | final.mp4, qc_report.json |
 
 ## 线稿控制管线（Phase 5.3-5.6）
 
@@ -123,6 +176,7 @@ python3 lib/scripts/scene-evaluator.py --mode render spec.json assets/scenes/
 | scene-evaluator.py | lib/scripts/ | 场景图评价（支持 sketch/render/default 模式）|
 | jimeng-client.js | lib/ | 即梦 API 客户端（Node.js）|
 | cost-scheduler.js | lib/ | 积分/成本调度 |
+| git-stage-manager.js | lib/ | Git 阶段版本管理（checkpoint/rollback/diff）|
 
 ## 底层依赖
 - **文生图**: 即梦 API (jimeng-5.0)
