@@ -196,22 +196,21 @@ python3 lib/scripts/scene-evaluator.py --mode render spec.json assets/scenes/
 
 ## 延长链引擎（Extension Chain）
 
-即梦 Seedance **全能参考模式**：上传上一段视频作为参考，prompt 中描述延长内容。
+即梦 Seedance **全能参考模式**，每个镜头的多参考输入：
 
-核心流程：
-1. **种子片段**：首个镜头图生视频（参考图 from storyboard）
-2. **延长生成**：每个后续镜头以上一段视频为参考 + 延长 prompt
-3. **音频预绑定**：TTS 完整生成 → 按镜头切分 → 最终合并
-4. **断点续传**：支持从任意镜头重新生成
+```
+段1: 首帧 + 目标尾帧 + TTS段 + BGM段 → 生成视频
+段2: 段1视频 + 段2目标尾帧 + TTS段 + BGM段 → 生成视频
+段N: 段N-1视频 + 段N目标尾帧 + TTS段 + BGM段 → 生成视频
+```
 
-延长 prompt 模板：`继续之前的动作和场景，{描述}，保持视觉风格和角色外观一致`
+- **目标尾帧**来自分镜图（storyboard），确保每个镜头有明确的视觉终点
+- **上一段视频**作为连续性参考，保持视觉风格和角色一致
+- **TTS/BGM** 按镜头时间切分预绑定，最终合并时音频自然连续
+- 延长 prompt：`继续之前的动作和场景，{描述}，保持视觉风格和角色外观一致`
 
-重生成粒度：
-- `single` — 只重生成一个镜头（以上一段视频为参考）
-- `breakpoint` — 从某镜头开始重新延长（保留之前的）
-- `full` — 全链重新生成
-
-核心模块：`lib/extension-chain.js`（buildChainPlan / executeChain / resumeFromBreakpoint / assembleFinal）
+重生成粒度：`single`（单镜头）/ `breakpoint`（断点重延长）/ `full`（全链）
+核心模块：`lib/extension-chain.js`
 
 ## 环境变量
 - `JIMENG_SESSION_ID`: 即梦 session ID
