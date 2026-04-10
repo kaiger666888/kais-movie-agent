@@ -22,7 +22,8 @@ const SCRIPTS_DIR = path.join(LIB_ROOT, 'lib/scripts');
  * @param {string} prompt - 场景描述
  * @param {string} spaceConstraints - S.P.A.C.E 空间约束
  * @param {string[]} refImages - 角色参考图路径
- * @param {object} options - { ratio, sampleStrength, model, output }
+ * @param {object} options - { ratio, sampleStrength, model, output, depth }
+ * @param {string} [options.depth] - 前后景层次，格式 "foreground=...;midground=...;background=..."
  * @returns {string} 线稿图片路径
  */
 export async function generateSketch(prompt, spaceConstraints, refImages = [], options = {}) {
@@ -32,12 +33,14 @@ export async function generateSketch(prompt, spaceConstraints, refImages = [], o
     model = 'jimeng-5.0',
     output = `assets/sketches/sketch-${Date.now()}.png`,
     retry = 2,
+    depth = '',
   } = options;
 
   const args = [
     `python3 ${SCRIPTS_DIR}/sketch-generator.py`,
     `--prompt "${escapeShell(prompt)}"`,
     `--space "${escapeShell(spaceConstraints)}"`,
+    ...(depth ? [`--depth "${escapeShell(depth)}"`] : []),
     ...refImages.flatMap(r => [`--ref`, r]),
     `--output ${output}`,
     `--sample-strength ${sampleStrength}`,
@@ -136,6 +139,9 @@ export async function runLineartPipeline(shot, options = {}) {
   const sketchPath = path.join(outputDir, 'sketches', `${shot.shotId}.png`);
   const renderPath = path.join(outputDir, 'scenes', `${shot.shotId}.png`);
 
+  // 从 shot.constraints 提取 depth 信息
+  const depth = extractDepth(shot.constraints || shot.spaceConstraints || '');
+
   // Phase 1: 生成线稿
   let sketchOk = false;
   let sketchAttempts = 0;
@@ -144,6 +150,7 @@ export async function runLineartPipeline(shot, options = {}) {
     await generateSketch(shot.prompt, shot.spaceConstraints || '', shot.refImages || [], {
       output: sketchPath,
       ratio,
+      depth,
     });
     sketchAttempts++;
 
@@ -287,6 +294,30 @@ export function selectReferenceImage(shotType, referenceImages) {
 }
 
 // ── 辅助函数 ──
+
+/**
+ * 从 constraints 中提取 DEPTH 字段值
+ * 支持两种来源：
+ * 1. constraints 数组中包含 "DEPTH:..." 的字符串
+ * 2. spaceConstraints 字符串中包含 "DEPTH:..." 的部分
+ * @param {string[]|string} constraints - 约束数组或空格约束字符串
+ * @returns {string} depth 值（如 "foreground=...;midground=...;background=..."），无则返回空串
+ */
+function extractDepth(constraints) {
+  if (Array.isArray(constraints)) {
+    for (const c of constraints) {
+      if (typeof c === 'string' && c.startsWith('DEPTH:')) {
+        return c.slice(6).trim();
+      }
+    }
+    return '';
+  }
+  if (typeof constraints === 'string') {
+    const match = constraints.match(/DEPTH:\s*(.+)/i);
+    return match ? match[1].trim() : '';
+  }
+  return '';
+}
 
 function buildSpec(shots) {
   const fs = require('fs');

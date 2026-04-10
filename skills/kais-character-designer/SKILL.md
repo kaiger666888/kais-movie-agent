@@ -250,6 +250,26 @@ kais-character-designer/
 3. 默认：3quarter-body（最通用的半身参考）
 ```
 
+### 多视角参考图（4D 身份锚定）
+
+多视角参考图是 `references` 字段的核心内容，用于在 4D 管线中实现跨帧、跨场景的角色身份一致：
+
+| 视角 | 文件名 | Prompt 关键词 |
+|------|--------|---------------|
+| 正面 | `front-source.png` | `front view, eyes looking at camera, symmetrical composition` |
+| 3/4 | `3q-source.png` | `3/4 view, head turned 45 degrees, showing depth and volume` |
+| 侧面 | `side-source.png` | `side profile, clean outline, nose bridge and jawline` |
+
+**生成逻辑**（`generateMultiViewReference` 方法）：
+1. 从 `artDirection` 构建 `style_prefix`
+2. 对每个视角，拼接 prompt：`style_prefix + 角角描述 + 角色外貌 + 性格 mood`
+3. 如果有 `referenceImage`（如 turnaround），使用图生图模式
+4. 返回 `{ character_id, references: { front, three_quarter, side } }`
+
+**向后兼容**：
+- 如果 `references` 字段不存在，下游应回退到 `reference_images[0]`
+- `lockConsistency()` 的 `generateMultiView` 选项默认 `true`，可设为 `false` 跳过多视角生成
+
 ## 注意事项
 
 - **转面图是核心**：一旦生成并确认，所有后续该角色的图片都以转面图为参考

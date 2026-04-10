@@ -10,6 +10,7 @@
 | `{style}` | 美术风格 | anime, realistic, watercolor |
 | `{art_direction}` | 导演美术指令 | 赛博朋克风格，冷色调，霓虹灯光 |
 | `{view_angle}` | 视角 | front, side, 3/4, close-up |
+| `{style_prefix}` | 多视角风格前缀 | anime, cyberpunk era, dark mood, palette: #111/#222 |
 
 ## 变体 A: 正面肖像
 
@@ -48,11 +49,46 @@ detailed facial features, consistent with previous views.
 ## 一致性重生成（风格变更）
 
 ```
-Character design of {character_name}, maintaining exact same face, 
+Character design of {character_name}, maintaining exact same face,
 body proportions, and features. {appearance}.
 NEW art style: {new_style}. {new_art_direction}.
 Same character, different artistic interpretation.
 Consistent with reference images provided.
+```
+
+## 多视角参考图模板（4D 身份锚定）
+
+用于 `generateMultiViewReference()` 生成 3 张身份锚定参考图。
+
+### 视角 1: 正面 (front-source)
+
+```
+{style_prefix}, front view portrait of {character_name},
+{appearance}, {personality} mood,
+front-facing, eyes looking at camera, symmetrical composition,
+upper body, clean white background, professional character reference sheet,
+high detail, studio lighting, identity anchor view
+```
+
+### 视角 2: 3/4 视角 (3q-source)
+
+```
+{style_prefix}, 3/4 view of {character_name},
+{appearance}, {personality} mood,
+head turned 45 degrees, showing depth and volume of face and body,
+upper body, clean white background, professional character reference sheet,
+high detail, soft lighting, identity anchor view
+```
+
+### 视角 3: 侧面 (side-source)
+
+```
+{style_prefix}, side profile view of {character_name},
+{appearance}, {personality} mood,
+perfect side profile, head and shoulders,
+clean outline showing nose bridge and jawline,
+clean white background, professional character reference sheet,
+high detail, silhouette clear, identity anchor view
 ```
 
 ## 使用说明

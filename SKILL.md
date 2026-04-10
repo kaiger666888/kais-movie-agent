@@ -24,6 +24,8 @@ Phase 5.5: 基于线稿渲染                     → 📌 git checkpoint
   ↓
 Phase 5.6: 渲染审核 (FAIL → 回滚到 5.5)
   ↓
+Phase 5.7: 拍摄手法规划 (kais-cinematography-planner) → 📌 git checkpoint
+  ↓
 Phase 6: 分镜板 (kais-storyboard-designer)  → 📌 git checkpoint
   ↓
 Phase 7: 视频生成 (kais-camera)             → 📌 git checkpoint
@@ -163,6 +165,7 @@ python3 lib/scripts/scene-evaluator.py --mode render spec.json assets/scenes/
 | kais-character-designer | 3 | 角色设计 + 参考图生成 |
 | kais-scenario-writer | 4 | 剧本/分镜编写 |
 | kais-scene-designer | 5 | 场景图生成 |
+| kais-cinematography-planner | 5.7 | 拍摄手法批量映射（Coverage Map） |
 | kais-storyboard-designer | 6 | 分镜板设计 |
 | kais-camera | 7 | 视频生成 + 合成 |
 | kais-shooting-script | - | 拍摄脚本生成 |

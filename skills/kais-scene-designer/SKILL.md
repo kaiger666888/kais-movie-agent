@@ -129,18 +129,22 @@ B03 日常实验 → 中景：侧面吃面
 
 对每个镜头生成黑白漫画风格线稿，锁定构图和空间关系。
 
-**S.P.A.C.E 约束格式**：
+**S.P.A.C.E.D 约束格式**：
 ```
 SUBJECT: 角色正面坐姿，双手持筷
 PROPS: 碗、筷子、电脑屏幕
 COMPOSITION: 中景，三分法构图
 ENVIRONMENT: 简约实验室，凌乱桌面
+DEPTH: foreground=角色坐姿; midground=桌面道具; background=窗外城市
 ```
+
+**DEPTH 字段说明**：显式标注前景/中景/背景三个层次的元素分布，帮助即梦从线稿自动提取深度信息，生成更有空间层次感的画面。格式为 `foreground=<前景元素>; midground=<中景元素>; background=<背景元素>`，各层之间用分号分隔。DEPTH 为空时跳过，不影响现有流程。
 
 ```bash
 python3 lib/scripts/sketch-generator.py \
   --prompt "$SCENE_DESCRIPTION" \
   --space "SUBJECT:$SUBJECT;PROPS:$PROPS;COMPOSITION:$COMPOSITION;ENVIRONMENT:$ENV" \
+  --depth "foreground=$FOREGROUND;midground=$MIDGROUND;background=$BACKGROUND" \
   --ref $BEST_MATCH_REFERENCE_IMAGE \
   --output assets/sketches/$SHOT_ID.png \
   --sample-strength 0.35
@@ -250,14 +254,16 @@ curl -s http://localhost:8000/v1/images/generations \
 - `{style_prefix}` — 来自 CharacterBible 的风格前缀
 - `{character_description}` — 来自 CharacterBible 的角色描述
 
-### 线稿阶段 Prompt 模板（S.P.A.C.E 约束）
+### 线稿阶段 Prompt 模板（S.P.A.C.E.D 约束）
 
 ```
 黑白漫画风格线稿，简洁干净的线条，无阴影无渐变。
 {场景描述}
-空间约束：SUBJECT:{角色姿态};PROPS:{道具列表};COMPOSITION:{景别构图};ENVIRONMENT:{环境描述}
+空间约束：SUBJECT:{角色姿态};PROPS:{道具列表};COMPOSITION:{景别构图};ENVIRONMENT:{环境描述};DEPTH:foreground={前景};midground={中景};background={背景}
 纯黑白线稿，清晰轮廓线，漫画分镜风格，没有颜色，没有灰度
 ```
+
+**DEPTH 为空时**：省略 `DEPTH:...` 部分，回退为 S.P.A.C.E 四字段约束，向后兼容。
 
 ### 渲染阶段 Prompt 模板
 
@@ -270,7 +276,7 @@ curl -s http://localhost:8000/v1/images/generations \
 ## lib/designer.js
 
 ES Module，提供：
-- `generateSketch(prompt, spaceConstraints, refImage, options)` — 生成线稿
+- `generateSketch(prompt, spaceConstraints, refImage, options)` — 生成线稿（options.depth 传递到 --depth）
 - `evaluateSketch(spec, sketchDir)` — 线稿审核
 - `renderFromSketch(sketchPath, prompt, refImages, options)` — 基于线稿渲染
 - `evaluateRender(spec, renderDir)` — 渲染审核
