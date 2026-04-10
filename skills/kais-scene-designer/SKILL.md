@@ -1,11 +1,13 @@
 ---
 name: kais-scene-designer
-description: "空间设计师。将 StoryDNA + ArtDirection 转化为 SceneDesign（场景布局、机位图、氛围时间线）。激活条件：用户提到'场景设计'、'scene design'、'场景布局'、'机位'、'镜头布局'、'场景图'、'氛围'、'scene'、'环境设计'、'空间设计'、'分场景'、'场景描述'、'场景参考'、'场景概念'、'场景搭建'时激活。"
+description: "空间设计师。将 StoryDNA + ArtDirection 转化为 SceneDesign（场景布局、机位图、氛围时间线）。支持线稿控制管线（默认启用）。激活条件：用户提到'场景设计'、'scene design'、'场景布局'、'机位'、'镜头布局'、'场景图'、'氛围'、'scene'、'环境设计'、'空间设计'、'分场景'、'场景描述'、'场景参考'、'场景概念'、'场景搭建'时激活。"
 ---
 
-# kais-scene-designer — 场景设计
+# kais-scene-designer — 场景设计（含线稿控制管线）
 
 空间设计师。将 StoryDNA + ArtDirection 转化为 SceneDesign（场景布局、机位图、氛围时间线）。
+
+**默认启用线稿控制管线**：先文生线稿锁定构图 → 线稿审核 → 基于线稿渲染 → 渲染审核 → 交付。
 
 ## 元数据
 
@@ -13,7 +15,8 @@ description: "空间设计师。将 StoryDNA + ArtDirection 转化为 SceneDesig
 type: spatial_designer
 population_size: 3
 output: SceneDesign
-capabilities: space_architecture, camera_map, atmosphere_timeline, character_consistency, beat_coverage
+capabilities: space_architecture, camera_map, atmosphere_timeline, character_consistency, beat_coverage, lineart_pipeline
+pipeline_modes: [lineart(default), direct(--no-sketch)]
 ```
 
 ## 触发词
@@ -26,6 +29,7 @@ capabilities: space_architecture, camera_map, atmosphere_timeline, character_con
 |------|------|------|
 | StoryDNA | StoryDNA | 故事基因（logline, beats, characters, tone） |
 | ArtDirection | ArtDirection | 视觉方向（风格、配色、光线、构图） |
+| CharacterBible | CharacterBible | 角色圣经（参考图、风格前缀） |
 
 ## 前置依赖
 
@@ -41,20 +45,22 @@ capabilities: space_architecture, camera_map, atmosphere_timeline, character_con
 
 ## 输出
 
-**SceneDesign v2.0.0**：
+**SceneDesign v3.0.0**：
 
 ```json
 {
   "type": "SceneDesign",
-  "version": "2.0.0",
+  "version": "3.0.0",
+  "pipeline": "lineart",
   "shots": [
     {
       "shot_id": "B01-foot-catch",
       "beat_id": "B01",
       "shot_type": "action_closeup",
       "description": "脚接杯子",
+      "sketch_image": "assets/sketches/B01-foot-catch.png",
+      "render_image": "assets/scenes/B01-foot-catch.png",
       "reference_image_used": "assets/characters/char_wuji/3quarter-body.png",
-      "generated_image": "assets/scenes/B01-foot-catch.png",
       "prompt_used": "完整prompt记录",
       "sample_strength": 0.35
     }
@@ -73,6 +79,11 @@ capabilities: space_architecture, camera_map, atmosphere_timeline, character_con
 ```
 
 ## 工作流程
+
+### 0. 模式选择
+
+- **默认：线稿管线模式**（推荐）— 文生线稿 → 审核 → 渲染 → 审核
+- **`--no-sketch`：快速模式** — 直接文生图 → 审核（跳过线稿，适合简单场景或快速迭代）
 
 ### 1. Beat → 镜头映射（强制步骤）
 
@@ -93,15 +104,6 @@ B03 日常实验 → 中景：侧面吃面
 
 **禁止**：只生成"全景/中景/特写"三个固定角度就认为完成。必须根据 beat 内容设计具体镜头。
 
-### 1.5. 一致性参数构建
-
-为每个镜头构建生成参数：
-
-1. 从 CharacterBible 获取 `style_prefix`
-2. 从 CharacterBible 获取 `sample_strength`（默认 0.35）
-3. 选择最匹配当前 beat 角度的参考图（正面/侧面/3/4等）
-4. 构建最终 prompt = `style_prefix` + 场景描述 + 角色描述 + 角度描述
-
 ### 2. 空间架构（space_architecture）
 
 为每个场景设计：
@@ -117,26 +119,108 @@ B03 日常实验 → 中景：侧面吃面
 - **close_up**: 特写情绪镜头
 - **dynamic**: 运动/特殊角度镜头
 
-每个机位包含：name, x, y, z, look_at, lens
-
 ### 4. 氛围时间线（atmosphere_timeline）
 
-将场景氛围映射到故事节拍：
-- 每个 beat 对应的氛围变化（光线、色彩、密度）
-- 情感高潮时的氛围强化
-- 过渡段的氛围渐变
+将场景氛围映射到故事节拍。
 
-### 5. 基于角色参考图生成
+---
 
-每张场景图必须用 multipart curl 上传角色参考图，保持角色一致性。
+### 5. 线稿生成（Phase 5.3）
 
-**参考图选择逻辑**：
-- 全景镜头 → 3/4 全身参考图
-- 中景镜头 → 根据角色朝向选择
-- 特写镜头 → 正面肖像参考图
-- 动作镜头 → 最接近动作姿态的参考图
+对每个镜头生成黑白漫画风格线稿，锁定构图和空间关系。
 
-API 调用示例：
+**S.P.A.C.E 约束格式**：
+```
+SUBJECT: 角色正面坐姿，双手持筷
+PROPS: 碗、筷子、电脑屏幕
+COMPOSITION: 中景，三分法构图
+ENVIRONMENT: 简约实验室，凌乱桌面
+```
+
+```bash
+python3 lib/scripts/sketch-generator.py \
+  --prompt "$SCENE_DESCRIPTION" \
+  --space "SUBJECT:$SUBJECT;PROPS:$PROPS;COMPOSITION:$COMPOSITION;ENVIRONMENT:$ENV" \
+  --ref $BEST_MATCH_REFERENCE_IMAGE \
+  --output assets/sketches/$SHOT_ID.png \
+  --sample-strength 0.35
+```
+
+**关键参数**：
+- `sample_strength=0.35`：角色参考图影响强度
+- `negative_prompt`：自动添加"彩色, 上色, 渲染, 阴影, 光影, gradient..."排除渲染类
+- 输出：纯黑白线稿，无色无阴影
+
+### 6. 线稿审核（Phase 5.4）
+
+```bash
+python3 lib/scripts/scene-evaluator.py --mode sketch spec.json assets/sketches/
+```
+
+**检查维度**：
+- 纯黑白（无灰度/渐变/彩色）
+- 线条清晰（无模糊/断裂）
+- 构图合理性（透视/比例）
+- 空间关系（前/中/远景层次）
+- 元素完整性（角色/道具/环境齐备）
+- 角色姿态（与描述一致）
+
+**FAIL 处理**：重新生成线稿，最多 2 次。
+
+### 7. 基于线稿渲染（Phase 5.5）
+
+```bash
+python3 lib/scripts/sketch-to-render.py \
+  --sketch assets/sketches/$SHOT_ID.png \
+  --prompt "$SCENE_DESCRIPTION $STYLE_PREFIX" \
+  --style "$ART_DIRECTION_STYLE" \
+  --ref $BEST_MATCH_REFERENCE_IMAGE \
+  --output assets/scenes/$SHOT_ID.png \
+  --sample-strength 0.25
+```
+
+**关键参数**：
+- `sample_strength=0.25`：线稿结构保留强度（低于线稿生成阶段）
+- `images` 顺序：[线稿(主要结构), 角色参考图(外观一致性)] — 双重控制
+- `negative_prompt`：自动添加"线稿, sketch, lineart, 草图, draft, 线条, 粗糙..."排除线稿类
+- 渲染 prompt 在场景描述基础上添加风格/氛围描述
+
+### 8. 渲染审核（Phase 5.6）
+
+```bash
+python3 lib/scripts/scene-evaluator.py --mode render spec.json assets/scenes/
+```
+
+**检查维度**：
+- 无残留线稿（不应有黑色线条痕迹）
+- 风格一致性（色彩/光影/质感协调）
+- 角色一致性（与参考图一致）
+- 构图保持（与线稿布局一致）
+- 美感质量（无AI生成瑕疵）
+
+**FAIL 处理**：调整 sample_strength 重试，最多 1 次。
+
+### 9. 一致性验证（降级策略）
+
+检查角色一致性：
+- 角色外貌（脸型、发型、服装）是否与 CharacterBible 一致
+- **降级策略**：0.25 → 0.15 → 0.05
+- 3 次重试后仍不一致，保留最佳结果并标注警告
+
+### 10. 覆盖率检查
+
+生成完成后，逐 beat 核对：
+- `coverage.total_beats` = StoryDNA 中的 beat 总数
+- `coverage.covered_beats` = 已有对应镜头的 beat 数
+- `coverage.missing_beats` = 缺失镜头的 beat ID 列表
+- **missing_beats 必须为空，否则不能交付**
+
+---
+
+### 快速模式（--no-sketch）
+
+跳过线稿阶段，直接文生图：
+
 ```bash
 curl -s http://localhost:8000/v1/images/generations \
   -H "Authorization: Bearer $SESSION_ID" \
@@ -147,21 +231,14 @@ curl -s http://localhost:8000/v1/images/generations \
   -F "images=@$BEST_MATCH_REFERENCE_IMAGE"
 ```
 
-### 6. 一致性验证（生成后）
+然后执行通用评价（`scene-evaluator.py --mode default`）。
 
-检查生成的场景图中角色是否与参考图一致：
-- 角色外貌（脸型、发型、服装）是否与 CharacterBible 一致
-- 如果不一致（角色外貌明显偏差），降低 `sample_strength` 重试
-- **降级策略**：0.35 → 0.25 → 0.15 → 0.05
-- 4 次重试后仍不一致，保留最佳结果并标注警告
+## 参考图选择策略
 
-### 7. 覆盖率检查
-
-生成完成后，逐 beat 核对：
-- `coverage.total_beats` = StoryDNA 中的 beat 总数
-- `coverage.covered_beats` = 已有对应镜头的 beat 数
-- `coverage.missing_beats` = 缺失镜头的 beat ID 列表
-- **missing_beats 必须为空，否则不能交付**
+- 全景镜头 → 3/4 全身参考图
+- 中景镜头 → 根据角色朝向选择
+- 特写镜头 → 正面肖像参考图
+- 动作镜头 → 最接近动作姿态的参考图
 
 ## 提示词模板
 
@@ -173,9 +250,31 @@ curl -s http://localhost:8000/v1/images/generations \
 - `{style_prefix}` — 来自 CharacterBible 的风格前缀
 - `{character_description}` — 来自 CharacterBible 的角色描述
 
+### 线稿阶段 Prompt 模板（S.P.A.C.E 约束）
+
+```
+黑白漫画风格线稿，简洁干净的线条，无阴影无渐变。
+{场景描述}
+空间约束：SUBJECT:{角色姿态};PROPS:{道具列表};COMPOSITION:{景别构图};ENVIRONMENT:{环境描述}
+纯黑白线稿，清晰轮廓线，漫画分镜风格，没有颜色，没有灰度
+```
+
+### 渲染阶段 Prompt 模板
+
+```
+{style_prefix}, {场景描述}, {角度描述}
+风格要求：{art_direction的style/light_quality/color_palette描述}
+{光影描述}, {氛围描述}, 电影级质感，高画质
+```
+
 ## lib/designer.js
 
 ES Module，提供：
+- `generateSketch(prompt, spaceConstraints, refImage, options)` — 生成线稿
+- `evaluateSketch(spec, sketchDir)` — 线稿审核
+- `renderFromSketch(sketchPath, prompt, refImages, options)` — 基于线稿渲染
+- `evaluateRender(spec, renderDir)` — 渲染审核
+- `generateDirect(prompt, refImage, options)` — 快速模式直接生成
 - `generateVariants(scene, artDirection, count=3)` — 生成 N 个场景变体
 - `createCameraMap(sceneDesign)` — 从场景设计生成机位图
 - `createAtmosphereTimeline(scene, storyBeats)` — 生成氛围时间线
@@ -184,6 +283,6 @@ ES Module，提供：
 
 ## 与其他 Skill 的协作
 
-- **上游**: 接收 StoryDNA（kais-story-dna）、ArtDirection（kais-art-director）、CharacterBible（kais-character-designer）
-- **下游**: 输出 SceneDesign → Storyboard（kais-storyboard）使用
-- **进化**: 场景变体通过 EvolutionState 进行适应度评估和选择
+- **上游**: 接收 StoryDNA（kais-scenario-writer）、ArtDirection（kais-art-direction）、CharacterBible（kais-character-designer）
+- **下游**: 输出 SceneDesign（含线稿+渲染图）→ Storyboard（kais-storyboard-designer）使用
+- **线稿管线**: sketch-generator.py → scene-evaluator.py --mode sketch → sketch-to-render.py → scene-evaluator.py --mode render

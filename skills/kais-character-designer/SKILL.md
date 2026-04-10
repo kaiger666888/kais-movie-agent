@@ -200,6 +200,33 @@ kais-character-designer/
     └── designer.js       # 核心逻辑 ES Module
 ```
 
+## 角色参考图在线稿管线中的使用
+
+角色参考图在场景设计的线稿管线中扮演关键角色：
+
+### 线稿阶段（Phase 5.3）
+- **用途**：确保线稿中角色姿态和轮廓与角色设定一致
+- **选择策略**：按动作/角度匹配
+  - 站立场景 → `3quarter-body.png` 或 `full-body` 参考图
+  - 坐姿场景 → 根据朝向选择 `front-portrait` 或 `side-profile`
+  - 动作场景 → 选择最接近动作姿态的参考图（如 `action-typing.png`）
+  - 表情特写 → 选择对应表情参考图（如 `expression-shock.png`）
+- **参数**：`sample_strength=0.35`，作为 sketch-generator.py 的 `--ref` 传入
+
+### 渲染阶段（Phase 5.5）
+- **用途**：确保渲染后角色外观（脸型、发型、服装）与参考图一致
+- **双重控制**：线稿控制构图 + 角色参考图控制外观
+- **选择策略**：与线稿阶段使用同一张参考图，保持一致性
+- **参数**：`sample_strength=0.25`，作为 sketch-to-render.py 的 `--ref` 传入
+- **images 顺序**：[线稿(结构), 角色参考图(外观)]
+
+### 参考图选择优先级
+```
+1. 精确动作匹配（如有 action-typing 等动作参考图）
+2. 角度匹配（front/side/3quarter → 按镜头角度选择）
+3. 默认：3quarter-body（最通用的半身参考）
+```
+
 ## 注意事项
 
 - **转面图是核心**：一旦生成并确认，所有后续该角色的图片都以转面图为参考
@@ -208,3 +235,4 @@ kais-character-designer/
 - **reference_images 至少 6 张**：覆盖主要角度和表情，确保后续图生图有足够参考
 - **风格变更需重生成转面图**：STYLE_PREFIX 变更时，转面图和参考图库都需要重新生成
 - **所有图片存入统一目录**：`assets/characters/{character_id}/`，便于管理
+- **线稿管线中参考图同源**：线稿阶段和渲染阶段应使用同一张参考图，避免角色不一致

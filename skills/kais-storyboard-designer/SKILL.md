@@ -53,7 +53,7 @@ description: "分镜设计系统，将剧本转化为完整分镜脚本。触发
 
 | 输入 | 类型 | 来源 |
 |------|------|------|
-| SceneDesign[] | 场景设计 | 场景设计 skill 产出 |
+| SceneDesign[] | 场景设计 | 场景设计 skill 产出（含 sketch_image + render_image） |
 | CharacterBible[] | 角色设定 | 角色设计 skill 产出 |
 | ArtDirection | 美术方向 | 美术设计 skill 产出 |
 | ScenarioScript | 剧本 | 编剧 skill 产出 |
@@ -67,7 +67,8 @@ description: "分镜设计系统，将剧本转化为完整分镜脚本。触发
   - `camera` — 镜头参数（angle/movement/lens）
   - `action` — 动作描述
   - `duration` — 时长（秒）
-  - `reference_image` — AI 生成的参考图 URL
+  - `reference_image` — 线稿构图蓝本（来自 SceneDesign 的 sketch_image）
+  - `render_image` — 渲染后的最终参考图（来自 SceneDesign 的 render_image）
 
 ## 核心流程
 
@@ -81,9 +82,18 @@ description: "分镜设计系统，将剧本转化为完整分镜脚本。触发
 - 动作场景 = 全景→中景→特写序列
 - 情绪高潮 = 特写 + 缓慢推进
 
-### 2. 参考图生成
+### 2. 使用线稿作为构图蓝本
 
-为每个镜头调用即梦 API 生成参考图。
+**线稿管线集成**：SceneDesign 现在包含两阶段输出（线稿 + 渲染图），分镜板使用线稿作为构图蓝本：
+
+- **`reference_image`**：指向 SceneDesign 中的 `sketch_image`（线稿），作为分镜的构图参考
+- **`render_image`**：指向 SceneDesign 中的 `render_image`（渲染图），作为最终画面参考
+- 线稿的优势：清晰展示构图、空间关系、角色位置，不受色彩/光影干扰
+- 分镜评审时优先看线稿确认构图，再看渲染图确认最终效果
+
+### 3. 补充分镜参考图（可选）
+
+对于线稿管线未覆盖的额外镜头，可单独生成参考图：
 
 **关键约束**：
 - **角色一致性**：同一角色在所有镜头中使用相同 seed 和角色描述

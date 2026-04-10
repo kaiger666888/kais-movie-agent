@@ -25,10 +25,13 @@ description: "将分镜脚本转换为视频生成参数，对接即梦API。触
 遵循 `/tmp/crew-v3-build/movie-schema.json` 中 `ShootingScript` 和 `VideoShot` 定义。
 
 ### 输入
-- **Storyboard** — 分镜脚本（含 shots 数组，每个 shot 有 shot_id, scene_ref, character_refs, camera, action, duration）
+- **Storyboard** — 分镜脚本（含 shots 数组，每个 shot 有 shot_id, scene_ref, character_refs, camera, action, duration, render_image）
 - **CharacterBible[]** — 角色圣经（appearance 字段用于角色描述拼接）
 - **ArtDirection** — 美术方向（style_name, color_palette, light_quality, texture 用于风格拼接）
-- **SceneDesign[]** — 场景设计（可选，location/atmosphere/lighting 用于场景描述）
+- **SceneDesign[]** — 场景设计（location/atmosphere/lighting 用于场景描述）
+
+> **注意**：视频生成阶段使用 Storyboard 中每个 shot 的 `render_image`（渲染后的最终场景图）作为首帧素材，
+> 而非线稿图。线稿仅用于构图参考，不直接用于视频生成。
 
 ### 输出
 - **ShootingScript** — 拍摄脚本（每个 VideoShot 含 prompt, seed, aspect_ratio, motion_strength）
@@ -111,6 +114,15 @@ camera.movement 会进一步调节：推拉摇移 +1~2，固定不变。
 - 纯文本视频：`/v1/videos/generations`（jimeng-video-3.5-pro）
 - Seedance 视频：`/v1/videos/generations/async`（需素材）
 - 降级文生图：`/v1/images/generations`
+
+### 视频素材说明
+
+**线稿管线集成后**，视频生成的首帧素材来源：
+- **首选**：Storyboard 中每个 shot 的 `render_image`（经过渲染审核的最终场景图）
+- **备选**：如果 render_image 不可用，降级使用文生图
+- **禁止**：使用线稿（sketch_image）直接作为视频素材（黑白线稿无法生成有效视频）
+
+Seedance 异步视频生成时，通过 `file_paths` 参数传入 render_image 路径。
 
 ## 工具文件
 - `lib/shooter.js` — 核心转换逻辑
