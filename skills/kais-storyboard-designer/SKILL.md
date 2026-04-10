@@ -69,6 +69,79 @@ description: "分镜设计系统，将剧本转化为完整分镜脚本。触发
   - `duration` — 时长（秒）
   - `reference_image` — 线稿构图蓝本（来自 SceneDesign 的 sketch_image）
   - `render_image` — 渲染后的最终参考图（来自 SceneDesign 的 render_image）
+  - `anchoring` — **四维锚定参数**（Render Layer 控制参数，详见下文）
+
+## 二级工作流：结构层 + 渲染层
+
+```
+Structure Layer (S.P.A.C.E 约束)
+  └── 线稿生成 → 锁定构图+空间关系
+        ↓ 结构锁定
+Render Layer (四维锚定注入)
+  ├── 深度锚定 (Depth)    → ControlNet Depth / 空间层次
+  ├── 身份锚定 (Identity)  → IP-Adapter / 角色一致性
+  ├── 光影锚定 (Lighting)  → IC-Light / 氛围统一
+  └── 时序锚定 (Temporal)  → AnimateDiff / 运动控制
+        ↓ 分层渲染→合成输出
+```
+
+> 完整设计文档：`docs/4d-anchoring-design.md`
+
+## 四维锚定参数（Render Layer）
+
+每个 shot 的 `anchoring` 字段控制渲染层的四维注入：
+
+```jsonc
+{
+  "anchoring": {
+    "depth": {
+      "enabled": true,
+      "strength": 0.7,
+      "foreground": "角色坐姿",
+      "midground": "桌面、碗筷",
+      "background": "窗外城市"
+    },
+    "identity": {
+      "enabled": true,
+      "characters": [
+        { "ref": "char_wuji", "weight": 0.75 }
+      ]
+    },
+    "lighting": {
+      "enabled": true,
+      "direction": "upper-left",
+      "intensity": 0.7,
+      "color_temp": "4500K",
+      "mood": "dramatic, rim-light"
+    },
+    "temporal": {
+      "enabled": true,
+      "motion_type": "slow-push-in",
+      "motion_speed": 0.3,
+      "motion_strength": 0.6,
+      "fps": 24
+    }
+  }
+}
+```
+
+### 锚定维度说明
+
+| 维度 | 技术 | 作用 | 即梦 API 适配 |
+|------|------|------|-------------|
+| **深度** (Depth) | ControlNet Depth | 锁定前后景空间层次 | 深度图作为参考图传入 |
+| **身份** (Identity) | IP-Adapter / images | 角色跨镜头一致性 | `images` + `sample_strength`（已支持）|
+| **光影** (Lighting) | IC-Light | 统一光照方向/色温/氛围 | style prompt + 光照参考图 |
+| **时序** (Temporal) | AnimateDiff / WAN | 控制运动风格和帧间一致性 | Seedance motion 参数 |
+
+### 渐进式降级策略
+
+| 级别 | 启用锚定 | 适用场景 | 成本 |
+|------|---------|---------|------|
+| **Draft** | 无 | 快速原型 | 最低 |
+| **Standard** | 身份 | 角色一致短片 | 中 |
+| **Cinematic** | 深度+身份+光影 | 正式制作 | 高 |
+| **Premium** | 全部四维 | 电影级成片 | 最高 |
 
 ## 核心流程
 
