@@ -17,13 +17,12 @@ Phase 4: 剧本编写 (kais-scenario-writer)   → 📌 git checkpoint
   ↓
 Phase 5: 场景图生成 (kais-scene-designer)   → 📌 git checkpoint
   ↓
-Phase 5.3: 线稿生成                         → 📌 git checkpoint
+Phase 5.3: 线稿生成（anatomy-guard 预防） → 📌 git checkpoint
+  ↓ anatomy-guard 线稿验证（GLM-4V 检测 + 重试）
   ↓
 Phase 5.4: 线稿审核 (FAIL → 回滚到 5.3)
   ↓
-Phase 5.5: 基于线稿渲染（四维锚定注入） → 📌 git checkpoint
-  ↓ anatomy-guard 预防检测（negative_prompt + 参考图骨骼注入）
-  ↓ anatomy-guard 验证修复（GLM-4V 检测 + prompt 重试）
+Phase 5.5: 基于线稿渲染（四维锚定注入 + anatomy-guard 验证修复） → 📌 git checkpoint
   ↓
 Phase 5.6: 渲染审核 (FAIL → 回滚到 5.5)
   ↓
@@ -199,7 +198,7 @@ python3 lib/scripts/scene-evaluator.py --mode render spec.json assets/scenes/
 
 ## 肢体解剖守卫（kais-anatomy-guard）
 
-三级防御机制，集成在 Phase 5.5 渲染管线中：
+三级防御机制，从线稿阶段（Phase 5.3）即开始工作，贯穿渲染阶段（Phase 5.5）：
 
 ### 预防层（已集成）
 `sketch-generator.py` 和 `sketch-to-render.py` 的 negative_prompt 已追加 anatomy 排除词：
