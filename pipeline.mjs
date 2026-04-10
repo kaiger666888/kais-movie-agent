@@ -10,6 +10,8 @@
  *   node pipeline.mjs list                           # 列出所有项目
  *
  * Steps: topic → outline → art-direction → characters → scenes → scenario → storyboard → shooting-script → production → post
+ *   注：characters 步骤会生成角色转面图并锁定一致性
+ *   注：scenes 步骤会基于角色参考图生成所有beat对应的镜头
  */
 
 import { readFileSync, writeFileSync, existsSync, mkdirSync, readdirSync } from "node:fs";
@@ -28,8 +30,8 @@ const STEPS = [
   { id: "topic", name: "选题分析", skill: "kais-topic-selector", output: "concept.json", approval: { type: "select", label: "请选择选题方向" } },
   { id: "outline", name: "故事大纲", skill: "kais-story-outline", output: "story.json", approval: { type: "confirm", label: "请确认故事大纲" } },
   { id: "art-direction", name: "美术方向", skill: "kais-art-direction", output: "art-direction.json", approval: { type: "select", label: "请选择并锁定全局风格" } },
-  { id: "characters", name: "角色设计", skill: "kais-character-designer", output: "characters.json", approval: { type: "select", label: "请选择角色设计方案" } },
-  { id: "scenes", name: "场景设计", skill: "kais-scene-designer", output: "scenes.json", approval: { type: "confirm", label: "请确认场景设计" } },
+  { id: "characters", name: "角色设计", skill: "kais-character-designer", output: "characters.json", approval: { type: "select", label: "请确认角色转面图（确认后将锁定一致性，后续不可修改）" } },
+  { id: "scenes", name: "场景设计", skill: "kais-scene-designer", output: "scenes.json", approval: { type: "confirm", label: "请确认场景设计（已覆盖全部beats，角色一致性已验证）" } },
   { id: "scenario", name: "剧本写作", skill: "kais-scenario-writer", output: "scenario.json", approval: { type: "select", label: "请选择剧本版本(A或B)" } },
   { id: "storyboard", name: "分镜设计", skill: "kais-storyboard-designer", output: "storyboard.json", approval: { type: "confirm", label: "请确认分镜设计" } },
   { id: "shooting-script", name: "拍摄脚本", skill: "kais-shooting-script", output: "shooting-script.json", approval: null },
