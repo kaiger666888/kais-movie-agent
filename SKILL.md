@@ -191,6 +191,10 @@ python3 lib/scripts/scene-evaluator.py --mode render spec.json assets/scenes/
 | anatomy-validator.py | lib/scripts/ | 解剖质量检测（GLM-4V，hands/face/body/full）|
 | jimeng-client.js | lib/ | 即梦 API 客户端（Node.js）|
 | cost-scheduler.js | lib/ | 积分/成本调度 |
+| extension-chain.js | lib/ | 延长链引擎（buildChainPlan/executeChain/assembleFinal）|
+| pipeline.js | lib/ | 管线编排器（串行执行 Phase 1→8，checkpoint/断点恢复）|
+| post-production.js | lib/ | 后期合成（字幕生成+音频混流+最终合成）|
+| bgm-selector.js | lib/ | BGM 选择（10种风格库，场景情感自动匹配）|
 | guard.js | skills/kais-anatomy-guard/lib/ | 肢体解剖修复守卫（negative_prompt + GLM-4V 检测 + 修复）|
 | git-stage-manager.js | lib/ | Git 阶段版本管理（checkpoint/rollback/diff）|
 - **文生图**: 即梦 API (jimeng-5.0)
@@ -213,15 +217,68 @@ python3 lib/scripts/scene-evaluator.py --mode render spec.json assets/scenes/
      prompt: "@1是上一段视频，从@1的结尾画面开始{风格}，{运动}，最终过渡到@2。"
 ```
 
-- **目标尾帧**来自分镜图，确保视觉终点
+- **目标尾帧**来自分镜图的 `end_frame` 字段（storyboard 自动生成）
 - **上一段视频**保持连续性
 - **TTS/BGM** 按镜头时间切分预绑定
+- **voice 集成**: executeChain 支持 `generateTTS` 回调，自动调用 kais-voice 生成 TTS
 
 核心模块：`lib/extension-chain.js`
 - `buildChainPlan()` — 构建执行计划
 - `buildFilePaths()` — 构建 file_paths（顺序与 @1@2@3 对应）
 - `buildSeedPrompt()` / `buildExtensionPrompt()` — 构建带参考关系描述的 prompt
 - `executeChain()` / `resumeFromBreakpoint()` / `assembleFinal()`
+
+## 管线编排器（Pipeline）
+
+```js
+import { Pipeline } from './lib/pipeline.js';
+
+const pipeline = new Pipeline({
+  workdir: '/path/to/project',
+  episode: 'EP01',
+  config: { title: '短片', genre: '科幻', duration_sec: 60, characters: [...] },
+  onPhaseComplete: (phase, result) => { ... },
+  onPhaseFail: (phase, error) => { ... },
+});
+
+// 执行全部
+const result = await pipeline.run();
+
+// 从断点恢复
+const result2 = await pipeline.resume('character');
+
+// 只执行某个阶段
+const result3 = await pipeline.runPhase('camera', { execute: async (p, phase) => { ... } });
+```
+
+## Phase 8 后期合成
+
+```js
+import { PostProduction } from './lib/post-production.js';
+
+const post = new PostProduction({ workdir, episode });
+
+// 一站式后期
+const result = await post.run({
+  dialogueLines: [{ text: '你好', start_time: 0, end_time: 2, speaker: '角色A' }],
+  videoPath: 'output/rough_cut.mp4',
+  ttsDir: 'assets/tts/',
+  bgmPath: 'assets/bgm/bgm.mp3',
+  burnSubtitles: false,
+});
+```
+
+## BGM 选择
+
+```js
+import { selectBGMStyle, generateBGMPrompt } from './lib/bgm-selector.js';
+
+// 根据场景情感推荐 BGM
+const recommendations = selectBGMStyle('英雄站在山顶', '史诗', 30);
+
+// 生成音乐 AI 提示词
+const prompt = generateBGMPrompt('追逐场景', '紧张', 20);
+```
 
 ## 环境变量
 - `JIMENG_SESSION_ID`: 即梦 session ID
