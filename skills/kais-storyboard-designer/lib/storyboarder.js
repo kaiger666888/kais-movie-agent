@@ -76,6 +76,7 @@ export function parseScriptToShots(script) {
       camera: { angle: '全景', movement: '缓慢横摇', lens: '24mm' },
       action: scene.description || scene.action || `建立${scene.location || '场景'}环境`,
       duration: 3.0,
+      end_frame: null,  // 延续锚点：由 generateShotReference 填充
     });
 
     // Parse actions/dialogue into medium shots and close-ups
@@ -97,6 +98,7 @@ export function parseScriptToShots(script) {
         },
         action: text,
         duration: isEmotional ? 2.0 : 3.0,
+        end_frame: null,  // 延续锚点：由 generateShotReference 填充
       });
     }
 
@@ -109,6 +111,7 @@ export function parseScriptToShots(script) {
         camera: { angle: '过肩', movement: '固定', lens: '50mm' },
         action: typeof line === 'string' ? line : `${line.speaker}说："${line.text}"`,
         duration: 2.5,
+        end_frame: null,  // 延续锚点：由 generateShotReference 填充
       });
     }
 
@@ -121,6 +124,7 @@ export function parseScriptToShots(script) {
         camera: { angle: '中景', movement: '缓慢拉远', lens: '35mm' },
         action: scene.closing || '场景结束',
         duration: 2.0,
+        end_frame: null,  // 延续锚点：由 generateShotReference 填充
       });
     }
   }
@@ -131,10 +135,65 @@ export function parseScriptToShots(script) {
 // ─── Reference Generation ──────────────────────────────────────────
 
 /**
- * Generate a shot reference image via 即梦 API
- * @returns {Promise<string|null>} image URL or null on failure
+ * 完整分镜板生成：解析剧本 + 为每个 shot 生成参考图和 end_frame
+ * @param {object} script - 剧本对象
+ * @param {object} characters - 角色设定 { charId: { description } }
+ * @param {object} scenes - 场景设定 { sceneId: { description } }
+ * @param {string} artStyle - 美术风格
+ * @param {object} options
+ * @param {boolean} options.withEndFrame - 是否生成 end_frame（默认 true）
+ * @param {function} options.onShotProgress - 进度回调 (current, total, shotId)
+ * @returns {Promise<object>} Storyboard
  */
-export async function generateShotReference(shot, character, scene, artStyle) {
+export async function generateStoryboard(script, characters = {}, scenes = {}, artStyle = '电影质感，低调光', options = {}) {
+  const shots = parseScriptToShots(script);
+  const total = shots.length;
+
+  for (let i = 0; i < total; i++) {
+    const shot = shots[i];
+    options.onShotProgress?.(i + 1, total, shot.shot_id);
+
+    // 获取角色和场景描述
+    const charDescs = shot.character_refs
+      .map(c => characters[c]?.description || characters[c]?.name || c)
+      .join('、');
+    const sceneDesc = scenes[shot.scene_ref]?.description || scenes[shot.scene_ref]?.location || '';
+
+    try {
+      const refs = await generateShotReference(shot, charDescs, sceneDesc, artStyle, {
+        withEndFrame: options.withEndFrame,
+      });
+      shot.reference_image = refs.reference_image;
+      shot.end_frame = refs.end_frame;
+    } catch (e) {
+      console.warn(`[storyboarder] shot ${shot.shot_id} 参考图生成失败: ${e.message}`);
+    }
+  }
+
+  const storyboard = {
+    type: 'Storyboard',
+    version: '2.0',
+    shots,
+  };
+
+  return storyboard;
+}
+
+// ─── Reference Generation (single shot) ──────────────────────────────────────────
+
+/**
+ * Generate a shot reference image via 即梦 API
+ * Also generates an end_frame (tail frame) for extension-chain continuity
+ * @param {object} shot - shot 对象
+ * @param {string} character - 角色描述
+ * @param {string} scene - 场景描述
+ * @param {string} artStyle - 美术风格
+ * @param {object} options
+ * @param {boolean} options.withEndFrame - 是否同时生成 end_frame（默认 true）
+ * @returns {Promise<{reference_image: string|null, end_frame: string|null}>}
+ */
+export async function generateShotReference(shot, character, scene, artStyle, options = {}) {
+  const { withEndFrame = true } = options;
   const cameraDesc = [shot.camera?.angle, shot.camera?.movement].filter(Boolean).join('，');
   const prompt = buildPrompt({
     shotDescription: shot.action,
@@ -144,7 +203,24 @@ export async function generateShotReference(shot, character, scene, artStyle) {
     artStyle,
     emotion: '',
   });
-  return generateImage(prompt);
+  const reference_image = await generateImage(prompt);
+
+  // 生成 end_frame：描述该镜头的目标尾帧画面
+  let end_frame = null;
+  if (withEndFrame && reference_image) {
+    // 尾帧 prompt：强调"最终画面"，通常是动作结束后的状态
+    const endPrompt = buildPrompt({
+      shotDescription: `${shot.action}（最终画面定格）`,
+      character,
+      scene,
+      cameraAngle: cameraDesc,
+      artStyle,
+      emotion: '',
+    });
+    end_frame = await generateImage(endPrompt);
+  }
+
+  return { reference_image, end_frame };
 }
 
 // ─── Validation ────────────────────────────────────────────────────

@@ -43,7 +43,8 @@ description: "分镜设计系统，将剧本转化为完整分镜脚本。触发
       },
       "action": "角色走进房间，环顾四周",
       "duration": 4.5,
-      "reference_image": "https://..."
+      "reference_image": "https://...",
+      "end_frame": "https://..."
     }
   ]
 }
@@ -69,6 +70,7 @@ description: "分镜设计系统，将剧本转化为完整分镜脚本。触发
   - `duration` — 时长（秒）
   - `reference_image` — 线稿构图蓝本（来自 SceneDesign 的 sketch_image）
   - `render_image` — 渲染后的最终参考图（来自 SceneDesign 的 render_image）
+  - `end_frame` — **延续锚点**（目标尾帧图片，用于延长链 extension-chain 的视觉终点）
   - `anchoring` — **四维锚定参数**（Render Layer 控制参数，详见下文）
 
 ## 二级工作流：结构层 + 渲染层
