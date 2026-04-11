@@ -28,7 +28,7 @@ anatomy-validator.py — AI 生成图片的解剖质量检测器
 import json, base64, urllib.request, os, sys, argparse
 
 API_URL = "https://open.bigmodel.cn/api/paas/v4/chat/completions"
-MODEL = "glm-4v-flash"
+MODEL = "glm-4.6v"
 MAX_IMG_SIZE = 4 * 1024 * 1024
 
 

@@ -36,7 +36,7 @@ scene-evaluator.py — AI 生成场景图逻辑一致性自动评价器
 import json, base64, urllib.request, os, sys, glob
 
 API_URL = "https://open.bigmodel.cn/api/paas/v4/chat/completions"
-MODEL = "glm-4v-flash"
+MODEL = "glm-4.6v"
 MAX_IMG_SIZE = 4 * 1024 * 1024  # 4MB
 
 
