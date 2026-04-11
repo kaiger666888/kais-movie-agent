@@ -15,6 +15,9 @@ Phase 3: 角色设计 (kais-character-designer) → 📌 git checkpoint
   ↓
 Phase 4: 剧本编写 (kais-scenario-writer + kais-emotion 对白注入)   → 📌 git checkpoint
   ↓
+Phase 4.5: 配音 (kais-voice)                → 📌 git checkpoint
+  ↓ 音色推荐 + 样本生成 + 用户审核 + 批量合成
+  ↓
 Phase 5: 场景图生成 (kais-scene-designer)   → 📌 git checkpoint
   ↓
 Phase 5.3: 线稿生成（anatomy-guard 预防） → 📌 git checkpoint
@@ -170,6 +173,7 @@ python3 lib/scripts/scene-evaluator.py --mode render spec.json assets/scenes/
 | kais-art-direction | 2 | 美术方向/视觉风格定义 |
 | kais-character-designer | 3 | 角色设计 + 参考图生成 |
 | kais-scenario-writer | 4 | 剧本/分镜编写（对白情感注入） |
+| kais-voice | 4.5 | 语音合成（GLM-TTS 多音色 + 审核选择） |
 | kais-scene-designer | 5 | 场景图生成 |
 | kais-cinematography-planner | 5.7 | 拍摄手法批量映射（Coverage Map） |
 | kais-anatomy-guard | - | 肢体解剖修复守卫（三级防御） |
@@ -222,6 +226,7 @@ python3 lib/scripts/scene-evaluator.py --mode render spec.json assets/scenes/
 ## 环境变量
 - `JIMENG_SESSION_ID`: 即梦 session ID
 - `JIMENG_API_URL`: 即梦 API 地址（默认 http://localhost:8000）
+- `ZHIPU_API_KEY`: 智谱 API Key（GLM-TTS 语音合成）
 
 ## 肢体解剖守卫（kais-anatomy-guard）
 
