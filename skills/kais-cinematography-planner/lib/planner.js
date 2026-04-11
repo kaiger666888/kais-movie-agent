@@ -208,12 +208,12 @@ export function detectConflicts(mappedScenes, options = {}) {
   }
   for (const [location, scenes] of Object.entries(locationGroups)) {
     if (scenes.length < 2) continue;
-    const sides = scenes.map(s => s.camera_positions[0]?.side).filter(Boolean);
+    const sides = scenes.map(s => s.camera_positions?.[0]?.side).filter(Boolean);
     const hasLeft = sides.includes('left');
     const hasRight = sides.includes('right');
     if (hasLeft && hasRight) {
-      const leftScene = scenes.find(s => s.camera_positions[0]?.side === 'left');
-      const rightScene = scenes.find(s => s.camera_positions[0]?.side === 'right');
+      const leftScene = scenes.find(s => s.camera_positions?.[0]?.side === 'left');
+      const rightScene = scenes.find(s => s.camera_positions?.[0]?.side === 'right');
       conflicts.push({
         type: 'axis_180',
         severity: 'error',
@@ -229,7 +229,7 @@ export function detectConflicts(mappedScenes, options = {}) {
   const locationProps = {};
   for (const scene of mappedScenes) {
     const loc = scene.location;
-    if (!loc || scene.props_anchor.length === 0) continue;
+    if (!loc || !scene.props_anchor || scene.props_anchor.length === 0) continue;
     if (!locationProps[loc]) locationProps[loc] = new Set();
     scene.props_anchor.forEach(p => locationProps[loc].add(p));
   }
