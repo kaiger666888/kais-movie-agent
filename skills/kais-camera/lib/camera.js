@@ -7,6 +7,7 @@
 
 import { writeFile, mkdir } from "node:fs/promises";
 import { join, dirname } from "node:path";
+import { buildChainPlan, executeChain, buildFilePaths, assembleFinal } from "../../../lib/extension-chain.js";
 
 /**
  * 降级策略：根据重试次数调整参数
@@ -323,13 +324,102 @@ export class CameraOperator {
   }
 
   /**
+   * 检测 shots 是否为延长链模式
+   * 判断依据：所有 shot 都有 end_frame 字段
+   */
+  _isChainMode(shots) {
+    return shots.length > 0 && shots.every(s => s.end_frame);
+  }
+
+  /**
+   * 延长链模式：使用 extension-chain 引擎执行
+   * @param {object} shootingScript - ShootingScript（shots 含 end_frame）
+   * @param {object} options
+   * @param {string} options.ttsPath - 完整 TTS 音频路径
+   * @param {string} options.bgmPath - 完整 BGM 音频路径
+   * @param {function} options.onProgress - 进度回调
+   * @param {function} options.onPhaseComplete - 阶段完成回调
+   * @returns {Promise<object>} ChainResult
+   */
+  async executeChainMode(shootingScript, options = {}) {
+    const shots = shootingScript.shots || [];
+    if (!this._isChainMode(shots)) {
+      throw new Error('executeChainMode: 并非所有 shot 都有 end_frame 字段');
+    }
+
+    const chainOutputDir = join(this.outputDir, 'chain');
+    await mkdir(chainOutputDir, { recursive: true });
+
+    // 1. 构建延长链计划
+    const plan = buildChainPlan(shots, chainOutputDir);
+
+    // 2. 执行延长链
+    const self = this;
+    const chainResult = await executeChain(plan, {
+      ttsPath: options.ttsPath,
+      bgmPath: options.bgmPath,
+      retryCount: this.maxRetries,
+      onProgress: options.onProgress,
+      async generate(shot) {
+        // 构建正确的 file_paths
+        const filePaths = buildFilePaths(shot);
+        const prompt = shot.prompt;
+
+        // 构建 Seedance options
+        const seedanceOptions = {
+          model: 'jimeng-video-seedance-2.0-fast',
+          ratio: '16:9',
+          duration: shot.duration || 4,
+        };
+
+        // 时序锚定增强
+        const temporal = shot.anchoring?.temporal;
+        const temporalStrength = extractSeedanceStrength(temporal);
+
+        if (temporalStrength != null) {
+          seedanceOptions.motion_strength = temporalStrength;
+        }
+
+        const videoUrl = await self.generateSeedanceVideo(prompt, filePaths, seedanceOptions);
+
+        // 下载到 shot 的目标路径
+        await mkdir(dirname(shot.videoPath), { recursive: true });
+        await self.client.download(videoUrl, shot.videoPath);
+
+        return videoUrl;
+      },
+    });
+
+    // 3. 如果全部成功，合并最终视频
+    if (chainResult.success && chainResult.videos.length > 1) {
+      const videoPaths = chainResult.videos.map(v => {
+        const shot = plan.shots[v.index];
+        return shot.videoPath;
+      });
+      const finalPath = join(this.outputDir, 'chain_final.mp4');
+      try {
+        await assembleFinal(videoPaths, options.bgmPath, finalPath);
+        chainResult.finalVideo = finalPath;
+      } catch (e) {
+        console.warn(`[CameraOperator] 延长链合并失败: ${e.message}`);
+        chainResult.finalVideo = null;
+      }
+    }
+
+    return chainResult;
+  }
+
+  /**
    * 批量执行所有镜头
+   * 自动检测是否为延长链模式（shots 含 end_frame），选择对应执行路径
    * @param {object} shootingScript - ShootingScript
    * @param {object} options
    * @param {number} options.concurrency - 并发数（默认 1）
    * @param {function} options.onProgress - 进度回调 (current, total, shotId)
    * @param {function} options.onShotComplete - 单镜头完成回调 (clip)
-   * @returns {Promise<object>} VideoClipList
+   * @param {string} options.ttsPath - TTS 音频路径（延长链模式使用）
+   * @param {string} options.bgmPath - BGM 音频路径（延长链模式使用）
+   * @returns {Promise<object>} VideoClipList 或 ChainResult
    */
   async executeAll(shootingScript, options = {}) {
     const { concurrency = 1, onProgress, onShotComplete } = options;
@@ -337,6 +427,28 @@ export class CameraOperator {
     this._clips = [];
     this._costs = [];
     this._startTime = Date.now();
+
+    // 延长链模式：所有 shot 都有 end_frame → 使用 extension-chain
+    if (this._isChainMode(shots)) {
+      const chainResult = await this.executeChainMode(shootingScript, options);
+      // 统一为 VideoClipList 格式
+      return {
+        type: 'VideoClipList',
+        version: '3.0',
+        mode: 'extension-chain',
+        clips: chainResult.videos.map(v => ({
+          shot_id: v.shotId,
+          status: 'success',
+          url: plan?.shots?.[v.index]?.videoPath,
+          mode: 'chain',
+          duration: v.duration,
+        })),
+        chain: chainResult,
+        total_cost: 0.05 * chainResult.videos.length,
+        total_duration: chainResult.totalDuration,
+        success_rate: chainResult.videos.length / shots.length,
+      };
+    }
 
     // 信号量控制并发
     const semaphore = new Semaphore(concurrency);
