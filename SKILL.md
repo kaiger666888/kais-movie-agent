@@ -33,7 +33,7 @@ Phase 5.7: 拍摄手法规划 (kais-cinematography-planner) → 📌 git checkpo
   ↓
 Phase 6: 分镜板 (kais-storyboard-designer)  → 📌 git checkpoint
   ↓
-Phase 7: 视频生成 (kais-camera + 时序锚定 + 延长链) → 📌 git checkpoint
+Phase 7: 视频生成 (kais-camera + Evolink Seedance 1.5 Pro + 延长链) → 📌 git checkpoint
   ↓ 延长链：种子片段 → 末帧桥接 → 连续延长
   ↓ 断点续传：支持从任意镜头重新延长
   ↓
@@ -189,7 +189,8 @@ python3 lib/scripts/scene-evaluator.py --mode render spec.json assets/scenes/
 | sketch-to-render.py | lib/scripts/ | 线稿→渲染（四维锚定融合：--style-ref/--lighting/--depth）|
 | scene-evaluator.py | lib/scripts/ | 场景图评价（sketch/render/default + 肢体检查 + 深度层次检查）|
 | anatomy-validator.py | lib/scripts/ | 解剖质量检测（GLM-4V，hands/face/body/full）|
-| jimeng-client.js | lib/ | 即梦 API 客户端（Node.js）|
+| jimeng-client.js | lib/ | 即梦 API 客户端（Node.js，生图用）|
+| evolink-client.js | lib/ | Evolink API 客户端（Node.js，视频生成用）|
 | cost-scheduler.js | lib/ | 积分/成本调度 |
 | extension-chain.js | lib/ | 延长链引擎（buildChainPlan/executeChain/assembleFinal）|
 | pipeline.js | lib/ | 管线编排器（串行执行 Phase 1→8，checkpoint/断点恢复）|
@@ -198,7 +199,7 @@ python3 lib/scripts/scene-evaluator.py --mode render spec.json assets/scenes/
 | guard.js | skills/kais-anatomy-guard/lib/ | 肢体解剖修复守卫（negative_prompt + GLM-4V 检测 + 修复）|
 | git-stage-manager.js | lib/ | Git 阶段版本管理（checkpoint/rollback/diff）|
 - **文生图**: 即梦 API (jimeng-5.0)
-- **视频生成**: Seedance 2.0
+- **视频生成**: Evolink Seedance 1.5 Pro (文生视频/图生视频/首尾帧)
 - **评价**: 智谱 GLM-4V-Flash
 - **合成**: FFmpeg
 

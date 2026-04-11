@@ -1,13 +1,16 @@
 /**
  * kais-camera — CameraOperator
  *
- * 视频生成执行层，封装 kais-jimeng 的视频生成能力。
- * 支持 Seedance 异步生成、重试降级、静态图 fallback。
+ * 视频生成执行层，图片生成用 kais-jimeng，视频生成用 Evolink (Seedance 1.5 Pro)。
+ * 向后兼容：未传 evolinkClient 时 fallback 到 jimeng（打印警告）。
  */
 
 import { writeFile, mkdir } from "node:fs/promises";
 import { join, dirname } from "node:path";
 import { buildChainPlan, executeChain, buildFilePaths, assembleFinal } from "../../../lib/extension-chain.js";
+import { EvolinkClient } from "../../../lib/evolink-client.js";
+
+const DEFAULT_MODEL = "seedance-1.5-pro";
 
 /**
  * 降级策略：根据重试次数调整参数
@@ -169,20 +172,32 @@ function extractSeedanceStrength(temporal) {
 
 export class CameraOperator {
   /**
-   * @param {import('./jimeng-client.js').JimengClient} jimengClient
+   * @param {import('./jimeng-client.js').JimengClient} jimengClient - 即梦客户端（生图）
    * @param {object} config
    * @param {string} config.outputDir - 输出目录
    * @param {number} config.maxRetries - 最大重试次数（默认 3）
+   * @param {import('../../../lib/evolink-client.js').EvolinkClient} [config.evolinkClient] - Evolink 客户端（生视频）
    */
   constructor(jimengClient, config = {}) {
-    this.client = jimengClient;
+    this.client = jimengClient; // jimeng — 继续负责生图
+    this.evolinkClient = config.evolinkClient || null;
     this.outputDir = config.outputDir || "/tmp/openclaw/videos";
     this.maxRetries = config.maxRetries ?? 3;
+
+    // 向后兼容警告
+    if (!this.evolinkClient) {
+      console.warn("[CameraOperator] 未传入 evolinkClient，视频生成将 fallback 到 jimeng（不推荐）");
+    }
 
     // 追踪状态
     this._clips = [];
     this._costs = [];
     this._startTime = null;
+  }
+
+  /** 是否使用 evolink */
+  get _useEvolink() {
+    return !!this.evolinkClient;
   }
 
   /**
@@ -254,37 +269,60 @@ export class CameraOperator {
         }
 
         // 生成视频
-        if (params.model?.includes("seedance") || filePaths.length > 0) {
-          // 构建 Seedance options，注入 temporal strength
-          const seedanceOptions = {
-            model: params.model || "jimeng-video-seedance-2.0-fast",
-            ratio: params.ratio || "16:9",
-            duration: params.duration || 4,
-          };
-          if (temporalStrength != null) {
-            seedanceOptions.motion_strength = temporalStrength;
-          }
-
-          const videoUrl = await this.generateSeedanceVideo(params.prompt, filePaths, seedanceOptions);
-
-          // 下载到本地
+        if (params.model?.includes("seedance") || filePaths.length > 0 || this._useEvolink) {
           const localPath = join(this.outputDir, `${shotId}.mp4`);
-          await this.client.download(videoUrl, localPath);
 
-          result = {
-            shot_id: shotId,
-            status: "success",
-            url: localPath,
-            mode: "seedance",
-            attempts,
-            duration: params.duration || 4,
-            cost: 0.05 * attempts,
-            temporal_enhanced: !!temporalSuffix,
-          };
+          if (this._useEvolink) {
+            // ── Evolink 路径 ──
+            const evolinkOptions = {
+              model: params.model || DEFAULT_MODEL,
+              aspect_ratio: params.ratio || "16:9",
+              duration: params.duration || 4,
+              image_urls: filePaths.length > 0 ? filePaths : [],
+              outputPath: localPath,
+            };
+            const videoResult = await this.evolinkClient.generateVideo(params.prompt, evolinkOptions);
+
+            result = {
+              shot_id: shotId,
+              status: "success",
+              url: videoResult.localPath || localPath,
+              mode: "evolink-seedance",
+              attempts,
+              duration: params.duration || 4,
+              cost: 0.05 * attempts,
+              temporal_enhanced: !!temporalSuffix,
+              taskId: videoResult.taskId,
+            };
+          } else {
+            // ── Fallback: jimeng 路径（向后兼容） ──
+            const seedanceOptions = {
+              model: params.model || "jimeng-video-seedance-2.0-fast",
+              ratio: params.ratio || "16:9",
+              duration: params.duration || 4,
+            };
+            if (temporalStrength != null) {
+              seedanceOptions.motion_strength = temporalStrength;
+            }
+
+            const videoUrl = await this.generateSeedanceVideo(params.prompt, filePaths, seedanceOptions);
+            await this.client.download(videoUrl, localPath);
+
+            result = {
+              shot_id: shotId,
+              status: "success",
+              url: localPath,
+              mode: "seedance",
+              attempts,
+              duration: params.duration || 4,
+              cost: 0.05 * attempts,
+              temporal_enhanced: !!temporalSuffix,
+            };
+          }
           this._costs.push({ shot_id: shotId, cost: 0.05, attempts });
           break;
         } else {
-          // 普通视频模型
+          // 普通视频模型（jimeng）
           const videoUrl = await this.client.generateVideo(params.prompt, {
             model: params.model || "jimeng-video-3.5-pro",
             ratio: params.ratio || "16:9",
@@ -365,28 +403,36 @@ export class CameraOperator {
         const filePaths = buildFilePaths(shot);
         const prompt = shot.prompt;
 
-        // 构建 Seedance options
-        const seedanceOptions = {
-          model: 'jimeng-video-seedance-2.0-fast',
-          ratio: '16:9',
-          duration: shot.duration || 4,
-        };
+        if (self._useEvolink) {
+          // ── Evolink 路径 ──
+          await mkdir(dirname(shot.videoPath), { recursive: true });
+          const videoResult = await self.evolinkClient.generateVideo(prompt, {
+            model: DEFAULT_MODEL,
+            aspect_ratio: shot.ratio || '16:9',
+            duration: shot.duration || 4,
+            image_urls: filePaths,
+            outputPath: shot.videoPath,
+          });
+          return videoResult.url;
+        } else {
+          // ── Fallback: jimeng 路径 ──
+          const seedanceOptions = {
+            model: 'jimeng-video-seedance-2.0-fast',
+            ratio: '16:9',
+            duration: shot.duration || 4,
+          };
 
-        // 时序锚定增强
-        const temporal = shot.anchoring?.temporal;
-        const temporalStrength = extractSeedanceStrength(temporal);
+          const temporal = shot.anchoring?.temporal;
+          const temporalStrength = extractSeedanceStrength(temporal);
+          if (temporalStrength != null) {
+            seedanceOptions.motion_strength = temporalStrength;
+          }
 
-        if (temporalStrength != null) {
-          seedanceOptions.motion_strength = temporalStrength;
+          const videoUrl = await self.generateSeedanceVideo(prompt, filePaths, seedanceOptions);
+          await mkdir(dirname(shot.videoPath), { recursive: true });
+          await self.client.download(videoUrl, shot.videoPath);
+          return videoUrl;
         }
-
-        const videoUrl = await self.generateSeedanceVideo(prompt, filePaths, seedanceOptions);
-
-        // 下载到 shot 的目标路径
-        await mkdir(dirname(shot.videoPath), { recursive: true });
-        await self.client.download(videoUrl, shot.videoPath);
-
-        return videoUrl;
       },
     });
 
@@ -436,13 +482,16 @@ export class CameraOperator {
         type: 'VideoClipList',
         version: '3.0',
         mode: 'extension-chain',
-        clips: chainResult.videos.map(v => ({
-          shot_id: v.shotId,
-          status: 'success',
-          url: plan?.shots?.[v.index]?.videoPath,
-          mode: 'chain',
-          duration: v.duration,
-        })),
+        clips: chainResult.videos.map(v => {
+          const shot = chainResult._plan?.shots?.[v.index];
+          return {
+            shot_id: v.shotId,
+            status: 'success',
+            url: shot?.videoPath || null,
+            mode: 'chain',
+            duration: v.duration,
+          };
+        }),
         chain: chainResult,
         total_cost: 0.05 * chainResult.videos.length,
         total_duration: chainResult.totalDuration,
