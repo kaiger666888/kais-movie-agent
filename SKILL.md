@@ -14,6 +14,7 @@ description: "AI短片制作全流程管线。触发词：movie agent, 短片制
 
 | Phase | 审核内容 | 展示方式 |
 |-------|---------|---------|
+| Phase 1 | 需求确认 + 调研报告 | 发送调研摘要到当前会话，等用户确认 |
 | Phase 2 | 美术方向（mood board 3选1 + 光影参考图） | 发送图片到当前会话，等用户选择/修改 |
 | Phase 3 | 角色设计（转面图 + 多角度参考图） | 发送图片到当前会话，等用户确认 |
 | Phase 4 | 剧本（scenario.json + 分镜描述） | 发送文本摘要到当前会话，等用户确认 |
@@ -38,10 +39,17 @@ description: "AI短片制作全流程管线。触发词：movie agent, 短片制
 > **设计原则**：叙事先行 — 先立故事骨架，再匹配视觉和角色。遵循真实电影工业流程：剧本 → 美术指导 → 选角 → 分镜 → 拍摄。
 
 ```
-Phase 1: 需求确认                              → 🔒 REVIEW GATE
-  ↓
-Phase 1.5: 品牌与背景深度调研 (deep-research)   → 📌 git checkpoint
-  ↓ 产出：品牌档案 + 目标受众画像 + 竞品案例 + 植入策略
+Phase 1: 需求确认 + 深度调研                     → 🔒 REVIEW GATE
+  ↓ 1.1: 需求确认（题材、热点、诗意、平台、时长）
+  ↓ 1.2: 深度调研 (deep-research)
+  ↓   调研维度：
+  ↓   - 人物背景：出身、成长经历、性格细节、关键时刻、原话/语录
+  ↓   - 事件脉络：关键转折点、时间线、冲突与突破
+  ↓   - 情感内核：驱动人物的深层动机、脆弱面、高光时刻
+  ↓   - 视觉线索：标志性场景、物品、动作、环境细节
+  ↓   - 观众共鸣点：哪些细节能让"每个人"被打动
+  ↓   工具：deep-research skill（2-3轮搜索+抓取，medium深度）
+  ↓   产出：调研报告 → 直接反哺大纲、美术、角色设计
   ↓
 Phase 2: 剧本大纲 (kais-scenario-writer)       → 📌 git checkpoint → 🔒 REVIEW GATE
   ↓ 产出：叙事结构 + 画面意图标注 + 旁白/对白
@@ -234,7 +242,7 @@ node lib/git-stage-manager.js stages                       # 列出所有阶段
 
 | Stage Name | Phase | 产出文件 |
 |------------|-------|---------|
-| `requirement` | 1 | requirement.json, brief.md |
+| `requirement` | 1 | requirement.json, brief.md, research-report.md |
 | `scenario` | 2 | scenario.json, story_bible.json, style_hints |
 | `art-direction` | 3 | art_direction.json, mood_board.png, color_palette.json |
 | `character` | 4 | characters.json, CHARACTERS_DIR/*.png |
@@ -323,7 +331,7 @@ python3 LIB_SCRIPTSscene-evaluator.py --mode render spec.json PROJECT_ASSETSscen
 
 | Skill | Phase | 功能 |
 |-------|-------|------|
-| deep-research | 1.5 | 品牌/人物/受众深度调研 |
+| deep-research | 1.2 | 人物/事件/情感深度调研（多轮搜索+抓取+分析） |
 | kais-art-direction | 3 | 美术方向/视觉风格定义 |
 | kais-character-designer | 3 | 角色设计 + 参考图生成 |
 | kais-scenario-writer | 4 | 剧本/分镜编写（对白情感注入） |
