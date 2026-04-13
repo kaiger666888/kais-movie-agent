@@ -14,7 +14,7 @@
       "触发词过少"
     ],
     "📐 结构完整性": [
-      "引用不存在: assets/tts/, assets/bgm/bgm.mp3"
+      "引用不存在: assets/sketches/, scripts/sketch-generator.py"
     ],
     "⚡ Token 效率": [
       "大段代码块(>20行)"

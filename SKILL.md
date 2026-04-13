@@ -6,7 +6,7 @@ description: "AI短片制作全流程管线。触发词：movie agent, 短片制
 # kais-movie-agent — AI 短片制作全流程管线
 
 ## 触发词
-`movie agent`, `短片制作`, `AI短片`, `视频管线`, `film pipeline`, `movie-wuji`
+`movie agent`, `短片制作`, `AI短片`, `视频管线`, `film pipeline`, `movie-wuji`, `AI视频制作`, `短视频管线`, `AI电影`, `影片制作`, `kais-movie`, `movie pipeline`
 
 ## ⚠️ 强制审核门（Review Gate）
 
@@ -157,7 +157,7 @@ node lib/git-stage-manager.js stages                       # 列出所有阶段
 | `art-direction` | 3 | art_direction.json, mood_board.png, color_palette.json |
 | `character` | 4 | characters.json, assets/characters/*.png |
 | `scene` | 5 | assets/scenes/*.png, scene_design.json |
-| `sketch` | 5.3 | assets/sketches/*.png |
+| `sketch` | 5.3 | `<project>/assets/sketches/*.png` |
 | `render` | 5.5 | assets/scenes/*.png (渲染版) |
 | `storyboard` | 6 | storyboard.json, shots.json |
 | `camera` | 7 | video_tasks.json, output/*.mp4, rough_cut.mp4 |
@@ -330,7 +330,7 @@ import { PostProduction } from './lib/post-production.js';
 const post = new PostProduction({ workdir, episode });
 const result = await post.run({
   dialogueLines: [...], videoPath: 'output/rough_cut.mp4',
-  ttsDir: 'assets/tts/', bgmPath: 'assets/bgm/bgm.mp3',
+  ttsDir: '{project}/assets/tts/', bgmPath: '{project}/assets/bgm/bgm.mp3',
 });
 ```
 
