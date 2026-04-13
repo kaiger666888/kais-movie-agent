@@ -30,15 +30,21 @@
 
 ## 管线流程
 
+> **设计原则**：叙事先行 — 先立故事骨架，再匹配视觉和角色。遵循真实电影工业流程：剧本 → 美术指导 → 选角 → 分镜 → 拍摄。
+
 ```
 Phase 1: 需求确认                              → 🔒 REVIEW GATE
   ↓
-Phase 2: 美术方向 (kais-art-direction)         → 📌 git checkpoint → 🔒 REVIEW GATE
+Phase 2: 剧本大纲 (kais-scenario-writer)       → 📌 git checkpoint → 🔒 REVIEW GATE
+  ↓ 产出：叙事结构 + 画面意图标注 + 旁白/对白
+  ↓ 不依赖具体美术风格和角色设定，只标注视觉意图
+  ↓
+Phase 3: 美术方向 (kais-art-direction)         → 📌 git checkpoint → 🔒 REVIEW GATE
+  ↓ 基于大纲的视觉意图，确定风格、色调、光影
   ↓ Step 3.5: 生成光影参考图 (lighting_ref.png) → 四维锚定-光影
   ↓
-Phase 3: 角色设计 (kais-character-designer)     → 📌 git checkpoint → 🔒 REVIEW GATE
-  ↓
-Phase 4: 剧本编写 (kais-scenario-writer + kais-emotion 对白注入) → 📌 git checkpoint → 🔒 REVIEW GATE
+Phase 4: 角色设计 (kais-character-designer)     → 📌 git checkpoint → 🔒 REVIEW GATE
+  ↓ 基于大纲+美术风格，设计角色并锁定一致性
   ↓
 Phase 4.5: 配音 (kais-voice)                    → 📌 git checkpoint → 🔒 REVIEW GATE
   ↓ 音色推荐 + 样本生成 + 用户审核 + 批量合成
@@ -64,6 +70,40 @@ Phase 7: 视频生成 (kais-camera + 时序锚定 + 延长链) → 📌 git chec
   ↓
 Phase 8: 后期合成 + 交付（音频预绑定合并） → 📌 git checkpoint
 ```
+
+### 为什么剧本先行？
+
+| 旧顺序 | 新顺序 | 原因 |
+|--------|--------|------|
+| 美术→角色→剧本 | **剧本→美术→角色** | 视觉服务于叙事，不是反过来 |
+| 先定风格再想故事 | **先有故事再匹配风格** | 大纲的画面意图标注让风格选择有依据 |
+| 角色在剧本之前 | **角色基于剧本需求设计** | 避免设计了用不上的角色 |
+| — | **大纲含画面意图** | Phase 2 产出同时标注视觉方向，下游无缝衔接 |
+
+### Phase 2（剧本大纲）产出规范
+
+```json
+{
+  "title": "片名",
+  "narrative_arc": "起承转合描述",
+  "voiceover_lines": [
+    { "id": "VO1", "time_range": "0-5s", "text": "旁白文字", "visual_intent": "画面意图描述" }
+  ],
+  "shots": [
+    {
+      "shot_id": "S01",
+      "description": "叙事描述",
+      "visual_intent": "视觉意图（不绑定具体风格，只描述画面感受）",
+      "camera_intent": "镜头意图（运动、角度、景别）",
+      "emotion_intent": "情绪意图"
+    }
+  ],
+  "style_hints": ["暗调工业风", "油污质感", "关键时刻金色光芒"],
+  "character_hints": ["14岁少年，瘦小但眼神坚定"]
+}
+```
+
+`visual_intent` / `style_hints` / `character_hints` 是给下游 Phase 3/4 的约束信号，不是最终方案。
 
 ## Git 版本管理（每个 Phase 自动 checkpoint）
 
@@ -108,9 +148,9 @@ node lib/git-stage-manager.js stages                       # 列出所有阶段
 | Stage Name | Phase | 产出文件 |
 |------------|-------|---------|
 | `requirement` | 1 | requirement.json, brief.md |
-| `art-direction` | 2 | art_direction.json, mood_board.png, color_palette.json |
-| `character` | 3 | characters.json, assets/characters/*.png |
-| `scenario` | 4 | scenario.json, story_bible.json |
+| `scenario` | 2 | scenario.json, story_bible.json, style_hints |
+| `art-direction` | 3 | art_direction.json, mood_board.png, color_palette.json |
+| `character` | 4 | characters.json, assets/characters/*.png |
 | `scene` | 5 | assets/scenes/*.png, scene_design.json |
 | `sketch` | 5.3 | assets/sketches/*.png |
 | `render` | 5.5 | assets/scenes/*.png (渲染版) |
