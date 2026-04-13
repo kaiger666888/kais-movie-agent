@@ -34,8 +34,8 @@ const post = new PostProduction({ workdir, episode });
 const result = await post.run({
   dialogueLines: [{ text: '你好', start_time: 0, end_time: 2, speaker: '角色A' }],
   videoPath: 'output/rough_cut.mp4',
-  ttsDir: 'assets/tts/',
-  bgmPath: 'assets/bgm/bgm.mp3',
+  ttsDir: 'WORKDIR_ASSETS/tts/',
+  bgmPath: 'WORKDIR_ASSETS/bgm/bgm.mp3',
   burnSubtitles: false,
 });
 ```

@@ -155,10 +155,10 @@ node lib/git-stage-manager.js stages                       # 列出所有阶段
 | `requirement` | 1 | requirement.json, brief.md |
 | `scenario` | 2 | scenario.json, story_bible.json, style_hints |
 | `art-direction` | 3 | art_direction.json, mood_board.png, color_palette.json |
-| `character` | 4 | characters.json, assets/characters/*.png |
-| `scene` | 5 | assets/scenes/*.png, scene_design.json |
-| `sketch` | 5.3 | `<project>/assets/sketches/*.png` |
-| `render` | 5.5 | assets/scenes/*.png (渲染版) |
+| `character` | 4 | characters.json, CHARACTERS_DIR/*.png |
+| `scene` | 5 | PROJECT_ASSETSscenes/*.png, scene_design.json |
+| `sketch` | 5.3 | `PROJECT/PROJECT_ASSETSsketches/*.png` |
+| `render` | 5.5 | PROJECT_ASSETSscenes/*.png (渲染版) |
 | `storyboard` | 6 | storyboard.json, shots.json |
 | `camera` | 7 | video_tasks.json, output/*.mp4, rough_cut.mp4 |
 | `delivery` | 8 | final.mp4, qc_report.json |
@@ -170,11 +170,11 @@ node lib/git-stage-manager.js stages                       # 列出所有阶段
 ### Phase 5.3: 线稿生成
 <!-- 以下路径为项目内相对路径示例，非 skill 自身文件 -->
 ```bash
-python3 lib/scripts/sketch-generator.py \
+python3 lib/LIB_SCRIPTSsketch-generator.py \
   --prompt "角色坐在桌前吃面，看着面前的屏幕" \
   --space "SUBJECT:角色正面坐姿，双手持筷;PROPS:碗、筷子、屏幕;COMPOSITION:中景" \
-  --ref assets/characters/{character_id}/front-source.png \
-  --output assets/sketches/{shot_id}.png
+  --ref CHARACTERS_DIR/{character_id}/front-source.png \
+  --output PROJECT_ASSETSsketches/{shot_id}.png
 ```
 
 参数：
@@ -184,17 +184,17 @@ python3 lib/scripts/sketch-generator.py \
 
 ### Phase 5.4: 线稿审核
 ```bash
-python3 lib/scripts/scene-evaluator.py --mode sketch spec.json assets/sketches/
+python3 LIB_SCRIPTSscene-evaluator.py --mode sketch spec.json PROJECT_ASSETSsketches/
 ```
 检查：构图合理性、纯黑白、关键元素完整、线条清晰。FAIL 则重新生成。
 
 ### Phase 5.5: 基于线稿渲染
 ```bash
-python3 lib/scripts/sketch-to-render.py \
-  --sketch assets/sketches/{shot_id}.png \
+python3 LIB_SCRIPTSsketch-to-render.py \
+  --sketch PROJECT_ASSETSsketches/{shot_id}.png \
   --prompt "赛博朋克风格，霓虹灯光，暗色调" \
-  --ref assets/characters/{character_id}/front-source.png \
-  --output assets/scenes/{shot_id}.png
+  --ref CHARACTERS_DIR/{character_id}/front-source.png \
+  --output PROJECT_ASSETSscenes/{shot_id}.png
 ```
 
 参数：
@@ -204,7 +204,7 @@ python3 lib/scripts/sketch-to-render.py \
 
 ### Phase 5.6: 渲染审核
 ```bash
-python3 lib/scripts/scene-evaluator.py --mode render spec.json assets/scenes/
+python3 LIB_SCRIPTSscene-evaluator.py --mode render spec.json PROJECT_ASSETSscenes/
 ```
 检查：无残留线稿、风格统一、角色一致、构图保持。
 
@@ -330,7 +330,7 @@ import { PostProduction } from './lib/post-production.js';
 const post = new PostProduction({ workdir, episode });
 const result = await post.run({
   dialogueLines: [...], videoPath: 'output/rough_cut.mp4',
-  ttsDir: '{project}/assets/tts/', bgmPath: '{project}/assets/bgm/bgm.mp3',
+  ttsDir: 'WORKDIR_ASSETS/tts/', bgmPath: 'WORKDIR_ASSETS/bgm/bgm.mp3',
 });
 ```
 
@@ -362,7 +362,7 @@ extra/missing limbs, bad proportions, distorted/asymmetric face, ...
 ### 检测层（按需调用）
 渲染完成后使用 GLM-4V-Flash 检测解剖问题：
 ```bash
-python3 lib/scripts/anatomy-validator.py render.png --mode full --threshold 0.6
+python3 LIB_SCRIPTS/anatomy-validator.py render.png --mode full --threshold 0.6
 ```
 返回 JSON 报告（`<image>.anatomy.json`），包含 score、issues、negative_boost。
 

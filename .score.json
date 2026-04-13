@@ -1,10 +1,10 @@
 {
   "skill": "kais-movie-agent",
-  "total": 90,
+  "total": 94,
   "grade": "🏆 优秀",
   "dimensions": {
     "🎯 触发精确度": 17,
-    "📐 结构完整性": 16,
+    "📐 结构完整性": 20,
     "⚡ Token 效率": 17,
     "🔧 可执行性": 20,
     "🌏 本地化质量": 20
@@ -12,9 +12,6 @@
   "issues": {
     "🎯 触发精确度": [
       "触发词过少"
-    ],
-    "📐 结构完整性": [
-      "引用不存在: assets/sketches/, scripts/sketch-generator.py"
     ],
     "⚡ Token 效率": [
       "大段代码块(>20行)"
