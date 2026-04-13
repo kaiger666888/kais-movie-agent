@@ -1,0 +1,15 @@
+# 子 skill（独立 repo 管理，workspace 通过 symlink 引用）
+skills/kais-anatomy-guard/
+skills/kais-art-direction/
+skills/kais-camera/
+skills/kais-character-designer/
+skills/kais-cinematography-planner/
+skills/kais-review-page/
+skills/kais-scenario-writer/
+skills/kais-scene-designer/
+skills/kais-shooting-script/
+skills/kais-storyboard-designer/
+skills/kais-voice/
+
+node_modules/
+.backup/
