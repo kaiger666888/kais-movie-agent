@@ -1,3 +1,8 @@
+---
+name: kais-movie-agent
+description: "AI短片制作全流程管线。触发词：movie agent, 短片制作, AI短片, 视频管线, film pipeline。覆盖需求确认→剧本大纲→美术方向→角色设计→配音→场景生成→分镜板→视频生成→后期合成的完整管线，支持git版本管理和断点续传。"
+---
+
 # kais-movie-agent — AI 短片制作全流程管线
 
 ## 触发词
@@ -110,6 +115,9 @@ Phase 8: 后期合成 + 交付（音频预绑定合并） → 📌 git checkpoin
 每个 Phase 完成后自动创建 git checkpoint，支持回滚到任意阶段。
 
 ### 使用方式
+
+> 📖 完整 API 用法见 [`references/api-usage.md`](references/api-usage.md)
+
 ```js
 import { GitStageManager } from './lib/git-stage-manager.js';
 
@@ -127,9 +135,6 @@ await git.log();
 
 // 回滚到指定阶段（如审核不通过）
 await git.rollback('art-direction');
-
-// 比较两个阶段
-await git.diff('art-direction', 'character');
 ```
 
 ### CLI
@@ -163,12 +168,13 @@ node lib/git-stage-manager.js stages                       # 列出所有阶段
 两阶段生成策略：先线稿锁定构图，再基于线稿渲染释放风格。
 
 ### Phase 5.3: 线稿生成
+<!-- 以下路径为项目内相对路径示例，非 skill 自身文件 -->
 ```bash
 python3 lib/scripts/sketch-generator.py \
   --prompt "角色坐在桌前吃面，看着面前的屏幕" \
   --space "SUBJECT:角色正面坐姿，双手持筷;PROPS:碗、筷子、屏幕;COMPOSITION:中景" \
-  --ref assets/characters/char_wuji/front-source.png \
-  --output assets/sketches/B03-eating.png
+  --ref assets/characters/{character_id}/front-source.png \
+  --output assets/sketches/{shot_id}.png
 ```
 
 参数：
@@ -185,10 +191,10 @@ python3 lib/scripts/scene-evaluator.py --mode sketch spec.json assets/sketches/
 ### Phase 5.5: 基于线稿渲染
 ```bash
 python3 lib/scripts/sketch-to-render.py \
-  --sketch assets/sketches/B03-eating.png \
+  --sketch assets/sketches/{shot_id}.png \
   --prompt "赛博朋克风格，霓虹灯光，暗色调" \
-  --ref assets/characters/char_wuji/front-source.png \
-  --output assets/scenes/B03-eating.png
+  --ref assets/characters/{character_id}/front-source.png \
+  --output assets/scenes/{shot_id}.png
 ```
 
 参数：
@@ -321,16 +327,10 @@ const result3 = await pipeline.runPhase('camera', { execute: async (p, phase) =>
 
 ```js
 import { PostProduction } from './lib/post-production.js';
-
 const post = new PostProduction({ workdir, episode });
-
-// 一站式后期
 const result = await post.run({
-  dialogueLines: [{ text: '你好', start_time: 0, end_time: 2, speaker: '角色A' }],
-  videoPath: 'output/rough_cut.mp4',
-  ttsDir: 'assets/tts/',
-  bgmPath: 'assets/bgm/bgm.mp3',
-  burnSubtitles: false,
+  dialogueLines: [...], videoPath: 'output/rough_cut.mp4',
+  ttsDir: 'assets/tts/', bgmPath: 'assets/bgm/bgm.mp3',
 });
 ```
 
@@ -338,13 +338,10 @@ const result = await post.run({
 
 ```js
 import { selectBGMStyle, generateBGMPrompt } from './lib/bgm-selector.js';
-
-// 根据场景情感推荐 BGM
 const recommendations = selectBGMStyle('英雄站在山顶', '史诗', 30);
-
-// 生成音乐 AI 提示词
-const prompt = generateBGMPrompt('追逐场景', '紧张', 20);
 ```
+
+> 📖 完整 API 用法（Pipeline / PostProduction / BGM / ExtensionChain）见 [`references/api-usage.md`](references/api-usage.md)
 
 ## 环境变量
 - `JIMENG_SESSION_ID`: 即梦 session ID
