@@ -40,6 +40,9 @@ description: "AI短片制作全流程管线。触发词：movie agent, 短片制
 ```
 Phase 1: 需求确认                              → 🔒 REVIEW GATE
   ↓
+Phase 1.5: 品牌与背景深度调研 (deep-research)   → 📌 git checkpoint
+  ↓ 产出：品牌档案 + 目标受众画像 + 竞品案例 + 植入策略
+  ↓
 Phase 2: 剧本大纲 (kais-scenario-writer)       → 📌 git checkpoint → 🔒 REVIEW GATE
   ↓ 产出：叙事结构 + 画面意图标注 + 旁白/对白
   ↓ 不依赖具体美术风格和角色设定，只标注视觉意图
@@ -75,6 +78,85 @@ Phase 7: 视频生成 (kais-camera + 时序锚定 + 延长链) → 📌 git chec
   ↓
 Phase 8: 后期合成 + 交付（音频预绑定合并） → 📌 git checkpoint
 ```
+
+### Phase 1.5（品牌与背景深度调研）
+
+在剧本创作之前，使用 `deep-research` skill 进行深度调研，确保故事有扎实的现实基础和精准的品牌植入。
+
+**触发条件**：当项目涉及品牌植入、真实人物/事件、特定行业/圈层时自动启用。
+
+#### 调研维度
+
+| 维度 | 内容 | 输出 |
+|------|------|------|
+| **品牌深度** | 品牌历史、创始故事、核心卖点、用户口碑、争议事件 | `research/brand_profile.md` |
+| **人物背景** | 真实人物经历、性格特征、关键事件、社交媒体人设 | `research/character_profile.md` |
+| **目标受众** | 核心人群画像、消费习惯、内容偏好、情感触点 | `research/audience_persona.md` |
+| **竞品案例** | 同品类/同行业短视频爆款案例、植入方式、播放数据 | `research/competitor_cases.md` |
+| **圈层文化** | 相关亚文化、社群黑话、价值观、禁忌话题 | `research/subculture_notes.md` |
+| **植入策略** | 基于以上调研，提出 3-5 个自然植入方案并排序 | `research/placement_strategy.md` |
+
+#### 调研流程
+
+```
+Step 1: 分解调研问题（6-10 个子问题）
+  → 品牌核心基因是什么？创始人的故事有哪些高光时刻？
+  → 目标用户是谁？他们在什么场景下使用产品？
+  → 同类产品有哪些爆款短视频？植入方式是什么？
+  → 相关圈层有什么文化符号和禁忌？
+
+Step 2: 多轮搜索（3 轮，deep-research skill）
+  → 第 1 轮：品牌基础 + 人物背景
+  → 第 2 轮：受众画像 + 竞品案例
+  → 第 3 轮：圈层文化 + 植入策略验证
+
+Step 3: 抓取与提炼（web_fetch top 10 页面）
+
+Step 4: 生成调研报告
+  → 保存到 PROJECT/research/ 目录
+  → 输出结构化摘要供 Phase 2 使用
+```
+
+#### 调研输出格式（Phase 2 直接消费）
+
+```json
+{
+  "brand_dna": ["赛道基因", "极致操控", "国货之光"],
+  "founder_story": "张雪：前赛车手，创立品牌初心...",
+  "audience_core": "25-35岁男性，摩托车爱好者，追求速度和自由",
+  "audience_pain_points": ["被合资品牌看不起", "国产品质不信任"],
+  "emotional_triggers": ["逆袭", "证明自己", "自由"],
+  "taboo_topics": ["安全性负面", "山寨争议"],
+  "placement_options": [
+    {
+      "concept": "弯道之王",
+      "naturalness": 5,
+      "brand_alignment": 5,
+      "viral_potential": 4,
+      "description": "地下赛车，靠弯道操控击败对手"
+    }
+  ],
+  "competitor_references": [
+    {"brand": "某品牌", "video": "URL", "views": "1.2亿", "technique": "情感共鸣"}
+  ]
+}
+```
+
+#### Git Stage 映射
+
+| Stage Name | Phase | 产出文件 |
+|------------|-------|---------|
+| `requirement` | 1 | requirement.json, brief.md |
+| `research` | 1.5 | research/*.md, research_summary.json |
+| `scenario` | 2 | scenario.json, story_bible.json, style_hints |
+
+#### 何时跳过
+
+- 纯虚构题材（无品牌植入）→ 跳过
+- 用户明确说"别调研了" → 跳过
+- 非首次制作同一品牌（已有 research_summary.json）→ 复用，仅增量更新
+
+---
 
 ### 为什么剧本先行？
 
@@ -241,7 +323,8 @@ python3 LIB_SCRIPTSscene-evaluator.py --mode render spec.json PROJECT_ASSETSscen
 
 | Skill | Phase | 功能 |
 |-------|-------|------|
-| kais-art-direction | 2 | 美术方向/视觉风格定义 |
+| deep-research | 1.5 | 品牌/人物/受众深度调研 |
+| kais-art-direction | 3 | 美术方向/视觉风格定义 |
 | kais-character-designer | 3 | 角色设计 + 参考图生成 |
 | kais-scenario-writer | 4 | 剧本/分镜编写（对白情感注入） |
 | kais-voice | 4.5 | 语音合成（GLM-TTS 多音色 + 审核选择） |
@@ -272,6 +355,7 @@ python3 LIB_SCRIPTSscene-evaluator.py --mode render spec.json PROJECT_ASSETSscen
 - **文生图**: 即梦 API (jimeng-5.0)
 - **视频生成**: Seedance 2.0
 - **评价**: 智谱 GLM-4V-Flash
+- **调研**: deep-research skill（品牌/受众/竞品深度调研）
 - **合成**: FFmpeg
 
 ## 延长链引擎（Extension Chain）
