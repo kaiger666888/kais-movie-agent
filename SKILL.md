@@ -41,15 +41,7 @@ description: "AI短片制作全流程管线。触发词：movie agent, 短片制
 ```
 Phase 1: 需求确认 + 深度调研                     → 🔒 REVIEW GATE
   ↓ 1.1: 需求确认（题材、热点、诗意、平台、时长）
-  ↓ 1.2: 深度调研 (deep-research)
-  ↓   调研维度：
-  ↓   - 人物背景：出身、成长经历、性格细节、关键时刻、原话/语录
-  ↓   - 事件脉络：关键转折点、时间线、冲突与突破
-  ↓   - 情感内核：驱动人物的深层动机、脆弱面、高光时刻
-  ↓   - 视觉线索：标志性场景、物品、动作、环境细节
-  ↓   - 观众共鸣点：哪些细节能让"每个人"被打动
-  ↓   工具：deep-research skill（2-3轮搜索+抓取，medium深度）
-  ↓   产出：调研报告 → 直接反哺大纲、美术、角色设计
+  ↓ 1.2: 深度调研 → 详见「通用调研能力」章节
   ↓
 Phase 2: 剧本大纲 (kais-scenario-writer)       → 📌 git checkpoint → 🔒 REVIEW GATE
   ↓ 产出：叙事结构 + 画面意图标注 + 旁白/对白
@@ -331,7 +323,21 @@ python3 LIB_SCRIPTSscene-evaluator.py --mode render spec.json PROJECT_ASSETSscen
 
 | Skill | Phase | 功能 |
 |-------|-------|------|
-| deep-research | 1.2 | 人物/事件/情感深度调研（多轮搜索+抓取+分析） |
+## 通用调研能力（全管线可用）
+
+> deep-research skill 可在管线任意阶段按需调用，不限于特定 Phase。当需要深入了解人物、事件、视觉风格参考、技术方案等问题时，随时启动深度调研。
+
+**典型调用场景：**
+
+| 阶段 | 调研场景 | 示例 |
+|------|---------|------|
+| Phase 1 | 人物背景、事件脉络、情感内核 | 张雪的成长经历、WSBK赛事细节 |
+| Phase 2 | 美术风格参考、视觉趋势 | "水墨+工业风"在AI视频中的案例 |
+| Phase 3 | 角色原型参考、服装细节 | 摩托车手的真实装备和穿搭 |
+| Phase 5 | 场景参考、光影技法 | 赛道摄像的运镜技巧 |
+| Phase 7 | 视频生成技术方案 | Seedance延长链最佳实践 |
+
+**调用方式：** 直接按 deep-research skill 的工作流程执行（问题分解→搜索→抓取→分析），调研结果直接反哺当前 Phase 产出。
 | kais-art-direction | 3 | 美术方向/视觉风格定义 |
 | kais-character-designer | 3 | 角色设计 + 参考图生成 |
 | kais-scenario-writer | 4 | 剧本/分镜编写（对白情感注入） |
