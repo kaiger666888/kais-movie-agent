@@ -1,12 +1,12 @@
 ---
 name: kais-movie-agent
-description: "AI短片制作全流程管线。触发词：movie agent, 短片制作, AI短片, 视频管线, film pipeline。覆盖需求确认→剧本大纲→美术方向→角色设计→配音→场景生成→分镜板→视频生成→后期合成的完整管线，支持git版本管理和断点续传。"
+description: "AI短片/短视频/短剧全流程自动制作管线。触发词：movie agent, 短片制作, AI短片, 视频管线, film pipeline, AI视频制作, 短视频管线, AI电影, 影片制作, AI短剧, 短剧制作, 视频自动化, 全自动视频, 一键生成视频, AI拍片, 视频工厂, 批量视频, 生成短片, make video, create film, video pipeline, movie production, AI filmmaker。覆盖需求确认→调研→剧本→美术方向→角色设计→配音→场景生成→分镜板→视频生成→后期合成的完整管线，支持git版本管理和断点续传。"
 ---
 
 # kais-movie-agent — AI 短片制作全流程管线
 
 ## 触发词
-`movie agent`, `短片制作`, `AI短片`, `视频管线`, `film pipeline`, `movie-wuji`, `AI视频制作`, `短视频管线`, `AI电影`, `影片制作`, `kais-movie`, `movie pipeline`
+`movie agent`, `短片制作`, `AI短片`, `视频管线`, `film pipeline`, `movie-wuji`, `AI视频制作`, `短视频管线`, `AI电影`, `影片制作`, `AI短剧`, `短剧制作`, `视频自动化`, `全自动视频`, `一键生成视频`, `AI拍片`, `视频工厂`, `批量视频`, `生成短片`, `make video`, `create film`, `video pipeline`, `movie production`, `AI filmmaker`, `kais-movie`, `movie pipeline`
 
 ## ⚠️ 强制审核门（Review Gate）
 
@@ -40,121 +40,36 @@ description: "AI短片制作全流程管线。触发词：movie agent, 短片制
 
 ```
 Phase 1: 需求确认 + 深度调研                     → 🔒 REVIEW GATE
-  ↓ 1.1: 需求确认（题材、热点、诗意、平台、时长）
-  ↓ 1.2: 深度调研 → 详见「通用调研能力」章节
-  ↓
-Phase 2: 剧本大纲 (kais-scenario-writer)       → 📌 git checkpoint → 🔒 REVIEW GATE
-  ↓ 产出：叙事结构 + 画面意图标注 + 旁白/对白
-  ↓ 不依赖具体美术风格和角色设定，只标注视觉意图
-  ↓
-Phase 3: 美术方向 (kais-art-direction)         → 📌 git checkpoint → 🔒 REVIEW GATE
-  ↓ 基于大纲的视觉意图，确定风格、色调、光影
-  ↓ Step 3.5: 生成光影参考图 (lighting_ref.png) → 四维锚定-光影
-  ↓
-Phase 4: 角色设计 (kais-character-designer)     → 📌 git checkpoint → 🔒 REVIEW GATE
-  ↓ 基于大纲+美术风格，设计角色并锁定一致性
-  ↓
-Phase 4.5: 配音 (kais-voice)                    → 📌 git checkpoint → 🔒 REVIEW GATE
-  ↓ 音色推荐 + 样本生成 + 用户审核 + 批量合成
-  ↓
-Phase 5: 场景图生成 (kais-scene-designer)       → 📌 git checkpoint
-  ↓
-Phase 5.3: 线稿生成（anatomy-guard 预防）       → 📌 git checkpoint
-  ↓ anatomy-guard 线稿验证（GLM-4V 检测 + 重试）
-  ↓
-Phase 5.4: 线稿审核 (FAIL → 回滚到 5.3)        → 🔒 REVIEW GATE
-  ↓
-Phase 5.5: 基于线稿渲染（四维锚定注入 + anatomy-guard 验证修复） → 📌 git checkpoint
-  ↓
-Phase 5.6: 渲染审核 (FAIL → 回滚到 5.5)        → 🔒 REVIEW GATE
-  ↓
-Phase 5.7: 拍摄手法规划 (kais-cinematography-planner) → 📌 git checkpoint
-  ↓
-Phase 6: 分镜板 (kais-storyboard-designer)  → 📌 git checkpoint → 🔒 REVIEW GATE
-  ↓
-Phase 7: 视频生成 (kais-camera + 时序锚定 + 延长链) → 📌 git checkpoint → 🔒 REVIEW GATE
-  ↓ 延长链：种子片段 → 末帧桥接 → 连续延长
-  ↓ 断点续传：支持从任意镜头重新延长
-  ↓
-Phase 8: 后期合成 + 交付（音频预绑定合并） → 📌 git checkpoint
+Phase 2: 剧本大纲 (kais-scenario-writer)           → 🔒 REVIEW GATE
+Phase 3: 美术方向 (kais-art-direction)             → 🔒 REVIEW GATE
+Phase 4: 角色设计 (kais-character-designer)         → 🔒 REVIEW GATE
+Phase 4.5: 配音 (kais-voice)                       → 🔒 REVIEW GATE
+Phase 5: 场景图生成 (kais-scene-designer)           → checkpoint
+Phase 5.3: 线稿生成（anatomy-guard 预防）           → checkpoint
+Phase 5.5: 基于线稿渲染                            → checkpoint
+Phase 5.6: 渲染审核                                → 🔒 REVIEW GATE
+Phase 5.7: 拍摄手法规划                            → checkpoint
+Phase 6: 分镜板 (kais-storyboard-designer)          → 🔒 REVIEW GATE
+Phase 7: 视频生成 (kais-camera + 延长链)            → 🔒 REVIEW GATE
+Phase 8: 后期合成 + 交付                           → checkpoint
 ```
+
+> 📖 完整 Phase 流程图（含子步骤）见 [`references/pipeline-flow.md`](references/pipeline-flow.md)
 
 ### Phase 1.5（品牌与背景深度调研）
 
-在剧本创作之前，使用 `deep-research` skill 进行深度调研，确保故事有扎实的现实基础和精准的品牌植入。
+> 📖 完整调研流程见 [`references/research-workflow.md`](references/research-workflow.md)
 
-**触发条件**：当项目涉及品牌植入、真实人物/事件、特定行业/圈层时自动启用。
+**触发条件**：品牌植入、真实人物/事件、特定行业/圈层时自动启用。纯虚构题材可跳过。
 
-#### 调研维度
-
-| 维度 | 内容 | 输出 |
-|------|------|------|
-| **品牌深度** | 品牌历史、创始故事、核心卖点、用户口碑、争议事件 | `research/brand_profile.md` |
-| **人物背景** | 真实人物经历、性格特征、关键事件、社交媒体人设 | `research/character_profile.md` |
-| **目标受众** | 核心人群画像、消费习惯、内容偏好、情感触点 | `research/audience_persona.md` |
-| **竞品案例** | 同品类/同行业短视频爆款案例、植入方式、播放数据 | `research/competitor_cases.md` |
-| **圈层文化** | 相关亚文化、社群黑话、价值观、禁忌话题 | `research/subculture_notes.md` |
-| **植入策略** | 基于以上调研，提出 3-5 个自然植入方案并排序 | `research/placement_strategy.md` |
-
-#### 调研流程
-
-```
-Step 1: 分解调研问题（6-10 个子问题）
-  → 品牌核心基因是什么？创始人的故事有哪些高光时刻？
-  → 目标用户是谁？他们在什么场景下使用产品？
-  → 同类产品有哪些爆款短视频？植入方式是什么？
-  → 相关圈层有什么文化符号和禁忌？
-
-Step 2: 多轮搜索（3 轮，deep-research skill）
-  → 第 1 轮：品牌基础 + 人物背景
-  → 第 2 轮：受众画像 + 竞品案例
-  → 第 3 轮：圈层文化 + 植入策略验证
-
-Step 3: 抓取与提炼（web_fetch top 10 页面）
-
-Step 4: 生成调研报告
-  → 保存到 PROJECT/research/ 目录
-  → 输出结构化摘要供 Phase 2 使用
-```
-
-#### 调研输出格式（Phase 2 直接消费）
-
-```json
-{
-  "brand_dna": ["赛道基因", "极致操控", "国货之光"],
-  "founder_story": "张雪：前赛车手，创立品牌初心...",
-  "audience_core": "25-35岁男性，摩托车爱好者，追求速度和自由",
-  "audience_pain_points": ["被合资品牌看不起", "国产品质不信任"],
-  "emotional_triggers": ["逆袭", "证明自己", "自由"],
-  "taboo_topics": ["安全性负面", "山寨争议"],
-  "placement_options": [
-    {
-      "concept": "弯道之王",
-      "naturalness": 5,
-      "brand_alignment": 5,
-      "viral_potential": 4,
-      "description": "地下赛车，靠弯道操控击败对手"
-    }
-  ],
-  "competitor_references": [
-    {"brand": "某品牌", "video": "URL", "views": "1.2亿", "technique": "情感共鸣"}
-  ]
-}
-```
-
-#### Git Stage 映射
-
-| Stage Name | Phase | 产出文件 |
-|------------|-------|---------|
-| `requirement` | 1 | requirement.json, brief.md |
-| `research` | 1.5 | research/*.md, research_summary.json |
-| `scenario` | 2 | scenario.json, story_bible.json, style_hints |
-
-#### 何时跳过
-
-- 纯虚构题材（无品牌植入）→ 跳过
-- 用户明确说"别调研了" → 跳过
-- 非首次制作同一品牌（已有 research_summary.json）→ 复用，仅增量更新
+| 维度 | 输出 |
+|------|------|
+| 品牌深度 | `research/brand_profile.md` |
+| 人物背景 | `research/character_profile.md` |
+| 目标受众 | `research/audience_persona.md` |
+| 竞品案例 | `research/competitor_cases.md` |
+| 圈层文化 | `research/subculture_notes.md` |
+| 植入策略 | `research/placement_strategy.md` |
 
 ---
 
@@ -169,28 +84,9 @@ Step 4: 生成调研报告
 
 ### Phase 2（剧本大纲）产出规范
 
-```json
-{
-  "title": "片名",
-  "narrative_arc": "起承转合描述",
-  "voiceover_lines": [
-    { "id": "VO1", "time_range": "0-5s", "text": "旁白文字", "visual_intent": "画面意图描述" }
-  ],
-  "shots": [
-    {
-      "shot_id": "S01",
-      "description": "叙事描述",
-      "visual_intent": "视觉意图（不绑定具体风格，只描述画面感受）",
-      "camera_intent": "镜头意图（运动、角度、景别）",
-      "emotion_intent": "情绪意图"
-    }
-  ],
-  "style_hints": ["暗调工业风", "油污质感", "关键时刻金色光芒"],
-  "character_hints": ["14岁少年，瘦小但眼神坚定"]
-}
-```
+> 📖 完整 JSON schema 见 [`references/scenario-schema.md`](references/scenario-schema.md)
 
-`visual_intent` / `style_hints` / `character_hints` 是给下游 Phase 3/4 的约束信号，不是最终方案。
+关键字段：`visual_intent`（视觉意图）、`style_hints`（风格提示）、`character_hints`（角色提示）— 给下游 Phase 3/4 的约束信号。
 
 ## Git 版本管理（每个 Phase 自动 checkpoint）
 
@@ -222,12 +118,9 @@ await git.rollback('art-direction');
 ### CLI
 ```bash
 node lib/git-stage-manager.js init <workdir>              # 初始化
-node lib/git-stage-manager.js checkpoint <workdir> <phase> # 手动 checkpoint
+node lib/git-stage-manager.js checkpoint <workdir> <phase> # checkpoint
 node lib/git-stage-manager.js log <workdir>               # 查看历史
 node lib/git-stage-manager.js rollback <workdir> <phase>   # 回滚
-node lib/git-stage-manager.js diff <workdir> <A> <B>       # 比较
-node lib/git-stage-manager.js current <workdir>            # 当前阶段
-node lib/git-stage-manager.js stages                       # 列出所有阶段
 ```
 
 ### Phase 与 Git Stage 映射
@@ -247,100 +140,26 @@ node lib/git-stage-manager.js stages                       # 列出所有阶段
 
 ## 线稿控制管线（Phase 5.3-5.6）
 
-两阶段生成策略：先线稿锁定构图，再基于线稿渲染释放风格。
+> 📖 完整参数与命令见 [`references/sketch-pipeline.md`](references/sketch-pipeline.md)
 
-### Phase 5.3: 线稿生成
-<!-- 以下路径为项目内相对路径示例，非 skill 自身文件 -->
-```bash
-python3 lib/LIB_SCRIPTSsketch-generator.py \
-  --prompt "角色坐在桌前吃面，看着面前的屏幕" \
-  --space "SUBJECT:角色正面坐姿，双手持筷;PROPS:碗、筷子、屏幕;COMPOSITION:中景" \
-  --ref CHARACTERS_DIR/{character_id}/front-source.png \
-  --output PROJECT_ASSETSsketches/{shot_id}.png
-```
+两阶段生成：先线稿锁定构图（Phase 5.3），再基于线稿渲染释放风格（Phase 5.5）。
 
-参数：
-- `--sample-strength 0.35`：角色参考图影响强度
-- `--model jimeng-5.0`：默认模型
-- `--ratio 9:16`：竖屏视频比例
+| 模式 | 每场景调用 | 积分 | 空间准确性 | 适用 |
+|------|----------|------|----------|------|
+| 快速（--no-sketch） | ~2次 | ~2 | 基准 | 简单/快速迭代 |
+| 线稿（默认） | ~3次 | ~3 | +30-50% | 正式制作 |
 
-### Phase 5.4: 线稿审核
-```bash
-python3 LIB_SCRIPTSscene-evaluator.py --mode sketch spec.json PROJECT_ASSETSsketches/
-```
-检查：构图合理性、纯黑白、关键元素完整、线条清晰。FAIL 则重新生成。
+## 通用调研能力（全管线可用）
 
-### Phase 5.5: 基于线稿渲染
-```bash
-python3 LIB_SCRIPTSsketch-to-render.py \
-  --sketch PROJECT_ASSETSsketches/{shot_id}.png \
-  --prompt "赛博朋克风格，霓虹灯光，暗色调" \
-  --ref CHARACTERS_DIR/{character_id}/front-source.png \
-  --output PROJECT_ASSETSscenes/{shot_id}.png
-```
-
-参数：
-- `--sample-strength 0.25`：线稿结构保留强度
-- images 顺序：[线稿(结构), 角色参考图(外观)]
-- `--style` 可额外指定风格关键词
-
-### Phase 5.6: 渲染审核
-```bash
-python3 LIB_SCRIPTSscene-evaluator.py --mode render spec.json PROJECT_ASSETSscenes/
-```
-检查：无残留线稿、风格统一、角色一致、构图保持。
-
-## 跳过线稿管线
-对于简单场景或快速迭代，可跳过线稿阶段直接生成：
-在 prompt 中添加 `--no-sketch` 或直接使用 Phase 5 的直接生成模式。
-
-## 成本对比
-
-| 模式 | 每场景平均调用 | 积分消耗 | 空间准确性 | 适用场景 |
-|------|-------------|---------|-----------|---------|
-| 快速模式（--no-sketch） | ~2次 | ~2积分 | 基准 | 简单场景、快速迭代 |
-| 线稿管线（默认） | 线稿1.5次+渲染1.5次 | ~3积分 | +30-50% | 复杂场景、正式制作 |
-
-- 线稿管线额外成本约 +50% 积分，但显著提升构图和空间准确性
-- 质量不达标时，重做线稿（低成本）比重做渲染（高成本）更经济
-- 建议正式制作使用线稿管线，draft/探索阶段使用快速模式
-
-## 关键参数配置
-
-| 参数 | 线稿生成 | 线稿→渲染 | 快速模式 |
-|------|---------|----------|---------|
-| model | jimeng-5.0 | jimeng-5.0 | jimeng-5.0 |
-| ratio | 9:16 | 9:16 | 9:16 |
-| resolution | 2k | 2k | 2k |
-| sample_strength | 0.35 | 0.25 | 0.35 |
-| negative_prompt | 彩色/渲染/阴影/渐变 | 线稿/草图/粗糙/黑白 | - |
-| images | 角色参考图 | [线稿, 角色正面, 角色3/4, 风格/光影参考] | 角色参考图 |
-| 审核 | --mode sketch | --mode render（含深度层次检查） | --mode default |
-| 光影锚定 | - | --style-ref + --lighting | - |
-| 深度锚定 | - | --depth | - |
+> deep-research skill 可在管线任意阶段按需调用。典型场景：Phase 1 人物背景调研、Phase 2 美术风格参考、Phase 3 角色原型参考、Phase 5 场景光影技法、Phase 7 视频生成技术方案。
 
 ## 子 Skill 列表
 
 | Skill | Phase | 功能 |
 |-------|-------|------|
-## 通用调研能力（全管线可用）
-
-> deep-research skill 可在管线任意阶段按需调用，不限于特定 Phase。当需要深入了解人物、事件、视觉风格参考、技术方案等问题时，随时启动深度调研。
-
-**典型调用场景：**
-
-| 阶段 | 调研场景 | 示例 |
-|------|---------|------|
-| Phase 1 | 人物背景、事件脉络、情感内核 | 张雪的成长经历、WSBK赛事细节 |
-| Phase 2 | 美术风格参考、视觉趋势 | "水墨+工业风"在AI视频中的案例 |
-| Phase 3 | 角色原型参考、服装细节 | 摩托车手的真实装备和穿搭 |
-| Phase 5 | 场景参考、光影技法 | 赛道摄像的运镜技巧 |
-| Phase 7 | 视频生成技术方案 | Seedance延长链最佳实践 |
-
-**调用方式：** 直接按 deep-research skill 的工作流程执行（问题分解→搜索→抓取→分析），调研结果直接反哺当前 Phase 产出。
+| kais-scenario-writer | 2 | 剧本/分镜编写（对白情感注入） |
 | kais-art-direction | 3 | 美术方向/视觉风格定义 |
-| kais-character-designer | 3 | 角色设计 + 参考图生成 |
-| kais-scenario-writer | 4 | 剧本/分镜编写（对白情感注入） |
+| kais-character-designer | 4 | 角色设计 + 参考图生成 |
 | kais-voice | 4.5 | 语音合成（GLM-TTS 多音色 + 审核选择） |
 | kais-scene-designer | 5 | 场景图生成 |
 | kais-cinematography-planner | 5.7 | 拍摄手法批量映射（Coverage Map） |
@@ -374,51 +193,26 @@ python3 LIB_SCRIPTSscene-evaluator.py --mode render spec.json PROJECT_ASSETSscen
 
 ## 延长链引擎（Extension Chain）
 
-即梦 Seedance **全能参考模式**，prompt 中用 `@1 @2 @3` 正确描述参考物关系：
+> 📖 完整 API 见 [`references/api-usage.md`](references/api-usage.md)
 
-```
-段1: @1首帧 + @2目标尾帧 + @3TTS段 + @4BGM段
-     prompt: "@1作为画面起点，@2作为画面终点。从@1开始，{运动}，最终过渡到@2。"
+即梦 Seedance **全能参考模式**，prompt 中用 `@1 @2 @3 @4` 描述参考物关系：
 
-段2: @1段1视频 + @2段2目标尾帧 + @3TTS段 + @4BGM段
-     prompt: "@1是上一段视频，从@1的结尾画面开始自然延续，{运动}，最终过渡到@2。"
+- **段1**: `@1`首帧 + `@2`目标尾帧 + `@3`TTS + `@4`BGM
+- **段N**: `@1`段N-1视频 + `@2`段N尾帧 + `@3`TTS + `@4`BGM
+- 目标尾帧来自分镜 `end_frame` 字段，TTS/BGM 按镜头时间切分
 
-段N: @1段N-1视频 + @2段N目标尾帧 + @3TTS段 + @4BGM段
-     prompt: "@1是上一段视频，从@1的结尾画面开始{风格}，{运动}，最终过渡到@2。"
-```
-
-- **目标尾帧**来自分镜图的 `end_frame` 字段（storyboard 自动生成）
-- **上一段视频**保持连续性
-- **TTS/BGM** 按镜头时间切分预绑定
-- **voice 集成**: executeChain 支持 `generateTTS` 回调，自动调用 kais-voice 生成 TTS
-
-核心模块：`lib/extension-chain.js`
-- `buildChainPlan()` — 构建执行计划
-- `buildFilePaths()` — 构建 file_paths（顺序与 @1@2@3 对应）
-- `buildSeedPrompt()` / `buildExtensionPrompt()` — 构建带参考关系描述的 prompt
-- `executeChain()` / `resumeFromBreakpoint()` / `assembleFinal()`
+核心函数：`buildChainPlan()` / `buildFilePaths()` / `buildSeedPrompt()` / `executeChain()` / `assembleFinal()`
 
 ## 管线编排器（Pipeline）
 
+> 📖 完整 API 见 [`references/api-usage.md`](references/api-usage.md)
+
 ```js
 import { Pipeline } from './lib/pipeline.js';
-
-const pipeline = new Pipeline({
-  workdir: '/path/to/project',
-  episode: 'EP01',
-  config: { title: '短片', genre: '科幻', duration_sec: 60, characters: [...] },
-  onPhaseComplete: (phase, result) => { ... },
-  onPhaseFail: (phase, error) => { ... },
-});
-
-// 执行全部
-const result = await pipeline.run();
-
-// 从断点恢复
-const result2 = await pipeline.resume('character');
-
-// 只执行某个阶段
-const result3 = await pipeline.runPhase('camera', { execute: async (p, phase) => { ... } });
+const pipeline = new Pipeline({ workdir, episode, config, onPhaseComplete, onPhaseFail });
+await pipeline.run();           // 执行全部
+await pipeline.resume('character'); // 从断点恢复
+await pipeline.runPhase('camera', { execute }); // 只执行某阶段
 ```
 
 ## Phase 8 后期合成
