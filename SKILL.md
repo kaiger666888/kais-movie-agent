@@ -3,37 +3,62 @@
 ## 触发词
 `movie agent`, `短片制作`, `AI短片`, `视频管线`, `film pipeline`, `movie-wuji`
 
+## ⚠️ 强制审核门（Review Gate）
+
+**以下 Phase 完成后必须暂停，展示产出物给用户审核，收到确认后才能继续：**
+
+| Phase | 审核内容 | 展示方式 |
+|-------|---------|---------|
+| Phase 2 | 美术方向（mood board 3选1 + 光影参考图） | 发送图片到当前会话，等用户选择/修改 |
+| Phase 3 | 角色设计（转面图 + 多角度参考图） | 发送图片到当前会话，等用户确认 |
+| Phase 4 | 剧本（scenario.json + 分镜描述） | 发送文本摘要到当前会话，等用户确认 |
+| Phase 5/5.6 | 场景图（所有镜头的渲染图） | 发送图片到当前会话，等用户确认 |
+| Phase 6 | 分镜板（完整 storyboard） | 发送分镜摘要到当前会话，等用户确认 |
+| Phase 7 | 视频粗剪（rough cut） | 发送视频或截图到当前会话，等用户确认 |
+
+**执行规则：**
+1. 到达审核门时，**必须停止执行**，不要继续下一个 Phase
+2. 将产出物发送给用户，附上简要说明和审核选项（✅通过 / 🔄重做 / ✏️修改）
+3. 使用 `message` 工具发送图片（带 inline buttons 让用户选择）
+4. **只有收到用户明确的"通过"回复后，才能执行 git checkpoint 并进入下一阶段**
+5. 用户要求重做时，回滚到对应 Phase 重新生成
+6. **禁止**：一次性跑完多个 Phase 然后事后补审核
+
+**为什么这很重要：** AI 生成结果不可预测，用户审美和预期可能与 AI 不同。跳过审核会导致大量返工和积分浪费。审核门是质量保障的核心机制，不是可选步骤。
+
+---
+
 ## 管线流程
 
 ```
-Phase 1: 需求确认
+Phase 1: 需求确认                              → 🔒 REVIEW GATE
   ↓
-Phase 2: 美术方向 (kais-art-direction)     → 📌 git checkpoint
+Phase 2: 美术方向 (kais-art-direction)         → 📌 git checkpoint → 🔒 REVIEW GATE
   ↓ Step 3.5: 生成光影参考图 (lighting_ref.png) → 四维锚定-光影
   ↓
-Phase 3: 角色设计 (kais-character-designer) → 📌 git checkpoint
+Phase 3: 角色设计 (kais-character-designer)     → 📌 git checkpoint → 🔒 REVIEW GATE
   ↓
-Phase 4: 剧本编写 (kais-scenario-writer + kais-emotion 对白注入)   → 📌 git checkpoint
+Phase 4: 剧本编写 (kais-scenario-writer + kais-emotion 对白注入) → 📌 git checkpoint → 🔒 REVIEW GATE
   ↓
-Phase 4.5: 配音 (kais-voice)                → 📌 git checkpoint
+Phase 4.5: 配音 (kais-voice)                    → 📌 git checkpoint → 🔒 REVIEW GATE
   ↓ 音色推荐 + 样本生成 + 用户审核 + 批量合成
   ↓
-Phase 5: 场景图生成 (kais-scene-designer)   → 📌 git checkpoint
+Phase 5: 场景图生成 (kais-scene-designer)       → 📌 git checkpoint
   ↓
-Phase 5.3: 线稿生成（anatomy-guard 预防） → 📌 git checkpoint
+Phase 5.3: 线稿生成（anatomy-guard 预防）       → 📌 git checkpoint
   ↓ anatomy-guard 线稿验证（GLM-4V 检测 + 重试）
   ↓
-Phase 5.4: 线稿审核 (FAIL → 回滚到 5.3)
+Phase 5.4: 线稿审核 (FAIL → 回滚到 5.3)        → 🔒 REVIEW GATE
   ↓
 Phase 5.5: 基于线稿渲染（四维锚定注入 + anatomy-guard 验证修复） → 📌 git checkpoint
   ↓
-Phase 5.6: 渲染审核 (FAIL → 回滚到 5.5)
+Phase 5.6: 渲染审核 (FAIL → 回滚到 5.5)        → 🔒 REVIEW GATE
   ↓
 Phase 5.7: 拍摄手法规划 (kais-cinematography-planner) → 📌 git checkpoint
   ↓
-Phase 6: 分镜板 (kais-storyboard-designer)  → 📌 git checkpoint
+Phase 6: 分镜板 (kais-storyboard-designer)  → 📌 git checkpoint → 🔒 REVIEW GATE
   ↓
-Phase 7: 视频生成 (kais-camera + 时序锚定 + 延长链) → 📌 git checkpoint
+Phase 7: 视频生成 (kais-camera + 时序锚定 + 延长链) → 📌 git checkpoint → 🔒 REVIEW GATE
   ↓ 延长链：种子片段 → 末帧桥接 → 连续延长
   ↓ 断点续传：支持从任意镜头重新延长
   ↓
@@ -180,6 +205,7 @@ python3 lib/scripts/scene-evaluator.py --mode render spec.json assets/scenes/
 | kais-storyboard-designer | 6 | 分镜板设计 |
 | kais-camera | 7 | 视频生成 + 合成 |
 | kais-shooting-script | - | 拍摄脚本生成 |
+| kais-review-page | - | 审核页面构建（HTML 交互式预览） |
 
 ## 共享工具
 
