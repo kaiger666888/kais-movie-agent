@@ -62,3 +62,17 @@ content_type_presets:
     hook_bonus: 4
     engagement_bonus: 2
     duration_penalty: 2
+
+# 第一导演（四维蓝图元层）
+first_director:
+  enabled: true
+  model: glm-4-flash
+  blueprint_path: blueprint.json
+  cognitive_walkthrough_enabled: true
+  entropy_injection_enabled: true
+  causal_loop_enabled: false  # 发布后启用
+  four_dimension_weights:
+    neuro: 0.25
+    emotion: 0.25
+    narrative: 0.25
+    social: 0.25
