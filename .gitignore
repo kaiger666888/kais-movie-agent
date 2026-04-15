@@ -13,3 +13,4 @@ skills/kais-voice/
 
 node_modules/
 .backup/
+lib/bgm-selector.js

@@ -140,7 +140,8 @@ node lib/git-stage-manager.js rollback <workdir> <phase>   # 回滚
 
 ## 线稿控制管线（Phase 5.3-5.6）
 
-> 📖 完整参数与命令见 [`references/sketch-pipeline.md`](references/sketch-pipeline.md)
+> ⚠️ **强制规则：所有镜头必须先线稿后渲染，无例外。** 不考虑积分成本，质量优先。
+> 线稿是构图和比例的保险锁，跳过线稿直接渲染会导致比例失调、构图崩坏。
 
 两阶段生成：先线稿锁定构图（Phase 5.3），再基于线稿渲染释放风格（Phase 5.5）。
 
