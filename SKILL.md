@@ -47,14 +47,14 @@ Phase 1: 需求确认 + 深度调研                     → 🔒 REVIEW GATE
 Phase 2: 剧本大纲 (kais-scenario-writer)           → 🔒 REVIEW GATE
   └─ 剧本预测试 (kais-audience 深度测评)            → checkpoint (自动)
 Phase 3: 美术方向 (kais-art-direction)             → 🔒 REVIEW GATE
-Phase 4: 角色设计 (kais-character-designer)         → 🔒 REVIEW GATE
+Phase 4: 角色设计 (kais-character-designer + kais-blender-pose) → 🔒 REVIEW GATE
 Phase 4.5: 配音 (kais-voice)                       → 🔒 REVIEW GATE
 Phase 5: 场景图生成 (kais-scene-designer)           → checkpoint
 Phase 5.3: 线稿生成（anatomy-guard 预防）           → checkpoint
 Phase 5.5: 基于线稿渲染                            → checkpoint
 Phase 5.6: 渲染审核                                → 🔒 REVIEW GATE
 Phase 5.7: 拍摄手法规划                            → checkpoint
-Phase 6: 分镜板 (kais-storyboard-designer)          → 🔒 REVIEW GATE
+Phase 6: 分镜板 (kais-storyboard-designer + kais-blender-pose) → 🔒 REVIEW GATE
 Phase 7: 视频生成 (kais-camera + 延长链)            → 🔒 REVIEW GATE
 Phase 8: 后期合成 + 交付                           → checkpoint
 ```
@@ -237,6 +237,7 @@ node lib/git-stage-manager.js rollback <workdir> <phase>   # 回滚
 | kais-scenario-writer | 2 | 剧本/分镜编写（对白情感注入） |
 | kais-art-direction | 3 | 美术方向/视觉风格定义 |
 | kais-character-designer | 4 | 角色设计 + 参考图生成 |
+| kais-blender-pose | 4, 6 | 3D 姿态参考图生成（Mixamo 动画帧截取 / 即梦图生图） |
 | kais-voice | 4.5 | 语音合成（GLM-TTS 多音色 + 审核选择） |
 | kais-scene-designer | 5 | 场景图生成 |
 | kais-cinematography-planner | 5.7 | 拍摄手法批量映射（Coverage Map） |
@@ -262,6 +263,7 @@ node lib/git-stage-manager.js rollback <workdir> <phase>   # 回滚
 | bgm-selector.js | lib/ | BGM 选择（10种风格库，场景情感自动匹配）|
 | guard.js | skills/kais-anatomy-guard/lib/ | 肢体解剖修复守卫（negative_prompt + GLM-4V 检测 + 修复）|
 | git-stage-manager.js | lib/ | Git 阶段版本管理（checkpoint/rollback/diff）|
+| pose-reference.js | lib/hooks/ | 姿态参考图生成（kais-blender-pose 集成，Phase 3/6 hook）|
 | 1st-director.js | lib/ | 四维蓝图生成 + 认知走查 + 模因提取 + 熵注入 + 因果闭环（元层）|
 | topic-selector-adapter.js | lib/ | 选题发散适配器（聚合四维尺度/6维度门控/受众匹配约束 → LLM生成候选选题）|
 - **文生图**: 即梦 API (jimeng-5.0)
