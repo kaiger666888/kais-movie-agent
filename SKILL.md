@@ -48,6 +48,7 @@ Phase 2: 剧本大纲 (kais-scenario-writer)           → 🔒 REVIEW GATE
   └─ 剧本预测试 (kais-audience 深度测评)            → checkpoint (自动)
 Phase 3: 美术方向 (kais-art-direction)             → 🔒 REVIEW GATE
 Phase 4: 角色设计 (kais-character-designer + kais-blender-pose) → 🔒 REVIEW GATE
+  └─ 剧本量化分析 (kais-story-score, 可选)            → checkpoint (自动)
 Phase 4.5: 配音 (kais-voice)                       → 🔒 REVIEW GATE
 Phase 5: 场景图生成 (kais-scene-designer)           → checkpoint
 Phase 5.3: 线稿生成（anatomy-guard 预防）           → checkpoint
@@ -57,6 +58,7 @@ Phase 5.7: 拍摄手法规划                            → checkpoint
 Phase 6: 分镜板 (kais-storyboard-designer + kais-blender-pose) → 🔒 REVIEW GATE
 Phase 7: 视频生成 (kais-camera + 延长链)            → 🔒 REVIEW GATE
 Phase 8: 后期合成 + 交付                           → checkpoint
+  └─ Phase 8.5: 质量门控 (6维度 + story-score注入)  → 🔒 APPROVE/WARN/REJECT
 ```
 
 > 📖 完整 Phase 流程图（含子步骤）见 [`references/pipeline-flow.md`](references/pipeline-flow.md)
@@ -246,6 +248,7 @@ node lib/git-stage-manager.js rollback <workdir> <phase>   # 回滚
 | kais-camera | 7 | 视频生成 + 合成 |
 | kais-shooting-script | - | 拍摄脚本生成 |
 | kais-review-page | - | 审核页面构建（HTML 交互式预览） |
+| kais-story-score | 4, 8.5 | 剧本量化分析（5维度：弧线/情感/角色/节奏/文本） + 质量门控注入 |
 
 ## 共享工具
 
