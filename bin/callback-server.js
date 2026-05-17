@@ -22,9 +22,9 @@
 
 import { createServer } from 'node:http';
 import { createHmac } from 'node:crypto';
-import { execFile } from 'node:child_process';
+import { execFile, spawn } from 'node:child_process';
 import { readFile, readdir, writeFile } from 'node:fs/promises';
-import { join } from 'node:path';
+import { join, dirname } from 'node:path';
 
 // ─── Configuration ──────────────────────────────────────────
 
@@ -68,7 +68,27 @@ function verifyGpuHmac(body, signature) {
 // ─── State File Lookup ──────────────────────────────────────
 
 /**
- * Find the .pipeline-state.json that contains the matching review_id.
+ * Parse content_ref string into episode and phase components.
+ * Format: "EP01:art-direction" or "kais-movie-agent:EP01:art-direction"
+ *
+ * @param {string} contentRef - Content reference from callback payload
+ * @returns {{episode: string, phaseId: string}|null}
+ */
+function parseContentRef(contentRef) {
+  if (!contentRef) return null;
+  const parts = contentRef.split(':');
+  // Handle "kais-movie-agent:EP01:art-direction" or "EP01:art-direction"
+  if (parts.length === 3 && parts[1].startsWith('EP')) {
+    return { episode: parts[1], phaseId: parts[2] };
+  }
+  if (parts.length === 2 && parts[0].startsWith('EP')) {
+    return { episode: parts[0], phaseId: parts[1] };
+  }
+  return null;
+}
+
+/**
+ * Find the .pipeline-state.json that contains the matching review_id or content_ref.
  * Uses the workdir from review metadata to locate the correct project directory.
  *
  * @param {number} reviewId - The review ID from the callback
@@ -76,7 +96,47 @@ function verifyGpuHmac(body, signature) {
  * @returns {Promise<{stateFilePath: string, state: object, phaseId: string}|null>}
  */
 async function findPipelineState(reviewId, payload) {
-  // Strategy 1: Use workdir from payload metadata if available
+  // Strategy 1: Use content_ref to parse episode + phase, then find state
+  const contentRef = payload.content_ref || '';
+  const parsed = parseContentRef(contentRef);
+  if (parsed) {
+    // Try metadata.workdir first
+    const metadata = payload.metadata || {};
+    const workdir = metadata.workdir;
+    if (workdir) {
+      const stateFilePath = join(workdir, '.pipeline-state.json');
+      try {
+        const state = JSON.parse(await readFile(stateFilePath, 'utf-8'));
+        if (state.phases[parsed.phaseId]) {
+          return { stateFilePath, state, phaseId: parsed.phaseId };
+        }
+      } catch {
+        // State file not found or invalid at this path, continue to search
+      }
+    }
+    // Fallback: search PIPELINE_WORKDIR children for matching episode
+    try {
+      const entries = await readdir(PIPELINE_WORKDIR, { withFileTypes: true });
+      for (const entry of entries) {
+        if (!entry.isDirectory()) continue;
+        const stateFilePath = join(PIPELINE_WORKDIR, entry.name, '.pipeline-state.json');
+        try {
+          const raw = await readFile(stateFilePath, 'utf-8');
+          const state = JSON.parse(raw);
+          if (state.episode === parsed.episode && state.phases[parsed.phaseId]) {
+            return { stateFilePath, state, phaseId: parsed.phaseId };
+          }
+        } catch {
+          // Skip unreadable/missing state files
+        }
+      }
+    } catch {
+      // Workdir may not be readable
+    }
+  }
+
+  // Strategy 2: Use review_id to match directly
+  // Strategy 2a: Use workdir from payload metadata if available
   const metadata = payload.metadata || {};
   const workdir = metadata.workdir;
 
@@ -94,7 +154,7 @@ async function findPipelineState(reviewId, payload) {
     }
   }
 
-  // Strategy 2: Search PIPELINE_WORKDIR direct children for matching review_id
+  // Strategy 2b: Search PIPELINE_WORKDIR direct children for matching review_id
   try {
     const entries = await readdir(PIPELINE_WORKDIR, { withFileTypes: true });
     for (const entry of entries) {
@@ -125,12 +185,21 @@ async function findPipelineState(reviewId, payload) {
  * Process a verified callback payload. Spawns pipeline resume or rollback
  * as a detached child process.
  *
+ * Callback payload structure (from review platform):
+ *   - review_id: number
+ *   - content_ref: string (e.g., "EP01:art-direction" or "kais-movie-agent:EP01:art-direction")
+ *   - new_state: string (e.g., "COMPLETE")
+ *   - disposition_action: string ("approve" | "reject")
+ *   - source_system: string
+ *   - metadata: object (from original review submission)
+ *   - review_result: object (selected, scores, feedback from reviewer)
+ *
  * @param {object} payload - Verified callback payload
  */
 async function handleCallback(payload) {
-  const { review_id, new_state, disposition_action, source_system } = payload;
+  const { review_id, content_ref, new_state, disposition_action, source_system } = payload;
 
-  console.log(`[callback] Processing review_id=${review_id} action=${disposition_action} state=${new_state} source=${source_system}`);
+  console.log(`[callback] Processing review_id=${review_id} content_ref=${content_ref || ''} action=${disposition_action} state=${new_state} source=${source_system}`);
 
   // Retry logic for review_id lookup (handles race condition from Pitfall 4)
   let found = null;
@@ -154,35 +223,78 @@ async function handleCallback(payload) {
   }
 
   const { stateFilePath, state, phaseId } = found;
-  const workdir = state.workdir || join(stateFilePath, '..');
+  const workdir = dirname(stateFilePath);
   console.log(`[callback] Found review_id=${review_id} in phase=${phaseId} at ${stateFilePath}`);
 
   const isApproved = disposition_action === 'approve' || (new_state === 'COMPLETE' && disposition_action !== 'reject');
 
   if (isApproved) {
-    // Approval: spawn pipeline resume as detached child process
-    const phase = phaseId;
-    console.log(`[callback] Approved — spawning pipeline resume for phase=${phase} workdir=${workdir}`);
+    console.log(`[callback] Approved — writing review results and spawning pipeline resume for phase=${phaseId} workdir=${workdir}`);
 
-    // Update state: mark phase as approved
+    // Extract review results from callback payload
+    const reviewResult = payload.review_result || {};
+    const selected = reviewResult.selected || [];
+    const scores = reviewResult.scores || {};
+    const feedback = reviewResult.feedback || {};
+
+    // Update state: mark phase as approved with review results
     state.phases[phaseId].status = 'approved';
     state.phases[phaseId].approved_at = new Date().toISOString();
+    state.phases[phaseId].review_result = {
+      action: 'approved',
+      selected,
+      scores,
+      feedback,
+    };
     await writeFile(stateFilePath, JSON.stringify(state, null, 2));
+    console.log(`[callback] Review results written: selected=${selected.length} scores=${Object.keys(scores).length} feedback=${Object.keys(feedback).length}`);
 
-    const child = execFile(
-      'node',
-      ['lib/pipeline.js', 'resume', phase, '--workdir', workdir],
-      { cwd: PIPELINE_WORKDIR, detached: true, stdio: 'ignore' },
-    );
-    child.unref();
-    console.log(`[callback] Pipeline resume spawned (PID: ${child.pid})`);
+    // Spawn pipeline resume as detached child process
+    // Uses inline script to import Pipeline and call resume() for the next phase
+    const PHASES_ORDER = [
+      'requirement', 'art-direction', 'character', 'scenario',
+      'voice', 'scene', 'storyboard', 'camera', 'post-production', 'quality-gate',
+    ];
+    const currentIdx = PHASES_ORDER.indexOf(phaseId);
+    const nextPhaseIdx = currentIdx + 1;
+
+    if (nextPhaseIdx < PHASES_ORDER.length) {
+      const nextPhaseId = PHASES_ORDER[nextPhaseIdx];
+      // Determine the project root: two levels up from bin/callback-server.js
+      const projectRoot = join(dirname(import.meta.url.replace('file://', '')), '..');
+
+      // Spawn a node process that imports Pipeline and resumes from the next phase
+      const resumeScript = `
+import { Pipeline } from '${projectRoot}/lib/pipeline.js';
+const p = new Pipeline({ workdir: '${workdir}', episode: '${state.episode || 'EP01'}' });
+try {
+  const result = await p.resume('${nextPhaseId}');
+  process.exit(result.success ? 0 : 1);
+} catch (err) {
+  console.error('[resume]', err.message);
+  process.exit(1);
+}
+`;
+      const child = spawn('node', ['--input-type=module', '-e', resumeScript], {
+        cwd: projectRoot,
+        detached: true,
+        stdio: 'ignore',
+        env: { ...process.env },
+      });
+      child.unref();
+      console.log(`[callback] Pipeline resume spawned for next phase=${nextPhaseId} (PID: ${child.pid})`);
+    } else {
+      console.log(`[callback] Phase=${phaseId} is the last phase, no resume needed`);
+    }
 
   } else if (disposition_action === 'reject') {
     // Rejection: rollback to previous stage checkpoint
     console.log(`[callback] Rejected — rolling back phase=${phaseId} workdir=${workdir}`);
 
+    // Extract review results for rejection context
+    const reviewResult = payload.review_result || {};
+
     // Find the previous stage to rollback to
-    // Import PHASES order to find previous stage
     const PHASES_ORDER = [
       'requirement', 'art-direction', 'character', 'scenario',
       'voice', 'scene', 'storyboard', 'camera', 'post-production', 'quality-gate',
@@ -203,10 +315,15 @@ async function handleCallback(payload) {
       console.warn(`[callback] No previous stage to rollback to for phase=${phaseId}`);
     }
 
-    // Update state: mark phase as rejected
+    // Update state: mark phase as rejected with review results
     state.phases[phaseId].status = 'rejected';
     state.phases[phaseId].rejected_at = new Date().toISOString();
     state.phases[phaseId].review_id = null;
+    state.phases[phaseId].review_result = {
+      action: 'rejected',
+      rejected: reviewResult.rejected || [],
+      feedback: reviewResult.feedback || {},
+    };
     await writeFile(stateFilePath, JSON.stringify(state, null, 2));
 
   } else {
