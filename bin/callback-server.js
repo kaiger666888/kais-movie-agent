@@ -1,15 +1,21 @@
 #!/usr/bin/env node
 /**
- * callback-server.js — Review platform callback receiver
+ * callback-server.js — Review platform + GPU task callback receiver
  *
  * Lightweight node:http server that receives HMAC-SHA256 signed callbacks
- * from the review platform and spawns pipeline resume or rollback as child processes.
+ * from the review platform (review results) and gold-team (GPU task events)
+ * and spawns pipeline resume or rollback as child processes.
+ *
+ * Routes:
+ *   POST /callback/review_result — Review platform approval/rejection callbacks
+ *   POST /callback/gpu_task      — Gold-team GPU task completion/failure callbacks
  *
  * Usage:
- *   REVIEW_CALLBACK_SECRET=shared-secret node bin/callback-server.js
+ *   REVIEW_CALLBACK_SECRET=shared-secret HMAC_SECRET_MA_GT=gpu-secret node bin/callback-server.js
  *
  * Environment:
- *   REVIEW_CALLBACK_SECRET — HMAC shared secret (must match callback_secret in review submission)
+ *   REVIEW_CALLBACK_SECRET — HMAC shared secret for review callbacks (must match callback_secret in review submission)
+ *   HMAC_SECRET_MA_GT      — HMAC shared secret for GPU task callbacks from gold-team
  *   CALLBACK_PORT          — HTTP listen port (default: 8766)
  *   PIPELINE_WORKDIR       — Base directory for pipeline projects (default: process.cwd())
  */
@@ -23,6 +29,7 @@ import { join } from 'node:path';
 // ─── Configuration ──────────────────────────────────────────
 
 const CALLBACK_SECRET = process.env.REVIEW_CALLBACK_SECRET || '';
+const GPU_HMAC_SECRET = process.env.HMAC_SECRET_MA_GT || '';
 const PORT = parseInt(process.env.CALLBACK_PORT || '8766', 10);
 const PIPELINE_WORKDIR = process.env.PIPELINE_WORKDIR || process.cwd();
 
@@ -40,6 +47,21 @@ const PIPELINE_WORKDIR = process.env.PIPELINE_WORKDIR || process.cwd();
 function verifyHmac(body, signature) {
   if (!CALLBACK_SECRET) return true; // Dev mode: no verification
   const expected = createHmac('sha256', CALLBACK_SECRET).update(body).digest('hex');
+  return `sha256=${expected}` === signature;
+}
+
+/**
+ * Verify HMAC-SHA256 signature for GPU task callbacks.
+ * Uses HMAC_SECRET_MA_GT env variable as the shared secret.
+ * In dev mode (no HMAC_SECRET_MA_GT set), always returns true.
+ *
+ * @param {string} body - Raw request body
+ * @param {string} signature - Value from X-Callback-Signature header
+ * @returns {boolean}
+ */
+function verifyGpuHmac(body, signature) {
+  if (!GPU_HMAC_SECRET) return true; // Dev mode: no verification
+  const expected = createHmac('sha256', GPU_HMAC_SECRET).update(body).digest('hex');
   return `sha256=${expected}` === signature;
 }
 
@@ -192,53 +214,147 @@ async function handleCallback(payload) {
   }
 }
 
+// ─── GPU Task Callback Handler ──────────────────────────────
+
+/**
+ * Process a verified GPU task callback payload.
+ * Dispatches based on event type: task.artifacts_ready or task.failed.
+ *
+ * @param {object} payload - Verified callback payload
+ */
+async function handleGpuCallback(payload) {
+  const { event, task_id, error } = payload;
+
+  if (event === 'task.artifacts_ready') {
+    console.log(`[GPU] 任务 ${task_id} 产物就绪`);
+
+    // Save event to state file
+    const stateFilePath = join(PIPELINE_WORKDIR, '.gpu-task-state.json');
+    let state = {};
+    try {
+      state = JSON.parse(await readFile(stateFilePath, 'utf-8'));
+    } catch {
+      // File doesn't exist yet, start fresh
+    }
+    if (!state.tasks) state.tasks = {};
+    state.tasks[task_id] = state.tasks[task_id] || {};
+    state.tasks[task_id].status = 'artifacts_ready';
+    state.tasks[task_id].updated_at = new Date().toISOString();
+    await writeFile(stateFilePath, JSON.stringify(state, null, 2));
+
+  } else if (event === 'task.failed') {
+    console.log(`[GPU] 任务 ${task_id} 失败: ${error || 'unknown error'}`);
+
+    // Save event to state file
+    const stateFilePath = join(PIPELINE_WORKDIR, '.gpu-task-state.json');
+    let state = {};
+    try {
+      state = JSON.parse(await readFile(stateFilePath, 'utf-8'));
+    } catch {
+      // File doesn't exist yet, start fresh
+    }
+    if (!state.tasks) state.tasks = {};
+    state.tasks[task_id] = state.tasks[task_id] || {};
+    state.tasks[task_id].status = 'failed';
+    state.tasks[task_id].error = error || null;
+    state.tasks[task_id].updated_at = new Date().toISOString();
+    await writeFile(stateFilePath, JSON.stringify(state, null, 2));
+
+  } else {
+    console.warn(`[GPU] Unknown event=${event}, ignoring`);
+  }
+}
+
 // ─── HTTP Server ─────────────────────────────────────────────
 
 const server = createServer((req, res) => {
-  // Only accept POST /callback/review_result
-  if (req.url !== '/callback/review_result' || req.method !== 'POST') {
-    res.writeHead(404, { 'Content-Type': 'text/plain' });
-    res.end('Not found');
+  // Route: Review platform callbacks
+  if (req.url === '/callback/review_result' && req.method === 'POST') {
+    let body = '';
+    req.on('data', chunk => { body += chunk; });
+
+    req.on('end', () => {
+      // Verify HMAC signature
+      const signature = req.headers['x-callback-signature'] || '';
+      if (!verifyHmac(body, signature)) {
+        console.warn(`[callback] HMAC verification failed for request from ${req.socket.remoteAddress}`);
+        res.writeHead(403, { 'Content-Type': 'application/json' });
+        res.end('{"error":"invalid signature"}');
+        return;
+      }
+
+      // Parse payload
+      let payload;
+      try {
+        payload = JSON.parse(body);
+      } catch (err) {
+        console.error(`[callback] Invalid JSON payload: ${err.message}`);
+        res.writeHead(400, { 'Content-Type': 'application/json' });
+        res.end('{"error":"invalid json"}');
+        return;
+      }
+
+      // Return 200 immediately (don't block callback delivery)
+      res.writeHead(200, { 'Content-Type': 'application/json' });
+      res.end('{"ok":true}');
+
+      // Process callback in background
+      handleCallback(payload).catch(err => {
+        console.error(`[callback] Unhandled error in handleCallback: ${err.message}`);
+      });
+    });
+
+    req.on('error', err => {
+      console.error(`[callback] Request error: ${err.message}`);
+    });
     return;
   }
 
-  let body = '';
-  req.on('data', chunk => { body += chunk; });
+  // Route: GPU task callbacks from gold-team
+  if (req.url === '/callback/gpu_task' && req.method === 'POST') {
+    let body = '';
+    req.on('data', chunk => { body += chunk; });
 
-  req.on('end', () => {
-    // Verify HMAC signature
-    const signature = req.headers['x-callback-signature'] || '';
-    if (!verifyHmac(body, signature)) {
-      console.warn(`[callback] HMAC verification failed for request from ${req.socket.remoteAddress}`);
-      res.writeHead(403, { 'Content-Type': 'application/json' });
-      res.end('{"error":"invalid signature"}');
-      return;
-    }
+    req.on('end', () => {
+      // Verify GPU HMAC signature
+      const signature = req.headers['x-callback-signature'] || '';
+      if (!verifyGpuHmac(body, signature)) {
+        console.warn(`[GPU] HMAC verification failed for request from ${req.socket.remoteAddress}`);
+        res.writeHead(403, { 'Content-Type': 'application/json' });
+        res.end('{"error":"invalid signature"}');
+        return;
+      }
 
-    // Parse payload
-    let payload;
-    try {
-      payload = JSON.parse(body);
-    } catch (err) {
-      console.error(`[callback] Invalid JSON payload: ${err.message}`);
-      res.writeHead(400, { 'Content-Type': 'application/json' });
-      res.end('{"error":"invalid json"}');
-      return;
-    }
+      // Parse payload
+      let payload;
+      try {
+        payload = JSON.parse(body);
+      } catch (err) {
+        console.error(`[GPU] Invalid JSON payload: ${err.message}`);
+        res.writeHead(400, { 'Content-Type': 'application/json' });
+        res.end('{"error":"invalid json"}');
+        return;
+      }
 
-    // Return 200 immediately (don't block callback delivery)
-    res.writeHead(200, { 'Content-Type': 'application/json' });
-    res.end('{"ok":true}');
+      // Return 200 immediately (don't block callback delivery)
+      res.writeHead(200, { 'Content-Type': 'application/json' });
+      res.end('{"ok":true}');
 
-    // Process callback in background
-    handleCallback(payload).catch(err => {
-      console.error(`[callback] Unhandled error in handleCallback: ${err.message}`);
+      // Process GPU callback in background
+      handleGpuCallback(payload).catch(err => {
+        console.error(`[GPU] Unhandled error in handleGpuCallback: ${err.message}`);
+      });
     });
-  });
 
-  req.on('error', err => {
-    console.error(`[callback] Request error: ${err.message}`);
-  });
+    req.on('error', err => {
+      console.error(`[GPU] Request error: ${err.message}`);
+    });
+    return;
+  }
+
+  // All other routes: 404
+  res.writeHead(404, { 'Content-Type': 'text/plain' });
+  res.end('Not found');
 });
 
 server.listen(PORT, '0.0.0.0', () => {
