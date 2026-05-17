@@ -14,8 +14,10 @@
  */
 
 import { Pipeline } from '../lib/pipeline.js';
+import crypto from 'node:crypto';
 
 const [,, command, ...args] = process.argv;
+const pipelineTraceId = crypto.randomUUID();
 
 // ─── Argument Parsing ─────────────────────────────────────────
 
@@ -57,8 +59,16 @@ async function runCommand(opts) {
   const pipeline = new Pipeline({
     workdir: opts.workdir || process.cwd(),
     episode: opts.episode || 'EP01',
+    traceId: pipelineTraceId,
     onProgress(phaseId, phaseName, status) {
-      console.log(`[pipeline] ${phaseName} (${phaseId}): ${status}`);
+      console.log(JSON.stringify({
+        traceId: pipelineTraceId,
+        phase: phaseId,
+        event: 'phase_progress',
+        phaseName,
+        status,
+        ts: new Date().toISOString(),
+      }));
     },
   });
 
@@ -73,8 +83,16 @@ async function resumeCommand(opts) {
   const pipeline = new Pipeline({
     workdir: opts.workdir || process.cwd(),
     episode: opts.episode || 'EP01',
+    traceId: pipelineTraceId,
     onProgress(phaseId, phaseName, status) {
-      console.log(`[pipeline] ${phaseName} (${phaseId}): ${status}`);
+      console.log(JSON.stringify({
+        traceId: pipelineTraceId,
+        phase: phaseId,
+        event: 'phase_progress',
+        phaseName,
+        status,
+        ts: new Date().toISOString(),
+      }));
     },
   });
 
