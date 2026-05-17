@@ -41,7 +41,7 @@
   - [ ] 支持 gold-team 配置传入
 
 ## Phase 4: 多候选审核调用改造
-- status: not_started
+- status: complete
 - goal: 提交审核时携带 candidates（3选1等），支持评分和反馈
 - requirements:
   - submitReview 支持 candidates 参数
