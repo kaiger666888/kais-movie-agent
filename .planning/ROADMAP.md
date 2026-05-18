@@ -51,3 +51,70 @@
   - [ ] 审核提交可携带 candidates 数组
   - [ ] 支持 enable_scoring 和 enable_feedback 配置
   - [ ] 不破坏现有 submitReview 接口
+
+## Phase 5: art-direction FLUX 图像生成 (4A.2)
+- status: complete
+- priority: P0
+- goal: 增加 art-direction phase 通过 gold-team FLUX 引擎生成高质量图像
+- requirements:
+  - 新增 generateArtDirectionViaGoldTeam 函数
+  - 使用 image_draw (FLUX) / image_refine / image_control 任务类型
+  - 支持 num_images 多候选生成
+  - 带降级回退
+- success_criteria:
+  - [x] art-direction phase 可通过 gold-team 生成 FLUX 图像
+  - [x] 支持多候选输出
+  - [x] gold-team 不可用时优雅降级
+
+## Phase 6: camera VIDEO_FINAL 视频生成 (4A.5)
+- status: complete
+- priority: P0
+- goal: 增加 camera phase 通过 gold-team VIDEO_FINAL 引擎生成视频
+- requirements:
+  - 新增 generateVideoViaGoldTeam 函数
+  - 支持 video_preview_fast / video_preview / video_final / video_to_video / video_interpolate
+  - preview_mode 切换快速/正式模式
+  - 带降级回退
+- success_criteria:
+  - [x] camera phase 可通过 gold-team 生成视频
+  - [x] 支持 preview/final 模式切换
+  - [x] gold-team 不可用时优雅降级
+
+## Phase 7: voice VOICE_CLONE/CONVERT (4A.6)
+- status: complete
+- priority: P1
+- goal: 增加 voice phase 声音克隆和变声能力
+- requirements:
+  - 新增 cloneVoice 函数 (voice_clone)
+  - 新增 convertVoice 函数 (voice_convert)
+  - 带降级回退
+- success_criteria:
+  - [x] voice phase 支持声音克隆
+  - [x] voice phase 支持变声
+  - [x] gold-team 不可用时优雅降级
+
+## Phase 8: post-production MUSIC/SFX (4A.7)
+- status: complete
+- priority: P0
+- goal: 通过 gold-team 生成配乐、音效、音频分离
+- requirements:
+  - 新增 generateBGM 函数 (music_final)
+  - 新增 generateSFX 函数 (sfx_generation)
+  - 新增 separateAudio 函数 (audio_separate)
+  - 带降级回退
+- success_criteria:
+  - [x] post-production phase 支持配乐生成
+  - [x] 支持音效生成
+  - [x] 支持音频分离
+  - [x] gold-team 不可用时优雅降级
+
+## Phase 9: lip-sync LIP_SYNC_RT (4A.8)
+- status: complete
+- priority: P2
+- goal: 后期口型同步
+- requirements:
+  - 新增 lipSync 函数 (lip_sync_rt)
+  - 带降级回退
+- success_criteria:
+  - [x] lip-sync 可通过 gold-team 执行口型同步
+  - [x] gold-team 不可用时优雅降级
