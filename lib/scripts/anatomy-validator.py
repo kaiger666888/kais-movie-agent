@@ -25,7 +25,8 @@ anatomy-validator.py — AI 生成图片的解剖质量检测器
   自动从 ~/.openclaw/openclaw.json 读取 zai API key
 """
 
-import json, base64, urllib.request, os, sys, argparse
+import json, base64, os, sys, argparse
+from hermes_helper import call_hermes_vision
 
 API_URL = "https://open.bigmodel.cn/api/paas/v4/chat/completions"
 MODEL = "glm-4.6v"
@@ -170,15 +171,7 @@ def validate_anatomy(img_path, api_key, mode="full"):
         }]
     }
 
-    data = json.dumps(payload).encode()
-    req = urllib.request.Request(API_URL, data=data, headers={
-        "Authorization": f"Bearer {api_key}",
-        "Content-Type": "application/json"
-    })
-
-    with urllib.request.urlopen(req, timeout=60) as r:
-        d = json.loads(r.read())
-        raw = d["choices"][0]["message"]["content"]
+    raw = call_hermes_vision(prompt, [b64], api_key, model=MODEL)
 
     # 清理临时文件
     if actual_path != img_path:

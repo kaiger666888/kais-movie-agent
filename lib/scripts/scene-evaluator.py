@@ -33,7 +33,8 @@ scene-evaluator.py — AI 生成场景图逻辑一致性自动评价器
   - render:  渲染专项检查（风格一致性/美感/无残留线稿/角色一致）
 """
 
-import json, base64, urllib.request, os, sys, glob
+import json, base64, os, sys, glob
+from hermes_helper import call_hermes_vision
 
 API_URL = "https://open.bigmodel.cn/api/paas/v4/chat/completions"
 MODEL = "glm-4.6v"
@@ -214,15 +215,7 @@ def evaluate_depth(img_path, description, depth_constraints, api_key):
         }]
     }
 
-    data = json.dumps(payload).encode()
-    req = urllib.request.Request(API_URL, data=data, headers={
-        "Authorization": f"Bearer {api_key}",
-        "Content-Type": "application/json"
-    })
-
-    with urllib.request.urlopen(req, timeout=60) as r:
-        d = json.loads(r.read())
-        raw = d["choices"][0]["message"]["content"]
+    raw = call_hermes_vision(prompt, [b64], api_key, model=MODEL)
 
     # 清理临时文件
     if actual_path != img_path:
@@ -319,23 +312,17 @@ def evaluate_single(img_path, description, constraints, api_key, mode="default")
             ]
         }]
     }
-    
-    data = json.dumps(payload).encode()
-    req = urllib.request.Request(API_URL, data=data, headers={
-        "Authorization": f"Bearer {api_key}",
-        "Content-Type": "application/json"
-    })
-    
-    with urllib.request.urlopen(req, timeout=60) as r:
-        d = json.loads(r.read())
-        return d["choices"][0]["message"]["content"]
-    
+
+    result = call_hermes_vision(prompt, [b64], api_key, model=MODEL)
+
     # 清理临时文件
     if actual_path != img_path:
         try:
             os.unlink(actual_path)
         except:
             pass
+
+    return result
 
 
 def parse_result(text):
