@@ -37,7 +37,7 @@ def call_hermes_vision(prompt: str, images_b64: list, api_key: str, model: str =
 
 
 def call_hermes_text(prompt: str, system: str = "", api_key: str = "",
-                     model: str = "glm-4-flash", temperature: float = 0.3) -> str:
+                     model: str = "glm-5.1", temperature: float = 0.3) -> str:
     """Route text LLM call through Hermes or fall back to direct API."""
     if HERMES_URL:
         try:
