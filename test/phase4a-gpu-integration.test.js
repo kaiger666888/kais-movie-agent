@@ -63,7 +63,6 @@ function mockPipeline() {
     config: {
       goldTeam: {
         baseUrl: `http://127.0.0.1:${mockPort}`,
-        apiKey: 'gt-mock-test-key',
         callbackBaseUrl: `http://127.0.0.1:${mockPort}`,
       },
       preview_mode: false,
@@ -292,14 +291,13 @@ describe('Phase 4A GPU Integration', () => {
       }
     });
 
-    it('should include X-API-Key header', async () => {
+    it('should include request headers', async () => {
       const { lipSync } = await import('../lib/phases/index.js');
       const pipeline = mockPipeline();
 
       await lipSync(pipeline, '/img.png', '/aud.wav');
 
-      // We verify the mock server received the request successfully,
-      // meaning auth header was accepted
+      // We verify the mock server received the request successfully
       assert.ok(submittedTasks.length > 0);
     });
   });

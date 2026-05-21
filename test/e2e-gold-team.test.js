@@ -1,7 +1,7 @@
 /**
  * E2E GPU Integration Tests — Real gold-team service
  *
- * Run with: GOLD_TEAM_URL=http://192.168.71.140:8900 GOLD_TEAM_API_KEY=xxx node --test test/e2e-gold-team.test.js
+ * Run with: GOLD_TEAM_URL=http://192.168.71.140:8900 node --test test/e2e-gold-team.test.js
  * Skip if env vars not set (safe for CI without gold-team access).
  */
 import { describe, it, before } from 'node:test';
@@ -23,7 +23,6 @@ import {
 } from '../lib/phases/index.js';
 
 const BASE_URL = process.env.GOLD_TEAM_URL;
-const API_KEY = process.env.GOLD_TEAM_API_KEY || '';
 const SKIP = !BASE_URL;
 
 function skipIfUnavailable() {
@@ -35,7 +34,7 @@ function skipIfUnavailable() {
 }
 
 function makeClient() {
-  return new GoldTeamClient({ baseUrl: BASE_URL, apiKey: API_KEY, timeout: 30000 });
+  return new GoldTeamClient({ baseUrl: BASE_URL, timeout: 30000 });
 }
 
 function mockPipeline() {
@@ -45,7 +44,6 @@ function mockPipeline() {
     config: {
       goldTeam: {
         baseUrl: BASE_URL,
-        apiKey: API_KEY,
         callbackBaseUrl: process.env.CALLBACK_BASE_URL || 'http://127.0.0.1:3000',
       },
       preview_mode: false,
@@ -89,7 +87,6 @@ describe('E2E: submitTTS', { skip: SKIP }, () => {
   it('should submit TTS with degraded mode when service unavailable', async () => {
     const badClient = new GoldTeamClient({
       baseUrl: 'http://127.0.0.1:1',
-      apiKey: 'bad-key',
       timeout: 3000,
     });
     const result = await badClient.submitTTSDegraded('test', {
@@ -199,7 +196,6 @@ describe('E2E: degradation', () => {
   it('should degrade gracefully when gold-team unreachable', async () => {
     const client = new GoldTeamClient({
       baseUrl: 'http://127.0.0.1:1',
-      apiKey: 'test',
       timeout: 2000,
     });
     const result = await client.submitTaskDegraded({
