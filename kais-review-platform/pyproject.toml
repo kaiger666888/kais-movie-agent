@@ -1,0 +1,22 @@
+[project]
+name = "kais-review-platform"
+version = "0.1.0"
+description = "Governance/review platform for AI production pipelines"
+requires-python = ">=3.12"
+dependencies = [
+    "fastapi>=0.115.0",
+    "uvicorn[standard]>=0.34.0",
+    "sqlalchemy>=2.0.0",
+    "aiosqlite>=0.20.0",
+    "redis>=5.0.0",
+    "arq>=0.26.0",
+    "pyjwt>=2.10.0",
+    "httpx>=0.28.0",
+    "pydantic-settings>=2.6.0",
+    "python-multipart>=0.0.18",
+    "pyyaml>=6.0.0",
+]
+
+[build-system]
+requires = ["setuptools>=75.0"]
+build-backend = "setuptools.backends._legacy:_Backend"
