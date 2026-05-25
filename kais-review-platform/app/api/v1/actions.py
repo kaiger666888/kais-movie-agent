@@ -25,6 +25,7 @@ from app.core.state_machine import (
     transition_state,
 )
 from app.core.dependencies import get_redis
+from app.models.evaluation import Evaluation
 from app.models.schema import Review
 from app.models.schemas import (
     ApiResponse,
@@ -42,6 +43,69 @@ from app.models.schemas import (
 logger = structlog.get_logger(__name__)
 
 router = APIRouter(prefix="/api/v1/reviews", tags=["actions"])
+
+
+# ---------------------------------------------------------------------------
+# Auto-collection: extract scores from review into evaluations
+# ---------------------------------------------------------------------------
+
+
+def _extract_human_scores(scores: list[dict] | None) -> dict:
+    """Extract average human dimension scores from review scores.
+    
+    Scores format: [{"candidate_ref": str, "score": int, "comment": str}]
+    Returns: {"human_cinematic": int, "human_motion": int, "human_consistency": int}
+    """
+    if not scores:
+        return {}
+    avg = sum(s.get("score", 0) for s in scores) / len(scores) if scores else 0
+    # Clamp to 1-5 range
+    clamped = max(1, min(5, round(avg)))
+    return {
+        "human_cinematic": clamped,
+        "human_motion": clamped,
+        "human_consistency": clamped,
+    }
+
+
+async def _auto_collect_evaluation(
+    db: AsyncSession,
+    review: Review,
+    disposition: str,
+    payload: dict | None = None,
+):
+    """Auto-create an evaluation record when a review is approved/rejected."""
+    try:
+        eval_id = str(uuid.uuid4())
+        metadata = review.metadata_json or {}
+        scores = review.scores_json or []
+        human_scores = _extract_human_scores(scores)
+
+        evaluation = Evaluation(
+            id=eval_id,
+            review_id=review.id,
+            phase=metadata.get("phase", review.type),
+            task_type=metadata.get("task_type", review.source_system),
+            success=(disposition == "approve"),
+            retry_count=0,
+            ai_quality_score=metadata.get("ai_quality_score"),
+            **human_scores,
+            hermes_decision_id=metadata.get("hermes_decision_id"),
+            hermes_confidence=metadata.get("hermes_confidence"),
+            parameters_used=metadata.get("parameters_used"),
+        )
+        db.add(evaluation)
+        await db.flush()
+
+        logger.info(
+            "evaluation_auto_collected",
+            eval_id=eval_id,
+            review_id=review.id,
+            disposition=disposition,
+        )
+    except Exception as e:
+        # Never block the review action if evaluation collection fails
+        logger.warning("evaluation_auto_collect_failed", review_id=review.id, error=str(e))
 
 
 # ---------------------------------------------------------------------------
@@ -399,6 +463,9 @@ async def approve_review(
         metadata["review_result"] = request.result.model_dump()
         review.metadata_json = metadata
 
+    # Auto-collect evaluation from review
+    await _auto_collect_evaluation(db, review, "approve", {"comment": request.comment})
+
     await db.refresh(review)
     return ApiResponse(
         data=_review_response(review).model_dump(),
@@ -465,6 +532,9 @@ async def reject_review(
             status_code=status.HTTP_409_CONFLICT,
             detail="Invalid state transition",
         )
+
+    # Auto-collect evaluation from rejection
+    await _auto_collect_evaluation(db, review, "reject", {"reason": request.reason})
 
     await db.refresh(review)
     return ApiResponse(
