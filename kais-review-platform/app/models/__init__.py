@@ -1,3 +1,4 @@
+from app.models.evaluation import Evaluation
 from app.models.schema import (
     AuditEntry,
     Base,
@@ -24,6 +25,7 @@ from app.models.schemas import (
 __all__ = [
     "AuditEntry",
     "Base",
+    "Evaluation",
     "PolicyVersion",
     "Review",
     "create_tables",
