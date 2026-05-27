@@ -1,43 +1,43 @@
 ---
 name: kais-movie-agent
-description: "AI短片全流程自动制作管线 (V7)。OpenClaw skill 架构：agent 用 hermes_llm/hermes_llm_vision/image 驱动创作，movie-agent 容器负责状态管理+GPU调度+文件存储。20步管线，审核门不可跳过。"
+description: "AI短片全流程自动制作管线 (V8)。OpenClaw 是唯一 LLM 调用者与编排引擎，无 movie-agent 容器依赖。gold-team 只做 GPU 调度。20步管线，审核门不可跳过。"
 ---
 
-# kais-movie-agent V7 — OpenClaw Agent 驱动架构
+# kais-movie-agent V8 — OpenClaw Agent 纯驱动架构
 
 ## 触发词
-`movie agent`, `短片制作`, `AI短片`, `视频管线`, `film pipeline`, `movie-wuji`, `AI视频制作`, `短视频管线`, `AI电影`, `影片制作`, `AI短剧`, `短剧制作`, `视频自动化`, `一键生成视频`, `AI拍片`, `kais-movie`, `movie pipeline`, `V7`
+`movie agent`, `短片制作`, `AI短片`, `视频管线`, `film pipeline`, `movie-wuji`, `AI视频制作`, `短视频管线`, `AI电影`, `影片制作`, `AI短剧`, `短剧制作`, `视频自动化`, `一键生成视频`, `AI拍片`, `kais-movie`, `movie pipeline`, `V8`, `V7`
 
 ---
 
-## 🏗️ 架构原则（V7 变更）
+## 🏗️ 架构原则（V8 变更）
 
-### Agent 驱动 vs 容器自驱动
+### OpenClaw 纯驱动架构
+
+- **Agent 驱动架构**：OpenClaw 是唯一 LLM 调用者与编排引擎
+- **不再依赖 movie-agent Docker 容器**（V7 已废弃）
+- **Platform (gold-team) 只做 GPU 调度**：接收任务、排队、执行、返回结果
+- **状态管理**：用 OpenClaw session 上下文 + 文件系统（不再用 Pipeline API）
+- **审核入口**：Telegram inline buttons + Toonflow 审核页面
 
 | 职责 | 执行者 | 工具 |
 |------|--------|------|
 | **创意生成**（剧本/prompt/场景描述） | OpenClaw Agent | `hermes_llm`, `hermes_llm_vision`, `image` |
 | **审核交互**（展示+等用户确认） | OpenClaw Agent | 会话回复 + inline buttons |
-| **状态管理**（pipeline 状态机） | movie-agent 容器 | `POST /api/v1/pipeline/*` |
-| **GPU 渲染**（图片/视频/TTS） | gold-team 容器 | `POST /api/v1/tasks` |
-| **文件存储**（产出物） | movie-agent 容器 | pipeline workdir |
-
-### LLM 扩展口
-
-Agent 默认用 `hermes_llm` 做创意生成。如果 movie-agent 容器内也有 LLM 能力（如 core-backend 的 universalAi），可以作为 **fallback**：
-- Agent 先用自己的 LLM
-- 如果需要批处理或离线任务，可以调用 movie-agent 的 pipeline API（容器内部可能用自带 LLM）
+| **状态管理**（管线进度） | OpenClaw Agent | session 上下文 + 文件系统 |
+| **GPU 渲染**（图片/视频/TTS） | gold-team 容器 | `exec curl → :8002/api/v1/tasks` |
+| **文件存储**（产出物） | 文件系统 | 项目 workdir |
 
 ### 工具映射
 
 ```
 创意写作 → hermes_llm(prompt, system)
 图像分析 → hermes_llm_vision(prompt, images) 或 image(prompt, images)
-图片生成 → image tool / gold-team API
-TTS     → gold-team API (tts-local/edge-tts)
-视频生成 → gold-team API (cloud-jimeng/seedance/comfyui-local)
-状态查询 → exec → curl movie-agent:8001/api/v1/pipeline/:id/status
-任务提交 → exec → curl gold-team:8002/api/v1/tasks
+图片生成 → exec curl → gold-team :8002/api/v1/tasks (type: image_draw)
+TTS     → exec curl → gold-team :8002/api/v1/tasks (type: tts)
+视频生成 → exec curl → gold-team :8002/api/v1/tasks (type: video_final)
+状态查询 → exec curl → gold-team :8002/api/v1/tasks/:id
+审核交互 → Telegram inline buttons / Toonflow 审核页面
 ```
 
 ---
@@ -104,34 +104,18 @@ Step 20: 质检与交付                                 → PASS/FAIL
 
 ## Agent 执行模式
 
-### 模式 A：Agent 直接驱动（默认）
-
-Agent 逐步执行每个 Step，自己调用 LLM/图片生成/审核交互：
+Agent 逐步执行每个 Step，自己调用 LLM / GPU 任务 / 审核交互：
 
 ```
 1. Agent 用 hermes_llm 生成内容
-2. 展示给用户 → 等确认
-3. 通过 gold-team API 提交 GPU 任务
-4. 查询状态 → 展示结果 → 等确认
+2. 展示给用户 → 等确认（Telegram inline buttons / Toonflow）
+3. 通过 exec curl 提交 GPU 任务到 gold-team :8002
+4. 轮询状态 → 展示结果 → 等确认
 5. 进入下一个 Step
 ```
 
-### 模式 B：Pipeline API 驱动（批量/离线）
-
-当用户明确要求"自动跑完"或需要离线执行时，通过 movie-agent 容器的 pipeline API：
-
-```bash
-# 创建 pipeline
-curl -X POST http://localhost:8001/api/v1/pipeline/create \
-  -H 'Content-Type: application/json' \
-  -d '{"project_id": <ID>}'
-
-# 启动
-curl -X POST http://localhost:8001/api/v1/pipeline/<id>/start
-
-# 查状态
-curl http://localhost:8001/api/v1/pipeline/<id>/status
-```
+> **V8 变更**：不再有 Pipeline API 模式，Agent 直接通过 exec curl 调用 gold-team。
+> 状态保存在 session 上下文和项目 workdir 文件中。
 
 ---
 
@@ -139,27 +123,13 @@ curl http://localhost:8001/api/v1/pipeline/<id>/status
 
 | 服务 | 地址 | 用途 |
 |------|------|------|
-| core-backend | localhost:8000 | 项目管理、小说存储 |
-| movie-agent | localhost:8001 | Pipeline 状态机 |
 | gold-team | localhost:8002 | GPU 渲染引擎 |
-| review-platform | localhost:8091 | 审核界面 |
-| ComfyUI | 172.17.0.1:8188 | 本地 GPU 推理 |
+| Toonflow | localhost:3000 | 前端展示+审核 |
+| ComfyUI | 172.17.0.1:8188 | 本地 GPU 推理（gold-team 内部调度） |
 
 ---
 
 ## API 速查
-
-### movie-agent（状态管理）
-
-```
-POST /api/v1/pipeline/create          ← {project_id, config?, metadata?}
-POST /api/v1/pipeline/:id/start       ← {from_phase?}
-POST /api/v1/pipeline/:id/resume      ← {phase, decision?}
-GET  /api/v1/pipeline/:id/status
-GET  /api/v1/pipeline/:id/phases
-POST /api/v1/pipeline/:id/cancel
-GET  /health
-```
 
 ### gold-team（GPU 任务）
 
@@ -295,7 +265,5 @@ node lib/git-stage-manager.js rollback <workdir> <step>
 | GLM-4V-Flash | 图像评价（扩展） | 7, 9, 16 |
 
 ## 环境变量
-- `JIMENG_SESSION_ID`: 即梦 session ID
-- `JIMENG_API_URL`: 即梦 API 地址
-- `ZHIPU_API_KEY`: 智谱 API Key
-- `SEEDANCE_API_KEY`: Seedance 2.0 API Key
+
+GPU 任务相关 API Key（即梦、Seedance 等）配置在 gold-team 容器的 `.env` 中，skill 层面无需配置。
