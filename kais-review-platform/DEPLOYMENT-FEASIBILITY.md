@@ -1,6 +1,6 @@
 # kais-review-platform Docker 部署可行性报告
 
-> **低配机 IP**: 192.168.71.140 | **高配机 Worker**: 192.168.71.38  
+> **本机 IP
 > **日期**: 2026-05-05
 
 ---
@@ -9,7 +9,7 @@
 
 ### 1.1 内存 & CPU 限制
 
-低配机 8-16GB RAM，需严格限制各容器资源，避免 OOM Kill。
+本机 32GB+ RAM，RTX 3090 24GB + RTX 3060Ti 8GB。
 
 ```yaml
 deploy:
@@ -148,7 +148,7 @@ cd "$BACKUP_DIR" && git add -A && git commit -m "backup $DATE" && git push
 
 ```
 ┌─────────────────────────────────────────────────┐
-│  低配机 192.168.71.140                          │
+│  本机 192.168.71.166                          │
 │  ┌──────────┐   ┌──────────┐   ┌─────────────┐ │
 │  │ Nginx    │──▶│ API      │──▶│ SQLite/Redis│ │
 │  │ :80/:443 │   │ :3000    │   │             │ │
@@ -163,7 +163,7 @@ cd "$BACKUP_DIR" && git add -A && git commit -m "backup $DATE" && git push
                    │ LAN (HTTP API)
                    ▼
 ┌──────────────────────────────────────────────────┐
-│  高配机 192.168.71.38                            │
+│  高配机 192.168.71.166                            │
 │  kais-movie-agent / kais-gold-team               │
 └──────────────────────────────────────────────────┘
 ```
@@ -173,7 +173,7 @@ cd "$BACKUP_DIR" && git add -A && git commit -m "backup $DATE" && git push
 **与 kais-movie-agent**：
 - 审核平台提供 REST API：`POST /api/v1/reviews` 提交审核任务
 - movie-agent 调用审核 API 提交待审核内容（场景图、分镜等）
-- 审核完成后通过 Webhook 回调 movie-agent：`POST http://192.168.71.38:{port}/callback/review`
+- 审核完成后通过 Webhook 回调 movie-agent：`POST http://192.168.71.166:{port}/callback/review`
 
 **与 kais-gold-team**：
 - 同样通过 REST API + Webhook 回调
@@ -184,7 +184,7 @@ cd "$BACKUP_DIR" && git add -A && git commit -m "backup $DATE" && git push
 ```nginx
 server {
     listen 80;
-    server_name 192.168.71.140;
+    server_name 192.168.71.166;
 
     # 前端静态文件
     location / {
@@ -235,10 +235,10 @@ services:
   api:
     environment:
       # Webhook 目标地址
-      - MOVIE_AGENT_CALLBACK_URL=http://192.168.71.38:8100/callback/review
-      - GOLD_TEAM_CALLBACK_URL=http://192.168.71.38:8200/callback/review
+      - MOVIE_AGENT_CALLBACK_URL=http://192.168.71.166:8100/callback/review
+      - GOLD_TEAM_CALLBACK_URL=http://192.168.71.166:8200/callback/review
       # 本平台外网地址（用于生成审核链接）
-      - PLATFORM_BASE_URL=http://192.168.71.140
+      - PLATFORM_BASE_URL=http://192.168.71.166
     # 确保能访问局域网
     extra_hosts:
       - "host.docker.internal:host-gateway"
@@ -346,7 +346,7 @@ def generate_review_token(review_id: str) -> str:
 # 3. 可选：设置过期时间（如 72h）
 ```
 
-**审核链接格式**：`http://192.168.71.140/review/{review_id}?token={one_time_token}`
+**审核链接格式**：`http://192.168.71.166/review/{review_id}?token={one_time_token}`
 
 **安全措施**：
 - 令牌 32 字符，不可猜测
@@ -414,9 +414,9 @@ services:
       - DATABASE_PATH=/app/data/review.db
       - REDIS_URL=redis://redis:6379
       - JWT_SECRET=${JWT_SECRET}
-      - PLATFORM_BASE_URL=http://192.168.71.140
-      - MOVIE_AGENT_CALLBACK_URL=http://192.168.71.38:8100/callback/review
-      - GOLD_TEAM_CALLBACK_URL=http://192.168.71.38:8200/callback/review
+      - PLATFORM_BASE_URL=http://192.168.71.166
+      - MOVIE_AGENT_CALLBACK_URL=http://192.168.71.166:8100/callback/review
+      - GOLD_TEAM_CALLBACK_URL=http://192.168.71.166:8200/callback/review
     volumes:
       - ./data:/app/data
       - ./uploads:/app/uploads
@@ -564,8 +564,8 @@ docker compose ps
 docker compose logs -f api
 
 # 4. 访问
-# 前端: http://192.168.71.140
-# API:  http://192.168.71.140/api/health
+# 前端: http://192.168.71.166
+# API:  http://192.168.71.166/api/health
 # 日志: http://localhost:9999 (Dozzle)
 
 # 5. 备份（可选 cron）

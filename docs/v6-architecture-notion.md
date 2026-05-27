@@ -41,18 +41,18 @@ This file contains the full V6 architecture spec for reference by development wo
 - **kais-script-agent** outline + script generation
 - **kais-consistency-agent** cross-shot consistency guard
 - **GPU Runtime Manager V5.1** stage-based scheduling
-- **3060Ti Combo** auxiliary GPU for audio overflow
+- **3060Ti** IO-only GPU (NVENC/ffmpeg, no inference)
 - **Feedback loops** (max 3 iterations)
 - **Asset library** (seedance-template, voice-model, soul-pack, music-stem)
 
 ### GPU Stage Mapping (V5.1)
-| Phase | Stage | 3090 Heavy | 3090 Light | 3060Ti |
-|-------|-------|-----------|-----------|--------|
-| 角色 | 3d_character | TRELLIS ~18G | Whisper+Moondream+Seed-VC ~5.5G | WD14 |
-| 场景 | 3d_scene | Hunyuan3D ~12G | CosyVoice2+... ~11.5G | - |
-| 视觉种子 | image_refine | Kontext/FLUX ~16G | Whisper+... ~5.5G | CosyVoice2 |
-| BGM骨架 | music_base | ACE Step base ~8G | CosyVoice2+... ~13.5G | - |
-| 预览 | video_preview | LTX-Video ~12G | CosyVoice2+... ~11.5G | UVR5 |
-| 视觉终版 | video_final | Wan 14B ~18G | Whisper+Moondream ~5G | CosyVoice2 |
-| 标志性BGM | music_final | ACE Step xl-sft ~17G | Whisper+Moondream ~5G | CosyVoice2 |
-| 对口型 | lip_sync | LatentSync ~7G | Whisper+... ~5.5G | CosyVoice2 |
+| Phase | Stage | 3090 (所有推理) | 3060Ti (IO) |
+|-------|-------|-----------|--------|
+| 角色 | 3d_character | TRELLIS ~18G | NVENC |
+| 场景 | 3d_scene | Hunyuan3D ~12G | - |
+| 视觉种子 | image_refine | Kontext/FLUX ~16G | - |
+| BGM骨架 | music_base | ACE Step base ~8G | - |
+| 预览 | video_preview | LTX-Video ~12G | NVENC/ffmpeg |
+| 视觉终版 | video_final | Wan 14B ~18G | NVENC/ffmpeg |
+| 标志性BGM | music_final | ACE Step xl-sft ~17G | - |
+| 对口型 | lip_sync | LatentSync ~7G | - |

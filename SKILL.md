@@ -197,15 +197,15 @@ curl -X POST http://localhost:8002/api/v1/tasks \
 
 ### Stage 映射表
 
-| Phase | Stage | 3090 Heavy | 3060Ti |
+| Phase | Stage | 3090 (推理) | 3060Ti (IO) |
 |-------|-------|-----------|--------|
-| 角色 | `3d_character` | TRELLIS ~18G | WD14 |
+| 角色 | `3d_character` | TRELLIS ~18G | NVENC |
 | 场景 | `3d_scene` | Hunyuan3D ~12G | - |
-| 视觉种子 | `image_refine` | Kontext/FLUX ~16G | CosyVoice2 |
+| 视觉种子 | `image_refine` | Kontext/FLUX ~16G | - |
 | BGM骨架 | `music_base` | ACE Step ~8G | - |
-| 预览 | `video_preview` | LTX-Video ~12G | UVR5 |
-| 视觉终版 | `video_final` | Wan 14B ~18G | CosyVoice2 |
-| 对口型 | `lip_sync` | LatentSync ~7G | CosyVoice2 |
+| 预览 | `video_preview` | LTX-Video ~12G | NVENC/ffmpeg |
+| 视觉终版 | `video_final` | Wan 14B ~18G | NVENC/ffmpeg |
+| 对口型 | `lip_sync` | LatentSync ~7G | - |
 
 ---
 

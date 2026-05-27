@@ -6,7 +6,7 @@
 
 ## 一、项目定位
 
-为 AI 生产管线（kais-movie-agent、kais-gold-team 等）提供**审核/治理 API 服务**，Docker 化部署在低配机上，实现：
+为 AI 生产管线（kais-movie-agent、kais-gold-team 等）提供**审核/治理 API 服务**，Docker 化部署在本机（192.168.71.166）上，实现：
 - 策略驱动的自动路由（AUTO/HUMAN/AI_AUDIT/BLOCK）
 - 移动端优先的人工审核网关
 - AI 审计预留接口（评分插件总线）
@@ -94,10 +94,10 @@ review-platform/
 ```
 
 ### 网络通信
-- **低配机 IP**: 192.168.71.140
-- kais-movie-agent / kais-gold-team → `POST http://192.168.71.140:8090/api/v1/review/submit`
+- **本机 IP
+- kais-movie-agent / kais-gold-team → `POST http://192.168.71.166:8090/api/v1/review/submit`
 - 审核平台 → 高配机 Webhook 回调
-- 移动端 → `https://192.168.71.140:8090/` (PWA)
+- 移动端 → `https://192.168.71.166:8090/` (PWA)
 
 ### 安全加固
 - Docker: `read_only: true`, `cap_drop: ALL`, 非 root 用户
