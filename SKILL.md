@@ -234,21 +234,26 @@ node lib/git-stage-manager.js rollback <workdir> <step>
 
 ---
 
-## 子 Skill 列表
+## 子 Skill 列表（管线核心 10/10 ✅）\n
+| # | Skill | Step | 功能 |
+|---|-------|------|------|
+| 1 | kais-soul-radar | 1 | 痛点调查与情感洞察 |
+| 2 | kais-script-agent | 3, 5 | 大纲生成 + 剧本生成 |
+| 3 | kais-story-score | 6, 12 | 剧本量化分析 + 质量门控 |
+| 4 | kais-character-designer | 7 | 主角设计（3图一体） |
+| 5 | kais-scene-designer | 9 | 场景图生成（6图一体） |
+| 6 | kais-spatio-temporal-agent | 11 | 时空剧本生成 |
+| 7 | kais-voice | 13B, 18 | 语音锁定 + 声音闭环（TTS） |
+| 8 | kais-camera | 14 | 运镜定稿 + 动态预览 |
+| 9 | kais-consistency-agent | 16 | 跨镜头一致性守护（DINOv2 > 0.85） |
+| 10 | kais-movie-gate | 20 | 终版质检与交付评分 |
+
+### 辅助 Skill
 
 | Skill | Step | 功能 |
 |-------|------|------|
-| kais-soul-radar | 1 | 痛点调查与情感洞察 |
-| kais-script-agent | 3, 5 | 大纲生成 + 剧本生成 |
-| kais-spatio-temporal-agent | 11 | 时空剧本生成 |
-| kais-consistency-agent | 16 | 跨镜头一致性守护 |
-| kais-scene-designer | 9 | 场景图生成 |
-| kais-character-designer | 7 | 主角设计 |
-| kais-camera | 14 | 运镜定稿 |
-| kais-voice | 13B, 18 | 语音锁定 + 声音闭环 |
 | kais-review-platform | 审核 | 审核页面 |
 | kais-anatomy-guard | 7, 9 | 肢体解剖修复守卫 |
-| kais-story-score | 6, 12 | 剧本量化分析 |
 
 ---
 
