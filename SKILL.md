@@ -129,6 +129,129 @@ Agent 逐步执行每个 Step，自己调用 LLM / GPU 任务 / 审核交互：
 
 ---
 
+## 🔄 产出物同步到 Toonflow
+
+**每个 Step 完成后，必须调用同步脚本将产出物同步到 Toonflow 前端展示。**
+
+### 同步脚本位置
+```bash
+/home/kai/workspace/kais-aigc-platform/scripts/agent-sync.js
+```
+
+### 同步方式（通过 exec 调用）
+
+#### 1. 同步剧本（Step 5, 6）
+```bash
+node /home/kai/workspace/kais-aigc-platform/scripts/agent-sync.js \
+  --project-name "${PROJECT_NAME}" \
+  --step 6 \
+  --asset-type script \
+  --file-path "${SCRIPT_FILE}" \
+  --metadata '{"name":"第1集剧本","episode":1}'
+```
+
+#### 2. 同步角色图片（Step 7, 8）
+```bash
+node /home/kai/workspace/kais-aigc-platform/scripts/agent-sync.js \
+  --project-name "${PROJECT_NAME}" \
+  --step 8 \
+  --asset-type character_image \
+  --file-path "${CHARACTER_IMAGE_FILE}" \
+  --metadata '{
+    "name": "主角名字",
+    "prompt": "角色生成 prompt...",
+    "description": "角色描述..."
+  }'
+```
+
+#### 3. 同步场景图片（Step 9, 10）
+```bash
+node /home/kai/workspace/kais-aigc-platform/scripts/agent-sync.js \
+  --project-name "${PROJECT_NAME}" \
+  --step 10 \
+  --asset-type scene_image \
+  --file-path "${SCENE_IMAGE_FILE}" \
+  --metadata '{
+    "name": "室内场景",
+    "prompt": "场景生成 prompt...",
+    "description": "场景描述..."
+  }'
+```
+
+#### 4. 同步语音（Step 13B, 18）
+```bash
+node /home/kai/workspace/kais-aigc-platform/scripts/agent-sync.js \
+  --project-name "${PROJECT_NAME}" \
+  --step 13 \
+  --asset-type voice \
+  --file-path "${VOICE_FILE}" \
+  --metadata '{
+    "name": "旁白_第1句",
+    "prompt": "语音内容",
+    "description": "旁白声音"
+  }'
+```
+
+#### 5. 同步预览视频（Step 14）
+```bash
+node /home/kai/workspace/kais-aigc-platform/scripts/agent-sync.js \
+  --project-name "${PROJECT_NAME}" \
+  --step 14 \
+  --asset-type video_preview \
+  --file-path "${VIDEO_FILE}" \
+  --metadata '{
+    "shotIndex": 5,
+    "duration": 3.5,
+    "prompt": "镜头描述"
+  }'
+```
+
+#### 6. 同步终版视频（Step 17）
+```bash
+node /home/kai/workspace/kais-aigc-platform/scripts/agent-sync.js \
+  --project-name "${PROJECT_NAME}" \
+  --step 17 \
+  --asset-type video_final \
+  --file-path "${FINAL_VIDEO_FILE}" \
+  --metadata '{
+    "shotIndex": 5,
+    "duration": 3.5,
+    "prompt": "最终镜头"
+  }'
+```
+
+### 支持的 asset_type
+
+| 类型 | 说明 | 对应 Step | API 端点 |
+|------|------|-----------|----------|
+| `script` | 剧本内容 | 5, 6 | `/api/v1/script` |
+| `character_image` | 角色图片 | 7, 8 | `/api/v1/assets/addAssets` |
+| `scene_image` | 场景图片 | 9, 10 | `/api/v1/assets/addAssets` |
+| `voice` | 语音文件 | 13B, 18 | `/api/v1/assets/addAudioAssets` |
+| `video_preview` | 预览视频 | 14 | `/api/v1/pipeline/ingest/videos` |
+| `video_final` | 终版视频 | 17 | `/api/v1/pipeline/ingest/videos` |
+
+### 同步时机
+
+- **每个 Step 生成产出物后立即同步**（审核门前）
+- **用户通过审核后**，同步最终版本到 Toonflow
+- **失败重做时**，同步新的产出物并覆盖旧版本
+
+### 验证同步成功
+
+同步脚本会返回以下信息：
+- ✅ 项目查找/创建成功
+- ✅ 产出物同步成功
+- 📊 返回同步结果（ID、路径等）
+
+如果同步失败，检查：
+1. Toonflow 服务是否运行（localhost:8000）
+2. API 路由是否正确
+3. 文件路径是否存在
+4. metadata JSON 格式是否正确
+
+---
+
 ## API 速查
 
 ### gold-team（GPU 任务）

@@ -20,6 +20,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.core.database import get_db
 from app.models.evaluation import Evaluation
 from app.models.schemas import ApiResponse
+from app.services.hermes_client import report_audit
 
 logger = structlog.get_logger(__name__)
 router = APIRouter(prefix="/api/v1/evaluations", tags=["evaluations"])
@@ -143,6 +144,20 @@ async def create_evaluation(
         phase=request.phase,
         task_type=request.task_type,
         success=request.success,
+    )
+
+    # Report evaluation outcome to Hermes audit (fire-and-forget)
+    await report_audit(
+        phase=request.phase,
+        decision_id=request.hermes_decision_id,
+        outcome="completed" if request.success else "failed",
+        metrics={
+            "ai_quality_score": request.ai_quality_score,
+            "gpu_time_sec": request.gpu_time_sec,
+            "peak_vram_gb": request.peak_vram_gb,
+            "human_cinematic": request.human_cinematic,
+        },
+        parameters_used=request.parameters_used,
     )
 
     return ApiResponse(

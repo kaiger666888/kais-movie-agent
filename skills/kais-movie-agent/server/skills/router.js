@@ -3,7 +3,8 @@
  *
  * toonflow/*    → core-backend:8000
  * jellyfish/*   → core-backend:8000
- * hermes/*      → hermes-agent (via core-backend /api/v1/llm/chat)
+ * hermes/*      → hermes-worker-agent:3100 (专家决策 /decide /audit /pipeline)
+ * hermes-llm/*  → core-backend:8000 (LLM 代理，向后兼容)
  * gold-team/*   → gold-team:8002
  *
  * 自动降级：下游不可用时返回错误而非崩溃
@@ -19,6 +20,10 @@ const SERVICE_MAP = {
     pathPrefix: '/api/v1/jellyfish',
   },
   'hermes': {
+    baseUrl: () => process.env.HERMES_WORKER_URL || 'http://localhost:3100',
+    pathPrefix: '',
+  },
+  'hermes-llm': {
     baseUrl: () => process.env.CORE_BACKEND_URL || 'http://kais-core-backend:8000',
     pathPrefix: '/api/v1/llm',
   },
@@ -97,4 +102,74 @@ export async function getDownstreamHealth() {
     results[name] = await pingService(name);
   }
   return results;
+}
+
+// ─────────────────────────────────────────────────────────
+// hermes-worker-agent 辅助函数
+// ─────────────────────────────────────────────────────────
+
+const HERMES_WORKER_BASE = () =>
+  process.env.HERMES_WORKER_URL || 'http://localhost:3100';
+
+/**
+ * 向 hermes-worker-agent 请求专家决策
+ *
+ * POST /decide  →  { stage, experts_consulted, decision, confidence }
+ *
+ * @param {string} phase   - 当前阶段 (e.g. 'storyboard', 'render', 'finalize')
+ * @param {object} context - 项目上下文 (title, style, constraints …)
+ * @param {number} [timeoutMs=10000]
+ * @returns {Promise<{ok:boolean, data?:object, error?:string}>}
+ */
+export async function askHermesDecide(phase, context, timeoutMs = 10000) {
+  const url = `${HERMES_WORKER_BASE()}/decide`;
+  try {
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ phase, context }),
+      signal: AbortSignal.timeout(timeoutMs),
+    });
+
+    if (!response.ok) {
+      const text = await response.text().catch(() => '');
+      return {
+        ok: false,
+        error: `hermes /decide returned ${response.status}: ${text.slice(0, 200)}`,
+      };
+    }
+
+    const data = await response.json().catch(() => ({}));
+    return { ok: true, data };
+  } catch (err) {
+    return {
+      ok: false,
+      error: `hermes /decide unreachable: ${err.message}`,
+    };
+  }
+}
+
+/**
+ * 向 hermes-worker-agent 汇报阶段审计结果（fire-and-forget）
+ *
+ * POST /audit  — 不等待响应，错误仅打日志
+ *
+ * @param {string} phase      - 阶段名
+ * @param {string} decisionId - 对应的决策 ID
+ * @param {string} outcome    - 执行结果 (success / fail / partial)
+ * @param {object} [metrics]  - 可选指标
+ */
+export function reportHermesAudit(phase, decisionId, outcome, metrics) {
+  const url = `${HERMES_WORKER_BASE()}/audit`;
+  const payload = JSON.stringify({ phase, decisionId, outcome, metrics });
+
+  fetch(url, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: payload,
+    signal: AbortSignal.timeout(5000),
+  }).catch((err) => {
+    console.error(`[hermes-audit] fire-and-forget failed: ${err.message}`);
+  });
+  // fire-and-forget — 不 return promise
 }
