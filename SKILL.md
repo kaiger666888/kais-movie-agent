@@ -34,6 +34,7 @@ description: "AI短片全流程自动制作管线 (V8)。OpenClaw 是唯一 LLM 
 创意写作 → hermes_llm(prompt, system)
 图像分析 → hermes_llm_vision(prompt, images) 或 image(prompt, images)
 图片生成 → exec curl → gold-team :8002/api/v1/tasks (type: image_draw)
+3D生成  → exec curl → gold-team :8002/api/v1/tasks (type: image_to_3d)
 TTS     → exec curl → gold-team :8002/api/v1/tasks (type: tts)
 视频生成 → exec curl → gold-team :8002/api/v1/tasks (type: video_final)
 状态查询 → exec curl → gold-team :8002/api/v1/tasks/:id
@@ -270,6 +271,7 @@ GET  /health
 |------|------|------|
 | `image_draw` | 文生图 | comfyui-local / cloud-jimeng / mock |
 | `image_refine` | 图片精炼 | comfyui-local |
+| `image_to_3d` | 图生3D (GLB) | hunyuan3d-local / comfyui-local (TRELLIS2) |
 | `tts` | 语音合成 | tts-local (edge-tts) |
 | `video_final` | 终版视频 | cloud-jimeng / comfyui-local |
 | `video_preview` | 预览视频 | comfyui-local |
@@ -289,6 +291,21 @@ curl -X POST http://localhost:8002/api/v1/tasks \
     "priority": "normal"
   }'
 
+# 图生3D（Hunyuan3D）
+curl -X POST http://localhost:8002/api/v1/tasks \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "task_id": "ma-$(date +%s)",
+    "type": "image_to_3d",
+    "params": {
+      "input_image": "/mnt/agents/output/scene_001.png",
+      "output_path": "/mnt/agents/output/ma-xxx/model.glb",
+      "model": "full",
+      "steps": 50
+    },
+    "priority": "normal"
+  }'
+
 # TTS
 curl -X POST http://localhost:8002/api/v1/tasks \
   -H 'Content-Type: application/json' \
@@ -299,6 +316,19 @@ curl -X POST http://localhost:8002/api/v1/tasks \
     "priority": "normal"
   }'
 ```
+
+### 3D 引擎选择策略
+
+| 场景 | 引擎 | 说明 |
+|------|------|------|
+| 角色建模（`3d_character`） | TRELLIS2 (comfyui-local) | 高精度纹理，VRAM ~18G |
+| 场景建模（`3d_scene`） | Hunyuan3D (hunyuan3d-local) | 大场景几何，VRAM ~12G |
+| 两者都不可用 | 拒绝并汇报 | 不降级到 mock |
+
+选择逻辑：
+- `image_to_3d` 类型默认路由到 `hunyuan3d-local`（executor 已硬编码优先匹配）
+- 如需指定 TRELLIS2，通过 ComfyUI workflow 方式提交（`type: image_draw` + ComfyUI Trellis2 workflow）
+- 3090 串行保证：gold-team executor 单 worker loop，任务排队执行
 
 ---
 
@@ -322,7 +352,7 @@ curl -X POST http://localhost:8002/api/v1/tasks \
 
 | Phase | Stage | 3090 (推理) | 3060Ti (IO) |
 |-------|-------|-----------|--------|
-| 角色 | `3d_character` | TRELLIS ~18G | NVENC |
+| 角色 | `3d_character` | TRELLIS2 (comfyui) ~18G | NVENC |
 | 场景 | `3d_scene` | Hunyuan3D ~12G | - |
 | 视觉种子 | `image_refine` | Kontext/FLUX ~16G | - |
 | BGM骨架 | `music_base` | ACE Step ~8G | - |
