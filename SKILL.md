@@ -23,9 +23,10 @@ description: "AI短片全流程自动制作管线 (V8)。OpenClaw 是唯一 LLM 
 | 职责 | 执行者 | 工具 |
 |------|--------|------|
 | **创意生成**（剧本/prompt/场景描述） | OpenClaw Agent | `hermes_llm`, `hermes_llm_vision`, `image` |
+| **图片生成**（文生图/图生图） | OpenClaw Agent | **kais-jimeng-cli（默认）** |
 | **审核交互**（展示+等用户确认） | OpenClaw Agent | 会话回复 + inline buttons |
 | **状态管理**（管线进度） | OpenClaw Agent | session 上下文 + 文件系统 |
-| **GPU 渲染**（图片/视频/TTS） | gold-team 容器 | `exec curl → :8002/api/v1/tasks` |
+| **GPU 渲染**（视频/TTS/3D） | gold-team 容器 | `exec curl → :8002/api/v1/tasks` |
 | **文件存储**（产出物） | 文件系统 | 项目 workdir |
 
 ### 工具映射
@@ -33,13 +34,23 @@ description: "AI短片全流程自动制作管线 (V8)。OpenClaw 是唯一 LLM 
 ```
 创意写作 → hermes_llm(prompt, system)
 图像分析 → hermes_llm_vision(prompt, images) 或 image(prompt, images)
-图片生成 → exec curl → gold-team :8002/api/v1/tasks (type: image_draw)
+文生图   → dreamina text2image --prompt "..." --model_version 5.0 --ratio 16:9 --resolution_type 2k --poll 0
+图生图   → dreamina reference2image --prompt "..." --reference-image ./ref.png --reference-strength 0.6 --model_version 5.0 --ratio 3:4 --resolution_type 2k --poll 0
 3D生成  → exec curl → gold-team :8002/api/v1/tasks (type: image_to_3d)
 TTS     → exec curl → gold-team :8002/api/v1/tasks (type: tts)
 视频生成 → exec curl → gold-team :8002/api/v1/tasks (type: video_final)
 状态查询 → exec curl → gold-team :8002/api/v1/tasks/:id
 审核交互 → Telegram inline buttons / Toonflow 审核页面
 ```
+
+### 图片生成默认引擎
+
+**所有图片生成（文生图、图生图、角色参考图、场景图）默认使用 kais-jimeng-cli（即梦 API）。**
+
+- **不经过 gold-team** 图片生成（gold-team 仅供视频/TTS/3D）
+- **不使用内置 image tool 生成图片**（仅用于分析）
+- **dreamina CLI 用法**：先提交（`--poll 0`），轮询结果（`dreamina query_result --submit_id ID`），下载图片（`aria2c URL`）
+- **降级**：即梦限流/超时 → gold-team `image_draw`（comfyui-local / cloud-jimeng）
 
 ---
 
@@ -447,6 +458,7 @@ curl -X POST http://localhost:8002/api/v1/tasks \
 6. **禁止跳步**：严格执行 20 步管线
 7. **验证闭环**：用户看到什么，才是真正的完成
 8. **Toonflow 同步不可跳过**：每个审核门通过后必须同步，同步是进入下一 Step 的前置条件
+9. **生图默认 kais-jimeng-cli**：图片生成不用 gold-team，直接用即梦 API
 
 ---
 
