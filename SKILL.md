@@ -66,6 +66,8 @@ TTS     → exec curl → gold-team :8002/api/v1/tasks (type: tts)
 2. 附上审核选项（✅通过 / 🔄重做 / ✏️修改）
 3. **只有收到用户确认后才能继续下一步**
 4. **禁止一次性跑多步然后事后补审核**
+5. **用户通过后，必须先同步到 Toonflow，同步成功后才进入下一 Step**
+6. **同步失败时暂停管线，不跳过同步步骤**
 
 ---
 
@@ -76,29 +78,42 @@ TTS     → exec curl → gold-team :8002/api/v1/tasks (type: tts)
 ```
 Step 1:  痛点调查 (kais-soul-radar)               → checkpoint
 Step 2:  选择主题                                   → 🔒 REVIEW GATE
+         └─ 📡 Toonflow: 创建项目 + 同步主题信息
 Step 3:  生成大纲 (hermes_llm)                      → checkpoint
 Step 4:  选择大纲                                   → 🔒 REVIEW GATE
+         └─ 📡 Toonflow: 同步大纲
 Step 5:  生成剧本 (hermes_llm)                      → checkpoint
 Step 6:  选择剧本                                   → 🔒 REVIEW GATE
+         └─ 📡 Toonflow: 同步剧本 (agent-sync --asset-type script)
 Step 7:  生成主角（3图一体, image tool）            → checkpoint
 Step 8:  选择主角 → soul-pack.json                  → 🔒 REVIEW GATE
+         └─ 📡 Toonflow: 同步角色图 (agent-sync --asset-type character_image) ×N
 Step 9:  生成场景（6图一体, image tool）            → checkpoint
 Step 10: 选择场景 → geometry-bed.json               → 🔒 REVIEW GATE
+         └─ 📡 Toonflow: 同步场景图 (agent-sync --asset-type scene_image) ×N + 保存画布FlowGraph
 Step 11: 时空剧本 (hermes_llm)                      → 🔒 REVIEW GATE
+         └─ 📡 Toonflow: 同步时空剧本 + 更新画布FlowGraph
 ```
 
 ### 下半部分：生产执行（Steps 12-20）
 
 ```
 Step 12: 剧本锁定审核                               → 🔒 REVIEW GATE
+         └─ 📡 Toonflow: 最终确认画布FlowGraph完整性
 Step 13: 种子骨架（13A视觉种子 ∥ 13B声音骨架）      → 🔒 REVIEW GATE
+         └─ 📡 Toonflow: 同步视觉种子图 (agent-sync --asset-type scene_image) + 语音 (agent-sync --asset-type voice)
 Step 14: 运镜定稿 + 动态预览                         → 🔒 REVIEW GATE
+         └─ 📡 Toonflow: 同步预览视频 (agent-sync --asset-type video_preview) ×N
 Step 15: AI风格化预览 + Seedance生产包定稿           → 🔒 REVIEW GATE
+         └─ 📡 Toonflow: 同步风格化预览
 Step 16: 一致性守护检查（DINOv2 > 0.85）            → 阻断/放行
 Step 17: 云端终版视频（Seedance 2.0 audio-driven）   → 🔒 REVIEW GATE
+         └─ 📡 Toonflow: 同步终版视频 (agent-sync --asset-type video_final) ×N
 Step 18: 本地BGM与声音闭环                          → checkpoint
+         └─ 📡 Toonflow: 同步BGM + 音效
 Step 19: 剪辑合成（FFmpeg）                         → checkpoint
 Step 20: 质检与交付                                 → PASS/FAIL
+         └─ 📡 Toonflow: 最终交付 + 审核评分写入
 ```
 
 ---
@@ -130,9 +145,14 @@ Agent 逐步执行每个 Step，自己调用 LLM / GPU 任务 / 审核交互：
 
 ---
 
-## 🔄 产出物同步到 Toonflow
+## 🔄 产出物同步到 Toonflow（强制集成）
 
-**每个 Step 完成后，必须调用同步脚本将产出物同步到 Toonflow 前端展示。**
+**每个审核门 Step 完成且用户确认后，必须调用 agent-sync.js 同步产出物到 Toonflow，同步成功后才能继续下一步。这是管线不可跳过的内置步骤。**
+
+### 同步位置
+```bash
+/home/kai/workspace/kais-aigc-platform/scripts/agent-sync.js
+```
 
 ### 同步脚本位置
 ```bash
@@ -232,11 +252,60 @@ node /home/kai/workspace/kais-aigc-platform/scripts/agent-sync.js \
 | `video_preview` | 预览视频 | 14 | `/api/v1/pipeline/ingest/videos` |
 | `video_final` | 终版视频 | 17 | `/api/v1/pipeline/ingest/videos` |
 
-### 同步时机
+### 同步时机（强制）
 
-- **每个 Step 生成产出物后立即同步**（审核门前）
-- **用户通过审核后**，同步最终版本到 Toonflow
-- **失败重做时**，同步新的产出物并覆盖旧版本
+- **用户通过审核后 → 立即同步**（同步是进入下一个 Step 的前置条件）
+- **失败重做时** → 同步新的产出物并覆盖旧版本
+- **同步失败 → 暂停管线，汇报用户，等待修复**
+
+### 管线执行流程（含同步）
+
+```
+Agent 生成产出物 → 展示给用户审核
+  ├─ 用户通过 → agent-sync.js 同步到 Toonflow
+  │   ├─ 同步成功 → 进入下一个 Step ✅
+  │   └─ 同步失败 → 暂停管线，汇报用户 ❌
+  ├─ 用户要求重做 → 回到对应 Step 重新生成
+  └─ 用户要求修改 → 调整后重新展示
+```
+
+### 画布 FlowGraph 同步
+
+**Step 10 和 Step 12** 完成后，必须额外保存画布 FlowGraph JSON，确保 Toonflow 无限画布能正确展示项目全貌：
+
+```bash
+# 通过 curl 直接调用 Toonflow canvas/save API
+curl -s -X POST http://localhost:8000/api/canvas/save \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "projectId": <PROJECT_ID>,
+    "episodesId": 1,
+    "graph": <FLOWGRAPH_JSON>
+  }'
+```
+
+FlowGraph JSON 格式：
+```json
+{
+  "nodes": [
+    {"id": "step-6-script", "type": "script", "position": {"x": 100, "y": 100}, "data": {"label": "22场景剧本"}},
+    {"id": "asset-linjian", "type": "asset", "position": {"x": 100, "y": 350}, "data": {"label": "林建·50岁", "type": "role"}},
+    {"id": "asset-gobi", "type": "asset", "position": {"x": 100, "y": 550}, "data": {"label": "戈壁公路", "type": "scene"}}
+  ],
+  "edges": [
+    {"id": "e-step6-linjian", "source": "step-6-script", "target": "asset-linjian"}
+  ]
+}
+```
+
+节点类型：
+| type | label 前缀 | 说明 |
+|------|-----------|------|
+| `script` | 步骤名 | 剧本/大纲/时空剧本 |
+| `asset` | 资产名 | 角色(type=role)/场景(type=scene)/工具(type=tool) |
+| `storyboard` | 分镜名 | 分镜板 |
+| `video` | 镜头名 | 视频 |
+| `audio` | 音频名 | BGM/音效/旁白 |
 
 ### 验证同步成功
 
@@ -371,6 +440,7 @@ curl -X POST http://localhost:8002/api/v1/tasks \
 5. **反馈最多 3 次**：任何回流路径最多迭代 3 次
 6. **禁止跳步**：严格执行 20 步管线
 7. **验证闭环**：用户看到什么，才是真正的完成
+8. **Toonflow 同步不可跳过**：每个审核门通过后必须同步，同步是进入下一 Step 的前置条件
 
 ---
 
