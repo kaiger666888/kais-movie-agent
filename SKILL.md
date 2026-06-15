@@ -1,20 +1,21 @@
 ---
 name: kais-movie-agent
-description: "AI短片全流程自动制作管线 (V8)。OpenClaw 是唯一 LLM 调用者与编排引擎，无 movie-agent 容器依赖。gold-team 只做 GPU 调度。20步管线，审核门不可跳过。"
+description: "AI短片全流程自动制作管线 (V8.1)。OpenClaw 是唯一编排引擎，创意生成通过 ACP 调用 hermes-agent 的 20 个 movie-expert 专家。gold-team 只做 GPU 调度。20步管线，审核门不可跳过。"
 ---
 
-# kais-movie-agent V8 — OpenClaw Agent 纯驱动架构
+# kais-movie-agent V8.1 — OpenClaw 编排 + hermes-agent 专家驱动架构
 
 ## 触发词
 `movie agent`, `短片制作`, `AI短片`, `视频管线`, `film pipeline`, `movie-wuji`, `AI视频制作`, `短视频管线`, `AI电影`, `影片制作`, `AI短剧`, `短剧制作`, `视频自动化`, `一键生成视频`, `AI拍片`, `kais-movie`, `movie pipeline`, `V8`, `V7`
 
 ---
 
-## 🏗️ 架构原则（V8 变更）
+## 🏗️ 架构原则（V8.1 变更）
 
-### OpenClaw 纯驱动架构
+### OpenClaw 编排 + hermes-agent 专家驱动架构
 
-- **Agent 驱动架构**：OpenClaw 是唯一 LLM 调用者与编排引擎
+- **OpenClaw 是唯一编排引擎**：调度子 Skill、走审核门、同步 Toonflow
+- **创意生成走 ACP**：通过 `sessions_spawn(runtime="acp", agentId="hermes-agent")` 调用 20 个 movie-expert
 - **不再依赖 movie-agent Docker 容器**（V7 已废弃）
 - **Platform (gold-team) 只做 GPU 调度**：接收任务、排队、执行、返回结果
 - **状态管理**：用 OpenClaw session 上下文 + 文件系统（不再用 Pipeline API）
@@ -22,7 +23,8 @@ description: "AI短片全流程自动制作管线 (V8)。OpenClaw 是唯一 LLM 
 
 | 职责 | 执行者 | 工具 |
 |------|--------|------|
-| **创意生成**（剧本/prompt/场景描述） | OpenClaw Agent | `hermes_llm`, `hermes_llm_vision`, `image` |
+| **专业创意生成**（剧本/角色/场景/分镜/运镜/BGM） | **hermes-agent 专家系统**（通过 ACP） | `sessions_spawn(runtime="acp", agentId="hermes-agent")` → `skill_invoke(expert_id, input, context)` |
+| **执行落地**（图片生成、prompt 组装、产物归档） | OpenClaw Agent + 子 Skill | `hermes_llm`, `hermes_llm_vision`, `image`, `kais-jimeng-cli` |
 | **图片生成**（文生图/图生图） | OpenClaw Agent | **kais-jimeng-cli（默认）** |
 | **审核交互**（展示+等用户确认） | OpenClaw Agent | 会话回复 + inline buttons |
 | **状态管理**（管线进度） | OpenClaw Agent | session 上下文 + 文件系统 |
@@ -32,7 +34,9 @@ description: "AI短片全流程自动制作管线 (V8)。OpenClaw 是唯一 LLM 
 ### 工具映射
 
 ```
-创意写作 → hermes_llm(prompt, system)
+专业创意 → ACP: sessions_spawn(runtime="acp", agentId="hermes-agent")
+            → skill_invoke(expert_id=<EXPERT>, input="...", context="...")
+轻量写作 → hermes_llm(prompt, system)             # 拼装、汇总、非专家场景
 图像分析 → hermes_llm_vision(prompt, images) 或 image(prompt, images)
 文生图   → dreamina text2image --prompt "..." --model_version 5.0 --ratio 16:9 --resolution_type 2k --poll 0
 图生图   → dreamina reference2image --prompt "..." --reference-image ./ref.png --reference-strength 0.6 --model_version 5.0 --ratio 3:4 --resolution_type 2k --poll 0
@@ -42,6 +46,27 @@ TTS     → exec curl → gold-team :8002/api/v1/tasks (type: tts)
 状态查询 → exec curl → gold-team :8002/api/v1/tasks/:id
 审核交互 → Telegram inline buttons / Toonflow 审核页面
 ```
+
+### hermes-agent 专家 → 管线 Step 速查
+
+通过 ACP 调用 `skill_invoke(expert_id=...)`，可用 20 个 movie-expert：
+
+| Step | 用途 | expert_id |
+|------|------|-----------|
+| Step 1 | 痛点调查 | `hook_retention` |
+| Step 3 | 大纲生成 | `screenplay` |
+| Step 5 | 剧本生成 | `screenplay` |
+| Step 7 | 主角设计 | `character_designer` + `drawer` |
+| Step 9 | 场景设计 | `scene_builder` + `drawer` |
+| Step 11 | 时空剧本 | `screenplay` + `cinematographer` |
+| Step 13A | 视觉种子 | `drawer` + `style_genome` |
+| Step 13B | 声音骨架 | `composer` + `foley` |
+| Step 14 | 运镜 | `cinematographer` |
+| Step 15 | 风格化 | `colorist` + `style_genome` |
+| Step 16 | 一致性 | `continuity` |
+| Step 18 | BGM | `composer` + `mixer` |
+
+**其他可用专家**（按需补充调用）：`animator`, `editor`, `performer`, `spatial_audio`, `production`, `compliance_marketing`, `lip_sync`, `script_auditor`, `storyboard_designer`
 
 ### 图片生成默认引擎
 
@@ -88,27 +113,33 @@ TTS     → exec curl → gold-team :8002/api/v1/tasks (type: tts)
 
 ```
 Step 1:  痛点调查 (kais-soul-radar)               → checkpoint
+         🎙️ hermes-agent expert: hook_retention
 Step 2:  选择主题                                   → 🔒 REVIEW GATE
          └─ 📡 Toonflow: 创建项目 + 同步主题信息
-Step 3:  生成大纲 (hermes_llm)                      → checkpoint
+Step 3:  生成大纲                                   → checkpoint
+         🎙️ hermes-agent expert: screenplay
 Step 4:  选择大纲                                   → 🔒 REVIEW GATE
          └─ 📡 Toonflow: 同步大纲
-Step 5:  生成剧本 (hermes_llm)                      → checkpoint
+Step 5:  生成剧本                                   → checkpoint
+         🎙️ hermes-agent expert: screenplay
 Step 6:  选择剧本                                   → 🔒 REVIEW GATE
          └─ 📡 Toonflow: 同步剧本 (agent-sync --asset-type script)
-Step 7:  生成主角·正视图 (image tool)               → checkpoint
+Step 7:  生成主角·正视图 (kais-jimeng-cli)         → checkpoint
+         🎙️ hermes-agent experts: character_designer (角色设定) + drawer (出图 prompt)
         └─ 7A: 正视图审核 (>=7) → 通过
         └─ 7B: 参考7A生成5张侧视图 (reference2image)
         └─ 7C: 侧视图一致性审核 (>=6)
 Step 8:  选择主角 → soul-pack.json（含6视图）          → 🔒 REVIEW GATE
          └─ 📡 Toonflow: 同步角色图 (agent-sync --asset-type character_image) ×6
-Step 9:  生成场景·俯视图 (image tool)               → checkpoint
+Step 9:  生成场景·俯视图 (kais-jimeng-cli)         → checkpoint
+         🎙️ hermes-agent experts: scene_builder (空间结构) + drawer (出图 prompt)
         └─ 9A: 俯视图审核 (>=7, 空间可读性)
         └─ 9B: 参考9A生成4张侧面视图 (reference2image)
         └─ 9C: 侧视图一致性审核 (>=6)
 Step 10: 选择场景 → geometry-bed.json（含5视图）        → 🔒 REVIEW GATE
          └─ 📡 Toonflow: 同步场景图 (agent-sync --asset-type scene_image) ×5/scene + 保存画布FlowGraph
-Step 11: 时空剧本 (hermes_llm)                      → 🔒 REVIEW GATE
+Step 11: 时空剧本                                   → 🔒 REVIEW GATE
+         🎙️ hermes-agent experts: screenplay (剧本) + cinematographer (镜头语言)
          └─ 📡 Toonflow: 同步时空剧本 + 更新画布FlowGraph
 ```
 
@@ -118,15 +149,21 @@ Step 11: 时空剧本 (hermes_llm)                      → 🔒 REVIEW GATE
 Step 12: 剧本锁定审核                               → 🔒 REVIEW GATE
          └─ 📡 Toonflow: 最终确认画布FlowGraph完整性
 Step 13: 种子骨架（13A视觉种子 ∥ 13B声音骨架）      → 🔒 REVIEW GATE
+         🎙️ 13A: drawer + style_genome
+         🎙️ 13B: composer + foley
          └─ 📡 Toonflow: 同步视觉种子图 (agent-sync --asset-type scene_image) + 语音 (agent-sync --asset-type voice)
 Step 14: 运镜定稿 + 动态预览                         → 🔒 REVIEW GATE
+         🎙️ hermes-agent expert: cinematographer
          └─ 📡 Toonflow: 同步预览视频 (agent-sync --asset-type video_preview) ×N
 Step 15: AI风格化预览 + Seedance生产包定稿           → 🔒 REVIEW GATE
+         🎙️ hermes-agent experts: colorist + style_genome
          └─ 📡 Toonflow: 同步风格化预览
 Step 16: 一致性守护检查（DINOv2 > 0.85）            → 阻断/放行
+         🎙️ hermes-agent expert: continuity
 Step 17: 云端终版视频（Seedance 2.0 audio-driven）   → 🔒 REVIEW GATE
          └─ 📡 Toonflow: 同步终版视频 (agent-sync --asset-type video_final) ×N
 Step 18: 本地BGM与声音闭环                          → checkpoint
+         🎙️ hermes-agent experts: composer + mixer
          └─ 📡 Toonflow: 同步BGM + 音效
 Step 19: 剪辑合成（FFmpeg）                         → checkpoint
 Step 20: 质检与交付                                 → PASS/FAIL
@@ -137,18 +174,112 @@ Step 20: 质检与交付                                 → PASS/FAIL
 
 ## Agent 执行模式
 
-Agent 逐步执行每个 Step，自己调用 LLM / GPU 任务 / 审核交互：
+Agent 逐步执行每个 Step，通过 ACP 调用 hermes-agent 专家生成创意、再走子 Skill 落地、然后 GPU 渲染：
 
 ```
-1. Agent 用 hermes_llm 生成内容
-2. 展示给用户 → 等确认（Telegram inline buttons / Toonflow）
-3. 通过 exec curl 提交 GPU 任务到 gold-team :8002
-4. 轮询状态 → 展示结果 → 等确认
-5. 进入下一个 Step
+1. Agent 通过 ACP 调用 hermes-agent 对应 expert_id 生成专业创意内容
+2. Agent 用子 Skill 执行落地（生成图片 prompt、调用 kais-jimeng-cli、归档产物）
+3. 展示给用户 → 等确认（Telegram inline buttons / Toonflow）
+4. 通过 exec curl 提交 GPU 任务到 gold-team :8002
+5. 轮询状态 → 展示结果 → 等确认
+6. 进入下一个 Step
 ```
 
 > **V8 变更**：不再有 Pipeline API 模式，Agent 直接通过 exec curl 调用 gold-team。
 > 状态保存在 session 上下文和项目 workdir 文件中。
+>
+> **V8.1 变更**：创意生成从直连 `hermes_llm` 升级为通过 ACP 调用 `hermes-agent` 的 movie-expert 专家系统，
+> 每个创意步骤都有对应领域的专家（screenplay、character_designer、cinematographer 等）把关。
+> `hermes_llm` 仍保留用于轻量任务（拼装/汇总/格式化/非专家场景）。
+
+---
+
+## 🔌 ACP 调用模板（hermes-agent 专家系统）
+
+OpenClaw Agent 通过 ACP 调用 hermes-agent 的 20 个 movie-expert skill：
+
+```
+OpenClaw Agent
+  → sessions_spawn(runtime="acp", agentId="hermes-agent")
+    → skill_invoke(expert_id="<EXPERT>", input="<任务描述>", context="<上下文>")
+    → 返回专家结果（JSON / Markdown / prompt 字符串）
+  → 子 Skill 用专家输出做执行（生成图片/调 GPU/归档）
+  → 继续管线
+```
+
+### 注册信息
+
+- **hermes-agent 二进制**：`/data/workspace/hermes-agent/.venv/bin/hermes-acp`
+- **注册 agent id**：`hermes-agent`
+- **核心 tool**：`skill_invoke`
+- **参数**：
+  - `expert_id`（enum，20 选 1）
+  - `input`（string，任务描述）
+  - `context`（optional string，管线上下文/前序产物）
+
+### 完整专家清单（20）
+
+`screenplay`, `drawer`, `animator`, `editor`, `colorist`, `composer`, `performer`,
+`scene_builder`, `foley`, `spatial_audio`, `mixer`, `continuity`, `style_genome`,
+`cinematographer`, `hook_retention`, `production`, `compliance_marketing`,
+`character_designer`, `lip_sync`, `script_auditor`, `storyboard_designer`
+
+### 调用示例
+
+#### Step 3 生成大纲（screenplay）
+
+```python
+session = sessions_spawn(runtime="acp", agentId="hermes-agent")
+result = session.skill_invoke(
+    expert_id="screenplay",
+    input="基于以下痛点生成 3 个不同风格的故事大纲（每个 200 字）：\n痛点：30-40 岁男性职场焦虑",
+    context=json.dumps({"theme": "职场焦虑", "target_audience": "30-40 男性"})
+)
+# result.outlines → ["大纲A...", "大纲B...", "大纲C..."]
+```
+
+#### Step 7 主角设计（character_designer + drawer 协同）
+
+```python
+session = sessions_spawn(runtime="acp", agentId="hermes-agent")
+
+# 1. character_designer：角色设定
+char_spec = session.skill_invoke(
+    expert_id="character_designer",
+    input="为剧本《...》设计主角：年龄/职业/性格/标志性视觉元素",
+    context=locked_script
+)
+
+# 2. drawer：把角色设定翻译成 kais-jimeng-cli 可用的 prompt
+draw_prompt = session.skill_invoke(
+    expert_id="drawer",
+    input="根据角色设定生成正视图文生图 prompt（含比例/光影/风格）",
+    context=char_spec
+)
+
+# 3. 子 Skill kais-character-designer 落地：调用 kais-jimeng-cli 出图
+character_image = kais_character_designer.generate(prompt=draw_prompt)
+```
+
+#### Step 14 运镜（cinematographer）
+
+```python
+session = sessions_spawn(runtime="acp", agentId="hermes-agent")
+camera_plan = session.skill_invoke(
+    expert_id="cinematographer",
+    input="为以下场景设计运镜（机位/焦段/运动/时长）",
+    context=json.dumps({"spatio_temporal_script": st_script, "scene_geometry": geom})
+)
+```
+
+### 专家 vs 子 Skill 协作关系
+
+| 角色 | 提供方 | 职责 |
+|------|--------|------|
+| **专业知识**（剧本结构、镜头语言、色彩理论、音乐编排） | hermes-agent 专家 | 产出"想法/设定/prompt 草稿/评分依据" |
+| **执行能力**（调即梦、调 GPU、归档、Toonflow 同步、审核门交互） | kais-* 子 Skill | 把专家输出落地为实际产物 |
+
+二者必须配合：**专家只生成创意，子 Skill 才能产出文件**。专家不能直接调 GPU/即梦，子 Skill 不能跳过专家凭空生成。
 
 ---
 
@@ -459,6 +590,7 @@ curl -X POST http://localhost:8002/api/v1/tasks \
 7. **验证闭环**：用户看到什么，才是真正的完成
 8. **Toonflow 同步不可跳过**：每个审核门通过后必须同步，同步是进入下一 Step 的前置条件
 9. **生图默认 kais-jimeng-cli**：图片生成不用 gold-team，直接用即梦 API
+10. **创意必走专家**：所有专业创意步骤（剧本/角色/场景/分镜/运镜/BGM 等）必须通过 ACP 调用 hermes-agent 对应 expert_id，禁止用 `hermes_llm` 直接生成专业内容（仅限轻量拼装/汇总）
 
 ---
 
@@ -476,18 +608,22 @@ node lib/git-stage-manager.js rollback <workdir> <step>
 ---
 
 ## 子 Skill 列表（管线核心 10/10 ✅）\n
-| # | Skill | Step | 功能 |
-|---|-------|------|------|
-| 1 | kais-soul-radar | 1 | 痛点调查与情感洞察 |
-| 2 | kais-script-agent | 3, 5 | 大纲生成 + 剧本生成 |
-| 3 | kais-story-score | 6, 12 | 剧本量化分析 + 质量门控 |
-| 4 | kais-character-designer | 7 | 主角设计（3图一体） |
-| 5 | kais-scene-designer | 9 | 场景图生成（6图一体） |
-| 6 | kais-spatio-temporal-agent | 11 | 时空剧本生成 |
-| 7 | kais-voice | 13B, 18 | 语音锁定 + 声音闭环（TTS） |
-| 8 | kais-camera | 14 | 运镜定稿 + 动态预览 |
-| 9 | kais-consistency-agent | 16 | 跨镜头一致性守护（DINOv2 > 0.85） |
-| 10 | kais-movie-gate | 20 | 终版质检与交付评分 |
+> **V8.1 协作模式**：子 Skill 提供"执行能力"（调即梦、调 GPU、归档、同步），hermes-agent 专家提供"专业知识"（剧本/分镜/运镜/色彩）。
+> 每个 Step 的标准流程是：**专家先产出创意 → 子 Skill 拿创意去执行落地**。
+> 子 Skill 列表与职责保持不变，专家调用通过 ACP 注入到对应 Step。
+
+| # | Skill | Step | 功能 | 协作的 hermes-agent 专家 |
+|---|-------|------|------|--------------------------|
+| 1 | kais-soul-radar | 1 | 痛点调查与情感洞察 | `hook_retention` |
+| 2 | kais-script-agent | 3, 5 | 大纲生成 + 剧本生成 | `screenplay` |
+| 3 | kais-story-score | 6, 12 | 剧本量化分析 + 质量门控 | `script_auditor` |
+| 4 | kais-character-designer | 7 | 主角设计（3图一体） | `character_designer` + `drawer` |
+| 5 | kais-scene-designer | 9 | 场景图生成（6图一体） | `scene_builder` + `drawer` |
+| 6 | kais-spatio-temporal-agent | 11 | 时空剧本生成 | `screenplay` + `cinematographer` |
+| 7 | kais-voice | 13B, 18 | 语音锁定 + 声音闭环（TTS） | `composer` + `foley` + `mixer` |
+| 8 | kais-camera | 14 | 运镜定稿 + 动态预览 | `cinematographer` |
+| 9 | kais-consistency-agent | 16 | 跨镜头一致性守护（DINOv2 > 0.85） | `continuity` |
+| 10 | kais-movie-gate | 20 | 终版质检与交付评分 | `compliance_marketing` |
 
 ### 辅助 Skill
 
@@ -502,7 +638,8 @@ node lib/git-stage-manager.js rollback <workdir> <step>
 
 | 服务 | 用途 | Step |
 |------|------|------|
-| hermes_llm | 创意生成（默认） | 全流程 |
+| **hermes-agent（ACP）** | **专业创意生成（20 个 movie-expert）** | **1, 3, 5, 7, 9, 11, 13, 14, 15, 16, 18** |
+| hermes_llm | 轻量写作（拼装/汇总/格式化） | 全流程 |
 | image tool | 图像分析/生成 | 7, 9, 16 |
 | 即梦 API (jimeng-5.0) | 文生图（扩展） | 7, 9 |
 | Seedance 2.0 (云端) | audio-driven 视频 | 17 |
