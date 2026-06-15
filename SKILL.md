@@ -85,12 +85,18 @@ Step 4:  选择大纲                                   → 🔒 REVIEW GATE
 Step 5:  生成剧本 (hermes_llm)                      → checkpoint
 Step 6:  选择剧本                                   → 🔒 REVIEW GATE
          └─ 📡 Toonflow: 同步剧本 (agent-sync --asset-type script)
-Step 7:  生成主角（3图一体, image tool）            → checkpoint
-Step 8:  选择主角 → soul-pack.json                  → 🔒 REVIEW GATE
-         └─ 📡 Toonflow: 同步角色图 (agent-sync --asset-type character_image) ×N
-Step 9:  生成场景（6图一体, image tool）            → checkpoint
-Step 10: 选择场景 → geometry-bed.json               → 🔒 REVIEW GATE
-         └─ 📡 Toonflow: 同步场景图 (agent-sync --asset-type scene_image) ×N + 保存画布FlowGraph
+Step 7:  生成主角·正视图 (image tool)               → checkpoint
+        └─ 7A: 正视图审核 (>=7) → 通过
+        └─ 7B: 参考7A生成5张侧视图 (reference2image)
+        └─ 7C: 侧视图一致性审核 (>=6)
+Step 8:  选择主角 → soul-pack.json（含6视图）          → 🔒 REVIEW GATE
+         └─ 📡 Toonflow: 同步角色图 (agent-sync --asset-type character_image) ×6
+Step 9:  生成场景·俯视图 (image tool)               → checkpoint
+        └─ 9A: 俯视图审核 (>=7, 空间可读性)
+        └─ 9B: 参考9A生成4张侧面视图 (reference2image)
+        └─ 9C: 侧视图一致性审核 (>=6)
+Step 10: 选择场景 → geometry-bed.json（含5视图）        → 🔒 REVIEW GATE
+         └─ 📡 Toonflow: 同步场景图 (agent-sync --asset-type scene_image) ×5/scene + 保存画布FlowGraph
 Step 11: 时空剧本 (hermes_llm)                      → 🔒 REVIEW GATE
          └─ 📡 Toonflow: 同步时空剧本 + 更新画布FlowGraph
 ```
