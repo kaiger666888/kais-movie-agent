@@ -12,7 +12,7 @@
 ## Milestones
 
 - ✅ **v1.0 AIGC Integration** — Phases 1-9 (shipped 2026-05-18)
-- 🚧 **v2.0 V8 → v2.0 PRFP DAG Migration** — Phases 10-14 (in planning)
+- ✅ **v2.0 V8 → v2.0 PRFP DAG Migration** — Phases 10-14 (shipped 2026-06-17)
 
 ---
 
