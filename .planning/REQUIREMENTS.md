@@ -11,18 +11,18 @@
 
 ### WRAP — Topology Wrapper(2 reqs)
 
-- [ ] **WRAP-01**: 新增 `lib/v2_topology/` 目录,暴露 16 节点 API(15 linear + 1 consultative theory_critic)。每节点对应 hermes-agent `nodes.yaml` 的 id(`creative_source` / `style_genome` / `screenplay` / ... / `theory_critic`)。Wrapper 不重写 V8,只暴露新 API 调用 V8 现有 lib/agents/ 实现(transparent pass-through)。
-- [ ] **WRAP-02**: `lib/pipeline.js` 保留 V8 实现作为 fallback;新增 `lib/v2_pipeline.js` 作为 v2.0 入口。环境变量 `KAI_PIPELINE_MODE=v8|v2|parallel` 控制模式。`parallel` 模式下 V8 + v2 同时运行,产出 diff 用于 A/B 验证。
+- [x] **WRAP-01**: 新增 `lib/v2_topology/` 目录,暴露 16 节点 API(15 linear + 1 consultative theory_critic)。每节点对应 hermes-agent `nodes.yaml` 的 id(`creative_source` / `style_genome` / `screenplay` / ... / `theory_critic`)。Wrapper 不重写 V8,只暴露新 API 调用 V8 现有 lib/agents/ 实现(transparent pass-through)。
+- [x] **WRAP-02**: `lib/pipeline.js` 保留 V8 实现作为 fallback;新增 `lib/v2_pipeline.js` 作为 v2.0 入口。环境变量 `KAI_PIPELINE_MODE=v8|v2|parallel` 控制模式。`parallel` 模式下 V8 + v2 同时运行,产出 diff 用于 A/B 验证。
 
 ### MIGRATE — Per-Node Agents Migration(2 reqs,split by layer)
 
-- [ ] **MIGRATE-01**: 重构 `lib/agents/` Layer 0-3 agents(root + intent parallel + visual intent + visual execution)从 V8 step-mapping 到 v2.0 node-mapping。包括:`creative_source` / `style_genome` / `screenplay` + `script_auditor` (loop) / `character_designer` / `cinematographer` / `prompt_injector` (NEW) / `visual_executor` (drawer+animator merged) / `continuity_auditor` (renamed from continuity)。
-- [ ] **MIGRATE-02**: 重构 `lib/agents/` Layer 4-6 agents(audio + post + final gates)从 V8 step-mapping 到 v2.0 node-mapping。包括:`audio_pipeline` (5 audio merged) / `editor` / `colorist` / `hook_retention` / `quality_gate` / `compliance_gate` (renamed)。
+- [x] **MIGRATE-01**: 重构 `lib/agents/` Layer 0-3 agents(root + intent parallel + visual intent + visual execution)从 V8 step-mapping 到 v2.0 node-mapping。包括:`creative_source` / `style_genome` / `screenplay` + `script_auditor` (loop) / `character_designer` / `cinematographer` / `prompt_injector` (NEW) / `visual_executor` (drawer+animator merged) / `continuity_auditor` (renamed from continuity)。
+- [x] **MIGRATE-02**: 重构 `lib/agents/` Layer 4-6 agents(audio + post + final gates)从 V8 step-mapping 到 v2.0 node-mapping。包括:`audio_pipeline` (5 audio merged) / `editor` / `colorist` / `hook_retention` / `quality_gate` / `compliance_gate` (renamed)。
 
 ### REMOVE — V8 Legacy Cleanup(2 reqs)
 
-- [ ] **REMOVE-01**: V8 step dispatch (`lib/phases/index.js`) deprecate — 一旦 v2.0 拓扑稳定(Phase 11-12 完成 + A/B 验证通过),移除 V8 20-step dispatch 代码。`KAI_PIPELINE_MODE=v8` 仍可启用作为应急 fallback,但 default = v2。
-- [ ] **REMOVE-02**: V8 specific 设计弃用:
+- [x] **REMOVE-01**: V8 step dispatch (`lib/phases/index.js`) deprecate — 一旦 v2.0 拓扑稳定(Phase 11-12 完成 + A/B 验证通过),移除 V8 20-step dispatch 代码。`KAI_PIPELINE_MODE=v8` 仍可启用作为应急 fallback,但 default = v2。
+- [x] **REMOVE-02**: V8 specific 设计弃用:
   - OpenClaw Agent 唯一 LLM 编排 → 替换为分层 LLM 调用(per Phase 7 §3.1 D1.4)
   - sketch-then-render 强制两阶段 → `composition_lock` 是 user-value 层;sketch-then-render 是 instantiation(per Phase 7 §3.3 D3.4)
   - Toonflow review platform → quality_gate + compliance_gate 接管
@@ -30,13 +30,13 @@
 
 ### CREATIVE — LLM-Creative Wiring(2 reqs)
 
-- [ ] **CREATIVE-01**: 实施 hermes-agent Phase 10 设计的 `consistency_context` + `logic-critic` 扩展。`lib/state/` 扩展支持 consistency-context schema(character_knowledge_state + timeline + stakes + spatial_layout + emotional_arc per `04-LLM-CREATIVE-DISTILLATION.md §2.1`)。`script_auditor` agent 扩展 6th dim:consistency_context_violations。
-- [ ] **CREATIVE-02**: 实施 `novelty_constraint` 从 `creative_source` 流出(per `04-LLM-CREATIVE-DISTILLATION.md §7`)。`creative_source` agent 输出新增 `novelty_constraint` schema(avoid_tropes + require_novelty_in + novelty_score_threshold + selected_template + template_choice_rationale)。`screenplay` agent 消费 novelty_constraint 作为 prompt 一部分。
+- [x] **CREATIVE-01**: 实施 hermes-agent Phase 10 设计的 `consistency_context` + `logic-critic` 扩展。`lib/state/` 扩展支持 consistency-context schema(character_knowledge_state + timeline + stakes + spatial_layout + emotional_arc per `04-LLM-CREATIVE-DISTILLATION.md §2.1`)。`script_auditor` agent 扩展 6th dim:consistency_context_violations。
+- [x] **CREATIVE-02**: 实施 `novelty_constraint` 从 `creative_source` 流出(per `04-LLM-CREATIVE-DISTILLATION.md §7`)。`creative_source` agent 输出新增 `novelty_constraint` schema(avoid_tropes + require_novelty_in + novelty_score_threshold + selected_template + template_choice_rationale)。`screenplay` agent 消费 novelty_constraint 作为 prompt 一部分。
 
 ### VALIDATE — Cross-Repo Coordination + Backward Compat(2 reqs)
 
-- [ ] **VALIDATE-01**: 实施 hermes-agent HANDOFF-06 versioning scheme。`impl_targets_design: design-2026-06-16-prfp` 在 PROJECT.md frontmatter 声明。任何 structural DAG change(add/remove/reorder nodes)需 cross-repo ADR(per HANDOFF-05 co-owned DAG)。
-- [ ] **VALIDATE-02**: Backward compatibility validation — V8 baseline `734dc71c9d` 保留作为 fallback;wrapper 期间(Phase 10-13)V8 + v2.0 可并行运行;V8 现有 API 消费者(外部 webhook + Telegram 通知等)不破坏。`KAI_PIPELINE_MODE=v8` 仍 work;default `KAI_PIPELINE_MODE=v2` 在 Phase 13 完成后切换。
+- [x] **VALIDATE-01**: 实施 hermes-agent HANDOFF-06 versioning scheme。`impl_targets_design: design-2026-06-16-prfp` 在 PROJECT.md frontmatter 声明。任何 structural DAG change(add/remove/reorder nodes)需 cross-repo ADR(per HANDOFF-05 co-owned DAG)。
+- [x] **VALIDATE-02**: Backward compatibility validation — V8 baseline `734dc71c9d` 保留作为 fallback;wrapper 期间(Phase 10-13)V8 + v2.0 可并行运行;V8 现有 API 消费者(外部 webhook + Telegram 通知等)不破坏。`KAI_PIPELINE_MODE=v8` 仍 work;default `KAI_PIPELINE_MODE=v2` 在 Phase 13 完成后切换。
 
 ---
 
@@ -71,16 +71,16 @@
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| WRAP-01 | 10 | Pending |
-| WRAP-02 | 10 | Pending |
-| MIGRATE-01 | 11 | Pending |
-| MIGRATE-02 | 12 | Pending |
-| REMOVE-01 | 13 | Pending |
-| REMOVE-02 | 13 | Pending |
-| CREATIVE-01 | 14 | Pending |
-| CREATIVE-02 | 14 | Pending |
-| VALIDATE-01 | 13 | Pending |
-| VALIDATE-02 | 13 | Pending |
+| WRAP-01 | 10 | ✓ Satisfied |
+| WRAP-02 | 10 | ✓ Satisfied |
+| MIGRATE-01 | 11 | ✓ Satisfied |
+| MIGRATE-02 | 12 | ✓ Satisfied |
+| REMOVE-01 | 13 | ✓ Satisfied |
+| REMOVE-02 | 13 | ✓ Satisfied |
+| CREATIVE-01 | 14 | ✓ Satisfied |
+| CREATIVE-02 | 14 | ✓ Satisfied |
+| VALIDATE-01 | 13 | ✓ Satisfied |
+| VALIDATE-02 | 13 | ✓ Satisfied |
 
 **Coverage:**
 - v2.0 requirements: **10 total** (WRAP × 2 + MIGRATE × 2 + REMOVE × 2 + CREATIVE × 2 + VALIDATE × 2)
