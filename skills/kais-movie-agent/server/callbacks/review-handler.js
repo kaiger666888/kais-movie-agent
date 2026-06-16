@@ -21,7 +21,7 @@ function verifyReviewHmac(body, signature) {
 }
 
 /**
- * 处理审核回调
+ * 处理审核回调 — 委托给 PipelineManager.handleReviewDecision()
  * @param {import('../pipeline/state-machine.js').PipelineManager} manager
  * @param {object} body - 回调数据
  */
@@ -40,37 +40,16 @@ export async function handleReviewCallback(manager, body) {
     ts: new Date().toISOString(),
   }));
 
+  const result = await manager.handleReviewDecision(pipeline_id, phase, decision, {
+    source: 'review-platform',
+    selectedItems: items || [],
+  });
+
   const entry = manager._get(pipeline_id);
-  if (!entry) throw new Error(`Pipeline not found: ${pipeline_id}`);
-
-  // 更新对应 phase 的审核结果
-  const phaseEntry = entry.phases.find(p => p.id === phase);
-  if (phaseEntry) {
-    phaseEntry.review_result = decision;
-    if (decision === 'approved') {
-      phaseEntry.status = 'completed';
-    } else if (decision === 'rejected') {
-      phaseEntry.status = 'failed';
-    }
-  }
-  entry.updatedAt = new Date().toISOString();
-
-  // 如果是 approved，自动恢复管线（启动下一个 phase）
-  let nextPhase = null;
-  if (decision === 'approved') {
-    const v6Idx = PHASES_V6.findIndex(p => p.id === phase);
-    if (v6Idx >= 0 && v6Idx + 1 < PHASES_V6.length) {
-      nextPhase = PHASES_V6[v6Idx + 1].id;
-      // 异步恢复管线
-      manager.resume(pipeline_id, { phase: nextPhase, decision: 'approved' }).catch(err => {
-        console.error(`[Review Callback] Resume failed: ${err.message}`);
-      });
-    }
-  }
 
   return {
-    pipeline_status: entry.status,
-    next_phase: nextPhase,
+    pipeline_status: entry?.status,
+    next_phase: result.nextPhase,
   };
 }
 

@@ -126,6 +126,78 @@ export class PipelineManager {
   }
 
   /**
+   * 统一审核决策入口 — 处理来自 telegram / canvas / review-platform 的审核决定
+   *
+   * @param {string} pipelineId - 管线 ID
+   * @param {string} phaseId - V6 phase ID（如 'art-character'）
+   * @param {'approved'|'rejected'} decision - 审核决定
+   * @param {object} context - 审核上下文
+   * @param {'telegram'|'canvas'|'review-platform'} context.source - 决定来源
+   * @param {string} [context.nodeId] - Canvas 节点 ID（canvas 来源时）
+   * @param {string} [context.reason] - 驳回原因
+   * @param {Array} [context.selectedItems] - 选中的候选项
+   * @returns {Promise<object>} { status, nextPhase?, reason? }
+   */
+  async handleReviewDecision(pipelineId, phaseId, decision, context = {}) {
+    const entry = this._get(pipelineId);
+    if (!entry) throw new Error(`Pipeline not found: ${pipelineId}`);
+
+    const v6Idx = PHASES_V6.findIndex(p => p.id === phaseId);
+    if (v6Idx < 0) throw new Error(`Unknown phase: ${phaseId}`);
+
+    const phaseEntry = entry.phases[v6Idx];
+    const source = context.source || 'unknown';
+
+    console.log(JSON.stringify({
+      event: 'review_decision',
+      pipeline_id: pipelineId,
+      phase_id: phaseId,
+      decision,
+      source,
+      node_id: context.nodeId || null,
+      selected_items: context.selectedItems || [],
+      ts: new Date().toISOString(),
+    }));
+
+    if (decision === 'approved') {
+      phaseEntry.status = 'completed';
+      phaseEntry.review_result = 'approved';
+      if (context.selectedItems) {
+        phaseEntry.selected_items = context.selectedItems;
+      }
+      entry.updatedAt = new Date().toISOString();
+
+      // 推进到下一个 phase
+      const nextIdx = v6Idx + 1;
+      if (nextIdx >= PHASES_V6.length) {
+        entry.status = 'completed';
+        entry.currentPhase = null;
+        return { status: 'completed', nextPhase: null };
+      }
+
+      const nextPhase = PHASES_V6[nextIdx].id;
+      // 异步恢复管线
+      this.resume(pipelineId, { phase: nextPhase, decision: 'approved' }).catch(err => {
+        console.error(`[PipelineManager] Resume after approval failed: ${err.message}`);
+      });
+
+      return { status: 'approved', nextPhase };
+    }
+
+    if (decision === 'rejected') {
+      phaseEntry.status = 'failed';
+      phaseEntry.review_result = 'rejected';
+      if (context.reason) {
+        phaseEntry.rejection_reason = context.reason;
+      }
+      entry.updatedAt = new Date().toISOString();
+      return { status: 'rejected', nextPhase: null, reason: context.reason || '' };
+    }
+
+    throw new Error(`Invalid decision: ${decision}`);
+  }
+
+  /**
    * 恢复管线
    */
   async resume(pipelineId, options = {}) {
