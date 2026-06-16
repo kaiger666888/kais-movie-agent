@@ -3,9 +3,23 @@ impl_targets_design: design-2026-06-16-prfp
 v8_baseline_ref: 734dc71c9d5ff20d55dbd0255f367030962cf329
 v8_deprecated_at: 2026-06-17
 hermes_agent_baseline_ref: 85965c393f44deae29a833f2ae98af66d26548ce
+current_milestone: none (v2.0 shipped 2026-06-17)
 ---
 
 # kais-movie-agent 集成开发
+
+## Current State (post-v2.0)
+
+**Shipped:** v2.0 V8 → v2.0 PRFP DAG Migration (2026-06-17)
+- 16 native v2.0 PRFP nodes in lib/v2_topology/ (15 linear + 1 consultative)
+- Default KAI_PIPELINE_MODE = v2; V8 preserved as deprecated fallback
+- 83/83 smoke checks pass (77 unit + 6 E2E integration)
+- Canonical cleanliness verified (0 hard-coded models in lib/v2_topology/)
+- V8 baseline 734dc71c9d byte-equivalent except @deprecated banners
+
+**Next:** Operator decides between FUTURE-K1 through K5 (see ROADMAP.md).
+
+---
 
 ## What This Is
 movie-agent 的 AIGC 集成层 — 将 gold-team GPU 调度和 review-platform 审核平台连接到电影制作流水线,实现 GPU 密集型任务(TTS、Blender、FLUX 图像、视频生成)的远程调度和人工审核工作流。
