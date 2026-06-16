@@ -98,21 +98,18 @@ check('Each node has correct layer/role metadata', () => {
   assert.equal(registry.quality_gate.layer, 6);
 });
 
-check('V8 pass-through nodes have non-empty v8PassthroughTargets', () => {
+check('All 16 nodes are native v2.0 (no V8 pass-through post Phase 11-12)', () => {
   const registry = buildNodeRegistry();
-  assert.ok(registry.creative_source.v8PassthroughTargets.length > 0);
-  assert.ok(registry.screenplay.v8PassthroughTargets.length > 0);
+  for (const id of Object.keys(registry)) {
+    // Phase 11-12 migrated all nodes; v8PassthroughTargets is empty for all
+    assert.equal(registry[id].v8PassthroughTargets.length, 0, `${id} should have no V8 targets`);
+    assert.equal(registry[id].isV2Native, true, `${id} should be v2 native`);
+  }
 });
 
-check('NEW nodes (theory_critic, hook_retention) have empty v8PassthroughTargets', () => {
-  const registry = buildNodeRegistry();
-  assert.equal(registry.theory_critic.v8PassthroughTargets.length, 0);
-  assert.equal(registry.hook_retention.v8PassthroughTargets.length, 0);
-});
-
-check('resolvePipelineMode defaults to v8', () => {
+check('resolvePipelineMode defaults to v2 (Phase 13 flip)', () => {
   delete process.env.KAI_PIPELINE_MODE;
-  assert.equal(resolvePipelineMode(), 'v8');
+  assert.equal(resolvePipelineMode(), 'v2');
 });
 
 check('resolvePipelineMode accepts v8/v2/parallel', () => {
@@ -123,8 +120,8 @@ check('resolvePipelineMode accepts v8/v2/parallel', () => {
   assert.equal(resolvePipelineMode('ab'), 'parallel');
 });
 
-check('resolvePipelineMode rejects unknown → falls back to v8', () => {
-  assert.equal(resolvePipelineMode('garbage'), 'v8');
+check('resolvePipelineMode rejects unknown → falls back to v2 (Phase 13)', () => {
+  assert.equal(resolvePipelineMode('garbage'), 'v2');
 });
 
 check('Each node describes() returns valid shape', () => {
@@ -138,15 +135,19 @@ check('Each node describes() returns valid shape', () => {
   }
 });
 
-await checkAsync('theory_critic + hook_retention stubs return phase_10_stub marker', async () => {
+await checkAsync('theory_critic + hook_retention return valid node_id markers', async () => {
   const registry = buildNodeRegistry();
   const tcResult = await registry.theory_critic.run({}, { test: true });
-  assert.equal(tcResult.phase_10_stub, true);
+  assert.equal(tcResult.node_id, 'theory_critic');
   assert.equal(tcResult.consultative, true);
 
-  const hrResult = await registry.hook_retention.run({}, { test: true });
-  assert.equal(hrResult.phase_10_stub, true);
-  assert.equal(hrResult.form_scope, 'short_drama');
+  // Phase 12 native hook_retention requires screenplay_full (or form!=short_drama to skip)
+  const hrResult = await registry.hook_retention.run({}, {
+    screenplay_full: { scene_list: [] },
+    form_context: { form: 'feature' },
+  });
+  assert.equal(hrResult.node_id, 'hook_retention');
+  assert.equal(hrResult.skipped, true); // form=feature triggers skip
 });
 
 console.log(`\n${passed} passed, ${failed} failed`);

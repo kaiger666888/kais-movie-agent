@@ -47,14 +47,12 @@ check('All 9 Layer 0-3 nodes are v2 native', () => {
   }
 });
 
-check('Layer 4-6 nodes still V8 pass-through (NOT yet migrated)', () => {
-  // Phase 11 scope is Layer 0-3 only; Layer 4-6 in Phase 12
-  assert.equal(registry.audio_pipeline.isV2Native, false);
-  assert.equal(registry.editor.isV2Native, false);
-  assert.equal(registry.colorist.isV2Native, false);
-  assert.equal(registry.hook_retention.isV2Native, false);
-  assert.equal(registry.quality_gate.isV2Native, false);
-  assert.equal(registry.compliance_gate.isV2Native, false);
+check('Phase 13 update: All 16 nodes now native (Layer 4-6 migrated in Phase 12)', () => {
+  // Phase 11 originally migrated Layer 0-3; Phase 12 migrated Layer 4-6
+  // Phase 13 status: ALL 16 nodes native v2.0
+  for (const id of Object.keys(registry)) {
+    assert.equal(registry[id].isV2Native, true, `${id} should be v2 native`);
+  }
 });
 
 check('InvariantBus validates 5D style genome', () => {

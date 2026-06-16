@@ -1,3 +1,10 @@
+---
+impl_targets_design: design-2026-06-16-prfp
+v8_baseline_ref: 734dc71c9d5ff20d55dbd0255f367030962cf329
+v8_deprecated_at: 2026-06-17
+hermes_agent_baseline_ref: 85965c393f44deae29a833f2ae98af66d26548ce
+---
+
 # kais-movie-agent 集成开发
 
 ## What This Is
