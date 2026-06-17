@@ -53,7 +53,8 @@ TTS     → exec curl → gold-team :8002/api/v1/tasks (type: tts)
 
 | Step | 用途 | expert_id |
 |------|------|-----------|
-| Step 1 | 痛点调查 | `hook_retention` |
+| Step 1 | 爆款选题雷达（kais-topic-radar 10维情绪共鸣） | `hook_retention` |
+| Step 2 | 主题生成（基于 Topic Kernel 共鸣公式筛选） | `hook_retention` |
 | Step 3 | 大纲生成 | `screenplay` |
 | Step 5 | 剧本生成 | `screenplay` |
 | Step 7 | 主角设计 | `character_designer` + `drawer` |
@@ -134,9 +135,13 @@ TTS     → exec curl → gold-team :8002/api/v1/tasks (type: tts)
 ### 上半部分：创意立项（Steps 1-11）
 
 ```
-Step 1:  痛点调查 (kais-soul-radar)               → checkpoint
+Step 1:  爆款选题雷达 (kais-topic-radar)               → checkpoint
          🎙️ hermes-agent expert: hook_retention
-Step 2:  生成×10主题 → 用户选择                   → 🔒 REVIEW GATE
+Step 2:  基于 Topic Kernel 生成×10主题 → 用户选择   → 🔒 REVIEW GATE
+         🎙️ hermes-agent expert: hook_retention
+         └─ 输入: Step 1 的 Topic Kernel（共鸣公式+目标人群+情绪维度）
+         └─ 输出: 10个主题方案（每个带 virality_score + safety_score + hook_pattern）
+         └─ 筛选: 只保留 virality_score ≥ 7 且 safety_score ≥ 8 的主题
          └─ 📡 Toonflow: 创建项目 + 同步主题信息
 Step 3:  生成×6大纲                                → checkpoint
          🎙️ hermes-agent expert: screenplay
@@ -636,7 +641,7 @@ node lib/git-stage-manager.js rollback <workdir> <step>
 
 | # | Skill | Step | 功能 | 协作的 hermes-agent 专家 |
 |---|-------|------|------|--------------------------|
-| 1 | kais-soul-radar | 1 | 痛点调查与情感洞察 | `hook_retention` |
+| 1 | kais-topic-radar | 1 | 爆款选题雷达（10大情绪共鸣维度） | `hook_retention` |
 | 2 | kais-script-agent | 3, 5 | 大纲生成 + 剧本生成 | `screenplay` |
 | 3 | kais-story-score | 6, 12 | 剧本量化分析 + 质量门控 | `script_auditor` |
 | 4 | kais-character-designer | 7 | 主角设计（3图一体） | `character_designer` + `drawer` |
