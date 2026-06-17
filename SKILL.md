@@ -107,6 +107,28 @@ TTS     → exec curl → gold-team :8002/api/v1/tasks (type: tts)
 
 ---
 
+## 🎲 生成冗余策略（成本越低冗余越多）
+
+**原则**：消耗越小的创意产出，一次性生成越多备选，加速创作并方便挑选最优。
+
+| Step | 产出类型 | 消耗级别 | 生成数量 | 用户操作 |
+|------|---------|---------|---------|---------|
+| Step 2 | 主题 | 🔵 极低（纯文本） | **10个** | 选1个或修改方向
+| Step 4 | 大纲 | 🔵 低（中等文本） | **6个** | 选1个或要求合并/修改 |
+| Step 6 | 剧本 | 🟡 中（长文本+LLM推理） | **3个** | 选1个或要求修改 |
+| Step 8 | 主角 | 🟠 高（图片生成） | 1组（正面+5侧，6视图） | 选1组或重做 |
+| Step 10 | 场景 | 🟠 高（图片生成） | 1组（俯+4侧，5视图/场景） | 选1组或重做 |
+| Step 11 | 时空剧本 | 🟡 中（文本） | **3个**运镜方案 | 选1个或合并 |
+| Step 13 | 视觉种子 | 🔴 极高（多张图片） | 按场景数 | 逐场景审核 |
+| Step 17 | 终版视频 | 🔴 极高（云端渲染） | 不冗余 | 通过/重做 |
+
+- **所有未选中**的备选（文本/图片/视频）统一存档到项目 workdir `candidates/<step>/` 目录
+- 文本存原始内容，图片/视频存文件 + 生成参数（prompt/model/score）
+- 用途：分支拓展（从任意节点重新出发）、正反数据集积累、风格对比参考
+- 每个备选标记元数据：`selected: true/false`、`score`、`reason`（选中/未选原因）
+
+---
+
 ## 管线流程
 
 ### 上半部分：创意立项（Steps 1-11）
@@ -114,15 +136,15 @@ TTS     → exec curl → gold-team :8002/api/v1/tasks (type: tts)
 ```
 Step 1:  痛点调查 (kais-soul-radar)               → checkpoint
          🎙️ hermes-agent expert: hook_retention
-Step 2:  选择主题                                   → 🔒 REVIEW GATE
+Step 2:  生成×10主题 → 用户选择                   → 🔒 REVIEW GATE
          └─ 📡 Toonflow: 创建项目 + 同步主题信息
-Step 3:  生成大纲                                   → checkpoint
+Step 3:  生成×6大纲                                → checkpoint
          🎙️ hermes-agent expert: screenplay
-Step 4:  选择大纲                                   → 🔒 REVIEW GATE
+Step 4:  选择大纲（6选1）                           → 🔒 REVIEW GATE
          └─ 📡 Toonflow: 同步大纲
-Step 5:  生成剧本                                   → checkpoint
+Step 5:  生成×3剧本                                → checkpoint
          🎙️ hermes-agent expert: screenplay
-Step 6:  选择剧本                                   → 🔒 REVIEW GATE
+Step 6:  选择剧本（3选1）                           → 🔒 REVIEW GATE
          └─ 📡 Toonflow: 同步剧本 (agent-sync --asset-type script)
 Step 7:  生成主角·正视图 (kais-jimeng-cli)         → checkpoint
          🎙️ hermes-agent experts: character_designer (角色设定) + drawer (出图 prompt)
@@ -138,7 +160,7 @@ Step 9:  生成场景·俯视图 (kais-jimeng-cli)         → checkpoint
         └─ 9C: 侧视图一致性审核 (>=6)
 Step 10: 选择场景 → geometry-bed.json（含5视图）        → 🔒 REVIEW GATE
          └─ 📡 Toonflow: 同步场景图 (agent-sync --asset-type scene_image) ×5/scene + 保存画布FlowGraph
-Step 11: 时空剧本                                   → 🔒 REVIEW GATE
+Step 11: 生成×3时空剧本（不同运镜方案）→ 用户选择      → 🔒 REVIEW GATE
          🎙️ hermes-agent experts: screenplay (剧本) + cinematographer (镜头语言)
          └─ 📡 Toonflow: 同步时空剧本 + 更新画布FlowGraph
 ```
