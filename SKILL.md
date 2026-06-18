@@ -1,9 +1,22 @@
 ---
 name: kais-movie-agent
-description: "AI短片全流程自动制作管线 (V8.5)。dreamina CLI 为唯一图片/视频生成工具。L1/L2/L3/L4 完整角色资产库 + Seedance 2.0 omni_reference + multiframe2video 故事视频。OpenClaw 是唯一编排引擎，创意生成通过 ACP 调用 hermes-agent 的 16 个活跃 movie-expert + 垂直专家。gold-team 只做 GPU 调度。25步管线，审核门不可跳过。"
+description: "AI短片全流程自动制作管线 (V8.6)。dreamina CLI 唯一生成工具。hermes-agent v2 专家驱动。L1-L4 完整角色资产库。13步管线，8个审核门。OpenClaw 唯一编排引擎。"
 ---
 
-# kais-movie-agent V8.5 — dreamina CLI + hermes-agent 专家驱动架构
+# kais-movie-agent V8.6 — dreamina CLI + hermes-agent v2 + 13步精简管线
+
+## 🆕 V8.6 更新（2026-06-18）
+
+1. **管线精简 25→13 步** — 6组合并：选题+主题、框架+大纲、剧本+审计、运镜+终审、视觉+风格化、声音+口型
+2. **审核门 12→8 个** — 用户等待轮次减半
+3. **Expert 调用约 15→10 次** — 省去冗余 ACP 调用
+4. **核心合并**：
+   - Step 1: hook_retention 共鸣+主题一步到位（原 Step 1+2）
+   - Step 2: creative_source+screenplay 框架+大纲一步到位（原 Step 2.5+3）
+   - Step 3: screenplay+script_auditor 剧本+审计原子操作（原 Step 5+5B+6）
+   - Step 6: screenplay+cinematographer+script_auditor 运镜+终审（原 Step 11+12）
+   - Step 7: visual_executor+prompt_injector+style_genome+colorist 视觉+风格化（原 Step 13A+15）
+   - Step 11: audio_pipeline BGM+音效+口型统一（原 Step 18+17B）
 
 ## 🆕 V8.5 更新（2026-06-18）
 
@@ -87,18 +100,18 @@ TTS     → exec curl → gold-team :8002/api/v1/tasks (type: tts)
 |------|------|-----------|
 | Step 1 | 爆款选题雷达（kais-topic-radar 10维情绪共鸣） | `hook_retention` |
 | Step 2 | 主题生成（基于 Topic Kernel 共鸣公式筛选） | `hook_retention` |
-| Step 2.5 | 故事框架锁定（叙事结构+人物关系+冲突+节奏） | `creative_source` + `screenplay` |
+| Step 2 | 故事框架+大纲 | `creative_source` + `screenplay` |
 | Step 3 | 大纲生成 | `screenplay` |
 | Step 5 | 剧本生成 | `screenplay` |
-| Step 7 | 主角设计 | `character_designer` + `visual_executor` (drawer) |
-| Step 9 | 场景设计 | `cinematographer` + `style_genome` + `visual_executor` (drawer) |
-| Step 11 | 时空剧本 | `screenplay` + `cinematographer` |
-| Step 13A | 视觉种子 | `visual_executor` (drawer) + `prompt_injector` + `style_genome` |
-| Step 13B | 声音骨架 | `audio_pipeline` (voicer + composer + foley) |
-| Step 14 | 运镜 | `cinematographer` |
-| Step 15 | 风格化 | `colorist` + `style_genome` |
-| Step 16 | 一致性 | `continuity_auditor` |
-| Step 18 | BGM | `audio_pipeline` (composer + mixer + spatial_audio) |
+| Step 4 | 主角设计+资产库 | `character_designer` + `visual_executor` (drawer) |
+| Step 5 | 场景设计 | `cinematographer` + `style_genome` + `visual_executor` (drawer) |
+| Step 6 | 时空剧本+终审 | `screenplay` + `cinematographer` + `script_auditor` |
+| Step 7 | 视觉种子+风格化 | `visual_executor` + `prompt_injector` + `style_genome` + `colorist` |
+| Step 7 | 视觉种子+风格化 | `visual_executor` + `prompt_injector` + `style_genome` + `colorist` |
+| Step 7B | 声音骨架 | `audio_pipeline` (voicer + composer + foley) |
+| Step 8 | 运镜+节奏 | `cinematographer` + `editor` |
+| Step 9 | 一致性检查 | `continuity_auditor` |
+| Step 11 | BGM+音效+口型 | `audio_pipeline` (composer + foley + mixer + spatial_audio + lip_sync) |
 
 **其他可用专家**（按需补充调用）：`editor`, `production`, `compliance_marketing`, `compliance_gate`, `creative_source`, `theory_critic`, `documentary_maker`, `animation_studio`
 
@@ -120,17 +133,16 @@ TTS     → exec curl → gold-team :8002/api/v1/tasks (type: tts)
 | Step | 审核内容 | 展示方式 |
 |------|---------|---------|
 | Step 2 | 主题选择 | 当前会话 |
-| Step 2.5 | 故事框架选择 | 当前会话 |
+| Step 2 | 故事框架+大纲选择 | 当前会话 |
 | Step 4 | 大纲选择 | 当前会话 |
 | Step 6 | 剧本选择 | 当前会话 |
-| Step 8 | 主角选择（3图一体） | 当前会话 |
-| Step 10 | 场景选择（6图一体） | 当前会话 |
-| Step 11 | 时空剧本 | 当前会话 |
-| Step 12 | 剧本锁定终审 | 当前会话 |
-| Step 13 | 种子骨架（视觉+声音） | 当前会话 |
-| Step 14 | 运镜预览 | 当前会话 |
-| Step 15 | AI风格化预览 | 当前会话 |
-| Step 17 | 云端终版视频 | 当前会话 |
+| Step 4 | 主角选择（L1-L4资产） | 当前会话 |
+| Step 5 | 场景选择（5视图） | 当前会话 |
+| Step 6 | 时空剧本+终审 | 当前会话 |
+| Step 6 | 时空剧本+终审 | 当前会话 |
+| Step 7 | 种子骨架（视觉+声音） | 当前会话 |
+| Step 8 | 运镜+节奏预览 | 当前会话 |
+| Step 10 | 终版视频 | 当前会话 |
 
 **执行规则：**
 1. 到达审核门时，**必须停止执行**，展示产出物
@@ -149,14 +161,14 @@ TTS     → exec curl → gold-team :8002/api/v1/tasks (type: tts)
 | Step | 产出类型 | 消耗级别 | 生成数量 | 用户操作 |
 |------|---------|---------|---------|---------|
 | Step 2 | 主题 | 🔵 极低（纯文本） | **10个** | 选1个或修改方向
-| Step 2.5 | 故事框架 | 🔵 极低（纯文本） | **3个** | 选1个或要求合并/修改 |
+| Step 2 | 故事框架+大纲 | 🔵 极低（纯文本） | **3个** | 选1个或要求合并/修改 |
 | Step 4 | 大纲 | 🔵 低（中等文本） | **6个** | 选1个或要求合并/修改 |
 | Step 6 | 剧本 | 🟡 中（长文本+LLM推理） | **3个** | 选1个或要求修改 |
-| Step 8 | 主角 | 🟠 高（图片生成） | 1组（正面+5侧，6视图） | 选1组或重做 |
-| Step 10 | 场景 | 🟠 高（图片生成） | 1组（俯+4侧，5视图/场景） | 选1组或重做 |
-| Step 11 | 时空剧本 | 🟡 中（文本） | **3个**运镜方案 | 选1个或合并 |
-| Step 13 | 视觉种子 | 🔴 极高（多张图片） | 按场景数 | 逐场景审核 |
-| Step 17 | 终版视频 | 🔴 极高（云端渲染） | 不冗余 | 通过/重做 |
+| Step 4 | 主角 | 🟠 高（图片生成） | L1×20+L2×N+L3/L4按需 | 选角色/重做 |
+| Step 5 | 场景 | 🟠 高（图片生成） | 1组（俯+4侧，5视图/场景） | 选1组或重做 |
+| Step 6 | 时空剧本 | 🟡 中（文本） | **3个**运镜方案（含审计） | 审计≥阈值放行 |
+| Step 7 | 视觉种子+风格化 | 🔴 极高（多张图片） | 按场景数 | 逐场景审核 |
+| Step 10 | 终版视频 | 🔴 极高（云端渲染） | 三种模式按需 | 通过/重做 |
 
 - **所有未选中**的备选（文本/图片/视频）统一存档到项目 workdir `candidates/<step>/` 目录
 - 文本存原始内容，图片/视频存文件 + 生成参数（prompt/model/score）
@@ -167,97 +179,83 @@ TTS     → exec curl → gold-team :8002/api/v1/tasks (type: tts)
 
 ## 管线流程
 
-### 上半部分：创意立项（Steps 1-11）
+### 上半部分：创意立项（Steps 1-6）
 
 ```
-Step 1:  爆款选题雷达 (kais-topic-radar)               → checkpoint
-         🎙️ hermes-agent expert: hook_retention
-Step 2:  基于 Topic Kernel 生成×10主题 → 用户选择   → 🔒 REVIEW GATE
-         🎙️ hermes-agent expert: hook_retention
-         └─ 输入: Step 1 的 Topic Kernel（共鸣公式+目标人群+情绪维度）
-         └─ 输出: 10个主题方案（每个带 virality_score + safety_score + hook_pattern）
-         └─ 筛选: 只保留 virality_score ≥ 7 且 safety_score ≥ 8 的主题
-         └─ 📐 V8.3: 故事梗概根据 episode_count × duration_sec_per_episode 动态分配容量
-            · 用 story-synopsis-builder.js 计算最低节拍点（每分钟≥2个）
-            · 多集时要求给出全局主线 + 每集独立梗概 + 集间关联
+Step 1:  选题+共鸣+主题×10 (kais-topic-radar + hook_retention) → 🔒 REVIEW GATE  ← V8.6: 合并原 Step 1+2
+         🎙️ hermes-agent expert: hook_retention（共鸣10维扫描 + 主题生成 + virality/safety 评分）
+         └─ 输入: 用户一句话（"做个30秒职场短片"）
+         └─ 输出: 10个主题方案（每个带 virality_score + safety_score + hook_pattern + topic_kernel）
+         └─ 筛选: 只保留 virality_score ≥ 7 且 safety_score ≥ 8
+         └─ 📐 故事容量根据 episode_count × duration_sec_per_episode 动态分配
          └─ 📡 Toonflow: 创建项目 + 同步主题信息
-Step 2.5: 故事框架锁定（叙事结构+人物关系+冲突设计+节奏策略）→ 🔒 REVIEW GATE  ← 新增
-         🎙️ hermes-agent expert: creative_source (故事内核/雪花法展开) + screenplay (叙事结构选择)
-         └─ 生成×3框架方案（不同叙事结构/节奏策略）
-         └─ 用户选择1个框架 → story-framework.json
-         └─ 📡 Toonflow: 同步故事框架
-Step 2.5B: 🆕 全局风格确立                              → checkpoint  ← V8.4 新增
+Step 2:  故事框架+大纲×3 (creative_source + screenplay) → 🔒 REVIEW GATE  ← V8.6: 合并原 Step 2.5+3
+         🎙️ hermes-agent expert: creative_source (故事内核/雪花法) + screenplay (叙事结构+大纲展开)
+         └─ 输入: 锁定主题
+         └─ 输出: 3个框架方案（每个含叙事结构+冲突+人物弧线+大纲200字）
+         └─ 📡 Toonflow: 同步框架+大纲
+Step 2B: 全局风格确立                              → checkpoint
          🎙️ hermes-agent expert: style_genome
-         └─ 基于 Step 2.5 框架生成 5D 风格向量（genre/mood/aesthetic/pace/color）
+         └─ 基于 Step 2 框架生成 5D 风格向量（genre/mood/aesthetic/pace/color）
          └─ 输出 style-genome.json → 贯穿全管线所有视觉生成
-Step 3:  生成×6大纲                                → checkpoint
-         🎙️ hermes-agent expert: screenplay
-Step 4:  选择大纲（6选1）                           → 🔒 REVIEW GATE
-         └─ 📡 Toonflow: 同步大纲
-Step 5:  生成×3剧本                                → checkpoint
-         🎙️ hermes-agent expert: screenplay
-Step 5B: 🆕 剧本定量审计                             → checkpoint  ← V8.4 新增
-         🎙️ hermes-agent expert: script_auditor
-         └─ 5维审计（叙事/情绪/钩子/角色/完播预测）→ 每个剧本打分
-         └─ 审计报告给 Step 6 做选择依据
-Step 6:  选择剧本（3选1）                           → 🔒 REVIEW GATE
+Step 3:  剧本×3 + 定量审计 (screenplay + script_auditor) → 🔒 REVIEW GATE  ← V8.6: 合并原 Step 5+5B+6
+         🎙️ hermes-agent expert: screenplay (剧本生成) + script_auditor (5维审计)
+         └─ 输入: 锁定大纲 + 风格向量
+         └─ 输出: 3个剧本，每个带5维评分（叙事/情绪/钩子/角色/完播预测）
+         └─ 高分剧本自动排序，全部<阈值才要求人工选
          └─ 📡 Toonflow: 同步剧本 (agent-sync --asset-type script)
-Step 7:  生成主角·L1/L2/L3/L4 资产库 (dreamina CLI) → checkpoint
+Step 4:  主角·L1/L2/L3/L4 资产库 (dreamina CLI)  → 🔒 REVIEW GATE  ← V8.6: 原 Step 7+8 合并编号
          🎙️ hermes-agent experts: character_designer (角色设定) + visual_executor (drawer sub-step, 出图 prompt)
-        └─ 7A: L1 身份锚点 — dreamina text2image × 20（面部特写，黄金标准检测，不合格重生≤3轮）
-        └─ 7B: L1 审核 (≥7) → 通过，注册到 CharacterAssetManager（永不更换）
-        └─ 7C: L2 造型卡片 — dreamina image2image（L1参考，每套服装正面+侧面，一造型一卡片不混放）
-        └─ 7D: L2 一致性审核 (≥6, 与L1面部一致+服装正确)
-        └─ 7E: L3 姿势包（按需）— dreamina image2image（L1+对应L2, 从剧本提取动作列表）
-        └─ 7F: L4 表情标定（按需）— dreamina image2image（L1, 从剧本提取表情列表）
-        └─ 7G: 资产库快照 → CharacterAssetManager.getAssetSnapshot() → character-asset-manifest.json
-Step 8:  选择主角 → soul-pack.json（含L1-L4分层资产）  → 🔒 REVIEW GATE
-         └─ 📡 Toonflow: 同步角色图 (agent-sync --asset-type character_image)
-Step 9:  生成场景·俯视图 (dreamina CLI)         → checkpoint
-         🎙️ hermes-agent experts: cinematographer (空间结构) + style_genome (视觉风格) + visual_executor (drawer sub-step, 出图 prompt)
-        └─ 9A: 俯视图审核 (>=7, 空间可读性)
-        └─ 9B: 参考9A生成4张侧面视图 (dreamina image2image)
-        └─ 9C: 侧视图一致性审核 (>=6)
-Step 10: 选择场景 → geometry-bed.json（含5视图）        → 🔒 REVIEW GATE
-         └─ 📡 Toonflow: 同步场景图 (agent-sync --asset-type scene_image) ×5/scene + 保存画布FlowGraph
-Step 11: 生成×3时空剧本（不同运镜方案）→ 用户选择      → 🔒 REVIEW GATE
-         🎙️ hermes-agent experts: screenplay (剧本) + cinematographer (镜头语言)
+        └─ 4A: L1 身份锚点 — dreamina text2image × 20（面部特写，黄金标准检测，不合格重生≤3轮）
+        └─ 4B: L1 审核 (≥7) → 通过，注册到 CharacterAssetManager（永不更换）
+        └─ 4C: L2 造型卡片 — dreamina image2image（L1参考，每套服装正面+侧面，一造型一卡片不混放）
+        └─ 4D: L2 一致性审核 (≥6, 与L1面部一致+服装正确)
+        └─ 4E: L3 姿势包（按需）— dreamina image2image（L1+对应L2, 从剧本提取动作列表）
+        └─ 4F: L4 表情标定（按需）— dreamina image2image（L1, 从剧本提取表情列表）
+        └─ 4G: 资产库快照 → CharacterAssetManager.getAssetSnapshot() → character-asset-manifest.json
+        └─ 🔒 用户确认角色 + 资产 → soul-pack.json
+        └─ 📡 Toonflow: 同步角色图 (agent-sync --asset-type character_image)
+Step 5:  场景·俯视+4侧 (dreamina CLI)              → 🔒 REVIEW GATE  ← V8.6: 原 Step 9+10 合并编号
+         🎙️ hermes-agent experts: cinematographer (空间结构) + style_genome (视觉风格) + visual_executor (drawer sub-step)
+        └─ 5A: 俯视图生成 + 审核 (≥7)
+        └─ 5B: 参考5A生成4张侧面视图 (dreamina image2image) + 一致性审核 (≥6)
+        └─ 🔒 用户确认场景 → geometry-bed.json
+        └─ 📡 Toonflow: 同步场景图 (agent-sync --asset-type scene_image) ×5/scene
+Step 6:  时空剧本×3 含终审 (screenplay + cinematographer + script_auditor) → 🔒 REVIEW GATE  ← V8.6: 合并原 Step 11+12
+         🎙️ hermes-agent expert: screenplay + cinematographer + script_auditor (终审)
+         └─ 生成3个运镜方案，同步附带审计评分
+         └─ 审计≥阈值才放行，全部<阈值需重做
          └─ 📡 Toonflow: 同步时空剧本 + 更新画布FlowGraph
 ```
 
-### 下半部分：生产执行（Steps 12-20）
+### 下半部分：生产执行（Steps 7-13）
 
 ```
-Step 12: 剧本锁定审核                               → 🔒 REVIEW GATE
-         🎙️ hermes-agent expert: script_auditor (终审审计)
-         └─ 📡 Toonflow: 最终确认画布FlowGraph完整性
-Step 13: 种子骨架（13A视觉种子 ∥ 13B声音骨架）      → 🔒 REVIEW GATE
-         🎙️ 13A: visual_executor (drawer sub-step) + prompt_injector + style_genome
-         🎙️ 13B: audio_pipeline (voicer sub-step TTS旁白 + composer sub-step BGM骨架 + foley sub-step)
-         └─ 🆕 prompt_injector: 把 visual_intent + style_genome + character_assets 翻译成即梦可用的 model_prompts
-         └─ 📡 Toonflow: 同步视觉种子图 (agent-sync --asset-type scene_image) + 语音 (agent-sync --asset-type voice)
-Step 14: 运镜定稿 + 剪辑节奏设计 + 动态预览         → 🔒 REVIEW GATE
+Step 7:  视觉种子+风格化 (visual_executor + prompt_injector + style_genome + colorist) → 🔒 REVIEW GATE  ← V8.6: 合并原 Step 13A+15
+         🎙️ hermes-agent experts: visual_executor (drawer sub-step) + prompt_injector + style_genome + colorist
+         └─ prompt_injector: 把 visual_intent + style_genome + character_assets 翻译成即梦可用的 model_prompts
+         └─ 一步输出风格化视觉种子（风格向量在 Step 2B 已确立）
+         └─ 📡 Toonflow: 同步视觉种子图 (agent-sync --asset-type scene_image)
+Step 7B: 声音骨架 (audio_pipeline)                      → checkpoint  ← 原 Step 13B
+         🎙️ hermes-agent expert: audio_pipeline (voicer sub-step TTS旁白 + composer sub-step BGM骨架 + foley sub-step)
+         └─ 📡 Toonflow: 同步语音 (agent-sync --asset-type voice)
+Step 8:  运镜+节奏+预览 (cinematographer + editor)    → 🔒 REVIEW GATE  ← V8.6: 原 Step 14
          🎙️ hermes-agent experts: cinematographer + editor (节奏前置)
-         └─ 🆕 editor: FxRxT矩阵 + Murch Rule of Six 决定镜头数/时长/转场
+         └─ editor: FxRxT矩阵 + Murch Rule of Six 决定镜头数/时长/转场
          └─ 📡 Toonflow: 同步预览视频 (agent-sync --asset-type video_preview) ×N
-Step 15: AI风格化预览 + Seedance生产包定稿           → 🔒 REVIEW GATE
-         🎙️ hermes-agent experts: colorist + style_genome
-         └─ 📡 Toonflow: 同步风格化预览
-Step 16: 一致性守护检查（L1锚点基准对比 > 0.85）   → 阻断/放行
+Step 9:  一致性守护检查（L1锚点基准 > 0.85）      → 阻断/放行  ← V8.6: 原 Step 16
          🎙️ hermes-agent expert: continuity_auditor
-         └─ 📐 V8.3: 以 L1 身份锚点为基准对比，auditImageVsL1() 逐图检查
-Step 17: 终版视频（三种模式按需选择）               → 🔒 REVIEW GATE
+         └─ 以 L1 身份锚点为基准对比，auditImageVsL1() 逐图检查
+Step 10: 终版视频（三种模式）                    → 🔒 REVIEW GATE  ← V8.6: 原 Step 17
          └─ 模式A: dreamina multiframe2video — 多帧故事视频（分镜帧已就绪，2-20图连贯过渡）
          └─ 模式B: dreamina multimodal2video — 全能参考（L1锚点+场景图，最强一致性）
          └─ 模式C: dreamina frames2video — 首尾帧（明确起止状态）
          └─ 📡 Toonflow: 同步终版视频 (agent-sync --asset-type video_final) ×N
-Step 17B: 🆕 口型同步（如有人物说话镜头）           → checkpoint  ← V8.4 新增
-         🎙️ hermes-agent expert: audio_pipeline (lip_sync sub-step)
-Step 18: 本地BGM与声音闭环                          → checkpoint
-         🎙️ hermes-agent experts: audio_pipeline (composer + foley + mixer + spatial_audio sub-steps)
+Step 11: BGM+音效+口型闭环                      → checkpoint  ← V8.6: 合并原 Step 18+17B
+         🎙️ hermes-agent expert: audio_pipeline (composer + foley + mixer + spatial_audio + lip_sync 按需)
          └─ 📡 Toonflow: 同步BGM + 音效
-Step 19: 剪辑合成（FFmpeg）                         → checkpoint
-Step 20: 质检与交付                                 → PASS/FAIL
+Step 12: 剪辑合成（FFmpeg）                       → checkpoint  ← V8.6: 原 Step 19
+Step 13: 质检与交付                              → PASS/FAIL  ← V8.6: 原 Step 20
          └─ 📡 Toonflow: 最终交付 + 审核评分写入
 ```
 
@@ -317,7 +315,7 @@ OpenClaw Agent
 
 ### 调用示例
 
-#### Step 2.5 故事框架锁定（creative_source + screenplay 协同）
+#### Step 2 故事框架+大纲（creative_source + screenplay 协同）
 
 ```python
 session = sessions_spawn(runtime="acp", agentId="hermes-agent")
@@ -352,7 +350,7 @@ result = session.skill_invoke(
 # result.outlines → ["大纲A...", "大纲B...", "大纲C..."]
 ```
 
-#### Step 7 主角设计（character_designer + visual_executor drawer sub-step 协同）
+#### Step 4 主角设计+资产库（character_designer + visual_executor drawer sub-step 协同）
 
 ```python
 session = sessions_spawn(runtime="acp", agentId="hermes-agent")
@@ -375,7 +373,7 @@ draw_prompt = session.skill_invoke(
 character_image = kais_character_designer.generate(prompt=draw_prompt)
 ```
 
-#### Step 14 运镜（cinematographer）
+#### Step 8 运镜+节奏（cinematographer + editor 协同）
 
 ```python
 session = sessions_spawn(runtime="acp", agentId="hermes-agent")
@@ -550,7 +548,7 @@ node /home/kai/workspace/kais-aigc-platform/scripts/agent-sync.js \
   }'
 ```
 
-#### 4. 同步语音（Step 13B, 18）
+#### 4. 同步语音（Step 7B, 11)
 ```bash
 node /home/kai/workspace/kais-aigc-platform/scripts/agent-sync.js \
   --project-name "${PROJECT_NAME}" \
@@ -564,7 +562,7 @@ node /home/kai/workspace/kais-aigc-platform/scripts/agent-sync.js \
   }'
 ```
 
-#### 5. 同步预览视频（Step 14）
+#### 5. 同步预览视频（Step 8）
 ```bash
 node /home/kai/workspace/kais-aigc-platform/scripts/agent-sync.js \
   --project-name "${PROJECT_NAME}" \
@@ -578,7 +576,7 @@ node /home/kai/workspace/kais-aigc-platform/scripts/agent-sync.js \
   }'
 ```
 
-#### 6. 同步终版视频（Step 17）
+#### 6. 同步终版视频（Step 10）
 ```bash
 node /home/kai/workspace/kais-aigc-platform/scripts/agent-sync.js \
   --project-name "${PROJECT_NAME}" \
@@ -622,7 +620,7 @@ Agent 生成产出物 → 展示给用户审核
 
 ### 画布 FlowGraph 同步
 
-**Step 10 和 Step 12** 完成后，必须额外保存画布 FlowGraph JSON，确保 Toonflow 无限画布能正确展示项目全貌：
+**Step 5 和 Step 6** 完成后，必须额外保存画布 FlowGraph JSON，确保 Toonflow 无限画布能正确展示项目全貌：
 
 ```bash
 # 通过 curl 直接调用 Toonflow canvas/save API
@@ -758,12 +756,10 @@ curl -X POST http://localhost:8002/api/v1/tasks \
 
 | 失败 Step | 回流目标 | 说明 |
 |-----------|---------|------|
-| Step 4/6 失败 | → Step 2.5 | 大纲/剧本结构性问题，回溯到框架 |
-| Step 14 失败 | → Step 11 | 运镜不匹配时空剧本 |
-| Step 15 失败 | → Step 13 或 Step 8 | 风格不达标 |
-| Step 16 失败 | → Step 13 | 一致性 < 0.85 |
-| Step 17 失败 | → Step 15 或 Wan 2.2 兜底 | 云端失败 |
-| Step 19 失败 | → 视觉回 Step 17，声音回 Step 18 | 剪辑失败 |
+| Step 4/6 失败 | → Step 2 | 大纲/剧本结构性问题，回溯到框架 |
+| Step 8 失败 | → Step 6 | 运镜不匹配时空剧本 |
+| Step 9 失败 | → Step 7 | 一致性 < 0.85 |
+| Step 10 失败 | → Step 7 | 云端视频失败，回视觉种子 |
 
 ---
 
@@ -838,7 +834,7 @@ node lib/git-stage-manager.js rollback <workdir> <step>
 
 ---
 
-> **Step 2.5 说明**：故事框架锁定为纯文本产出，直接由 hermes-agent 专家（creative_source + screenplay）通过 ACP 生成，无需子 Skill 落地执行。产出物 `story-framework.json` 作为 Step 3（大纲）和 Step 5（剧本）的强制输入。
+> **Step 2 说明**：故事框架+大纲锁定为纯文本产出，直接由 hermes-agent 专家（creative_source + screenplay）通过 ACP 生成，无需子 Skill 落地执行。产出物 `story-framework.json` 作为 Step 3（剧本）的强制输入。
 
 ## 外部服务
 
