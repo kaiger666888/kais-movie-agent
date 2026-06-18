@@ -1,16 +1,16 @@
 ---
 name: kais-movie-agent
-description: "AI短片全流程自动制作管线 (V8.1)。OpenClaw 是唯一编排引擎，创意生成通过 ACP 调用 hermes-agent 的 20 个 movie-expert 专家。gold-team 只做 GPU 调度。20步管线，审核门不可跳过。"
+description: "AI短片全流程自动制作管线 (V8.2)。OpenClaw 是唯一编排引擎，创意生成通过 ACP 调用 hermes-agent 的 20 个 movie-expert 专家。gold-team 只做 GPU 调度。20步管线，审核门不可跳过。"
 ---
 
-# kais-movie-agent V8.1 — OpenClaw 编排 + hermes-agent 专家驱动架构
+# kais-movie-agent V8.2 — OpenClaw 编排 + hermes-agent 专家驱动架构
 
 ## 触发词
 `movie agent`, `短片制作`, `AI短片`, `视频管线`, `film pipeline`, `movie-wuji`, `AI视频制作`, `短视频管线`, `AI电影`, `影片制作`, `AI短剧`, `短剧制作`, `视频自动化`, `一键生成视频`, `AI拍片`, `kais-movie`, `movie pipeline`, `V8`, `V7`
 
 ---
 
-## 🏗️ 架构原则（V8.1 变更）
+## 🏗️ 架构原则（V8.2 变更）
 
 ### OpenClaw 编排 + hermes-agent 专家驱动架构
 
@@ -55,6 +55,7 @@ TTS     → exec curl → gold-team :8002/api/v1/tasks (type: tts)
 |------|------|-----------|
 | Step 1 | 爆款选题雷达（kais-topic-radar 10维情绪共鸣） | `hook_retention` |
 | Step 2 | 主题生成（基于 Topic Kernel 共鸣公式筛选） | `hook_retention` |
+| Step 2.5 | 故事框架锁定（叙事结构+人物关系+冲突+节奏） | `creative_source` + `screenplay` |
 | Step 3 | 大纲生成 | `screenplay` |
 | Step 5 | 剧本生成 | `screenplay` |
 | Step 7 | 主角设计 | `character_designer` + `drawer` |
@@ -87,6 +88,7 @@ TTS     → exec curl → gold-team :8002/api/v1/tasks (type: tts)
 | Step | 审核内容 | 展示方式 |
 |------|---------|---------|
 | Step 2 | 主题选择 | 当前会话 |
+| Step 2.5 | 故事框架选择 | 当前会话 |
 | Step 4 | 大纲选择 | 当前会话 |
 | Step 6 | 剧本选择 | 当前会话 |
 | Step 8 | 主角选择（3图一体） | 当前会话 |
@@ -115,6 +117,7 @@ TTS     → exec curl → gold-team :8002/api/v1/tasks (type: tts)
 | Step | 产出类型 | 消耗级别 | 生成数量 | 用户操作 |
 |------|---------|---------|---------|---------|
 | Step 2 | 主题 | 🔵 极低（纯文本） | **10个** | 选1个或修改方向
+| Step 2.5 | 故事框架 | 🔵 极低（纯文本） | **3个** | 选1个或要求合并/修改 |
 | Step 4 | 大纲 | 🔵 低（中等文本） | **6个** | 选1个或要求合并/修改 |
 | Step 6 | 剧本 | 🟡 中（长文本+LLM推理） | **3个** | 选1个或要求修改 |
 | Step 8 | 主角 | 🟠 高（图片生成） | 1组（正面+5侧，6视图） | 选1组或重做 |
@@ -143,6 +146,11 @@ Step 2:  基于 Topic Kernel 生成×10主题 → 用户选择   → 🔒 REVIEW
          └─ 输出: 10个主题方案（每个带 virality_score + safety_score + hook_pattern）
          └─ 筛选: 只保留 virality_score ≥ 7 且 safety_score ≥ 8 的主题
          └─ 📡 Toonflow: 创建项目 + 同步主题信息
+Step 2.5: 故事框架锁定（叙事结构+人物关系+冲突设计+节奏策略）→ 🔒 REVIEW GATE  ← 新增
+         🎙️ hermes-agent expert: creative_source (故事内核/雪花法展开) + screenplay (叙事结构选择)
+         └─ 生成×3框架方案（不同叙事结构/节奏策略）
+         └─ 用户选择1个框架 → story-framework.json
+         └─ 📡 Toonflow: 同步故事框架
 Step 3:  生成×6大纲                                → checkpoint
          🎙️ hermes-agent expert: screenplay
 Step 4:  选择大纲（6选1）                           → 🔒 REVIEW GATE
@@ -252,6 +260,29 @@ OpenClaw Agent
 `character_designer`, `lip_sync`, `script_auditor`, `storyboard_designer`
 
 ### 调用示例
+
+#### Step 2.5 故事框架锁定（creative_source + screenplay 协同）
+
+```python
+session = sessions_spawn(runtime="acp", agentId="hermes-agent")
+
+# 1. creative_source：提炼故事内核（如适用现实主义题材）
+story_kernel = session.skill_invoke(
+    expert_id="creative_source",
+    input="为选定主题《{theme}》提炼故事内核 + 雪花法展开（Step 1-4）",
+    context=json.dumps({"theme": locked_theme, "target_audience": target_audience})
+)
+
+# 2. screenplay：基于故事内核设计3个叙事框架方案
+frameworks = session.skill_invoke(
+    expert_id="screenplay",
+    input="基于以下故事内核，设计3个不同叙事框架方案（每个含：叙事结构/核心冲突/人物关系网/角色弧线/节奏策略）",
+    context=json.dumps({"story_kernel": story_kernel, "theme": locked_theme})
+)
+# frameworks → [{structure, conflicts, relationships, arcs, pacing}, ...]
+
+# 3. 用户选择1个 → 锁定为 story-framework.json
+```
 
 #### Step 3 生成大纲（screenplay）
 
@@ -582,6 +613,7 @@ curl -X POST http://localhost:8002/api/v1/tasks \
 
 | 失败 Step | 回流目标 | 说明 |
 |-----------|---------|------|
+| Step 4/6 失败 | → Step 2.5 | 大纲/剧本结构性问题，回溯到框架 |
 | Step 14 失败 | → Step 11 | 运镜不匹配时空剧本 |
 | Step 15 失败 | → Step 13 或 Step 8 | 风格不达标 |
 | Step 16 失败 | → Step 13 | 一致性 < 0.85 |
@@ -635,7 +667,7 @@ node lib/git-stage-manager.js rollback <workdir> <step>
 ---
 
 ## 子 Skill 列表（管线核心 10/10 ✅）\n
-> **V8.1 协作模式**：子 Skill 提供"执行能力"（调即梦、调 GPU、归档、同步），hermes-agent 专家提供"专业知识"（剧本/分镜/运镜/色彩）。
+> **V8.2 协作模式**：子 Skill 提供"执行能力"（调即梦、调 GPU、归档、同步），hermes-agent 专家提供"专业知识"（剧本/分镜/运镜/色彩）。
 > 每个 Step 的标准流程是：**专家先产出创意 → 子 Skill 拿创意去执行落地**。
 > 子 Skill 列表与职责保持不变，专家调用通过 ACP 注入到对应 Step。
 
@@ -660,6 +692,8 @@ node lib/git-stage-manager.js rollback <workdir> <step>
 | kais-anatomy-guard | 7, 9 | 肢体解剖修复守卫 |
 
 ---
+
+> **Step 2.5 说明**：故事框架锁定为纯文本产出，直接由 hermes-agent 专家（creative_source + screenplay）通过 ACP 生成，无需子 Skill 落地执行。产出物 `story-framework.json` 作为 Step 3（大纲）和 Step 5（剧本）的强制输入。
 
 ## 外部服务
 
