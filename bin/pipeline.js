@@ -14,6 +14,7 @@
  */
 
 import { Pipeline } from '../lib/pipeline.js';
+import { createCanvasSync } from '../lib/canvas-sync-hook.js';
 import crypto from 'node:crypto';
 
 const [,, command, ...args] = process.argv;
@@ -56,6 +57,14 @@ Available phases:
 // ─── Commands ──────────────────────────────────────────────────
 
 async function runCommand(opts) {
+  // Canvas 自动同步
+  const canvasSync = createCanvasSync({
+    baseUrl: process.env.CANVAS_BASE_URL || 'http://192.168.71.176:10588',
+    projectId: parseInt(process.env.CANVAS_PROJECT_ID || '1', 10),
+    episodesId: parseInt(process.env.CANVAS_EPISODES_ID || '1', 10),
+    agentName: 'kais-movie-agent',
+  });
+
   const pipeline = new Pipeline({
     workdir: opts.workdir || process.cwd(),
     episode: opts.episode || 'EP01',
@@ -69,6 +78,22 @@ async function runCommand(opts) {
         status,
         ts: new Date().toISOString(),
       }));
+      canvasSync.onProgress(phaseId, phaseName, status);
+    },
+    onPhaseComplete(phase, result) {
+      console.log(JSON.stringify({
+        traceId: pipelineTraceId,
+        phase: phase.id,
+        event: 'phase_complete_detail',
+        ts: new Date().toISOString(),
+      }));
+      canvasSync.onPhaseComplete(phase, result);
+    },
+    onPhaseFail(phase, error) {
+      canvasSync.onPhaseFail(phase, error);
+    },
+    onCanvasPush(phase, candidates) {
+      canvasSync.onCanvasPush(phase, candidates);
     },
   });
 
@@ -80,6 +105,14 @@ async function runCommand(opts) {
 }
 
 async function resumeCommand(opts) {
+  // Canvas 自动同步
+  const canvasSync = createCanvasSync({
+    baseUrl: process.env.CANVAS_BASE_URL || 'http://192.168.71.176:10588',
+    projectId: parseInt(process.env.CANVAS_PROJECT_ID || '1', 10),
+    episodesId: parseInt(process.env.CANVAS_EPISODES_ID || '1', 10),
+    agentName: 'kais-movie-agent',
+  });
+
   const pipeline = new Pipeline({
     workdir: opts.workdir || process.cwd(),
     episode: opts.episode || 'EP01',
@@ -93,6 +126,16 @@ async function resumeCommand(opts) {
         status,
         ts: new Date().toISOString(),
       }));
+      canvasSync.onProgress(phaseId, phaseName, status);
+    },
+    onPhaseComplete(phase, result) {
+      canvasSync.onPhaseComplete(phase, result);
+    },
+    onPhaseFail(phase, error) {
+      canvasSync.onPhaseFail(phase, error);
+    },
+    onCanvasPush(phase, candidates) {
+      canvasSync.onCanvasPush(phase, candidates);
     },
   });
 
