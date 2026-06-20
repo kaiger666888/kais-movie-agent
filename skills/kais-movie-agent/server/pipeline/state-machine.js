@@ -22,7 +22,7 @@ export class PipelineManager {
    */
   create(projectId, config = {}, metadata = {}) {
     const pipelineId = `pipe_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`;
-    const workdir = config.workdir || `/tmp/movie-agent/${pipelineId}`;
+    const workdir = config.workdir || `/data/projects/${projectId}/${metadata.episode || projectId}/${pipelineId}`;
 
     const pipeline = new Pipeline({
       workdir,
