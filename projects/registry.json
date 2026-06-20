@@ -12,8 +12,9 @@
       "displayName": "中文标题 (如 赫兹里的公路)",
       "projectId": "数字，写入 o_project.id 和 o_agentWorkData.projectId"
     },
+    "episodesIdRule": "episodesId = o_script.id（剧本ID）。画布数据通过 (projectId, episodesId) 二元组隔离。新项目必须先在 o_script 创建剧本记录，episodesId 自动分配。",
     "isolation": "每个项目的画布数据通过 (projectId, episodesId) 二元组隔离，存储在 o_agentWorkData 表",
-    "creationRule": "新项目必须在 o_project 表创建记录后，才能运行管线"
+    "creationRule": "新项目必须: 1) registry.json 注册 2) o_project 创建记录 3) o_script 创建至少一个剧本"
   },
   "projects": [
     {
@@ -25,6 +26,9 @@
       "status": "active",
       "intro": "AI真人科幻短剧 | LDR风格",
       "createdAt": "2026-06-20",
+      "episodes": [
+        { "scriptId": 1, "name": "第一集", "episodesId": 1 }
+      ],
       "note": "临时ID，后续正式项目请用1000+"
     },
     {
@@ -36,6 +40,9 @@
       "status": "archived",
       "intro": "管线流程测试用",
       "createdAt": "2025-06-16",
+      "episodes": [
+        { "scriptId": 4, "name": "测试剧本-EP02", "episodesId": 4 }
+      ],
       "note": "测试项目，可清理"
     },
     {
@@ -47,6 +54,9 @@
       "status": "archived",
       "intro": "流浪猫小橘的故事",
       "createdAt": "2026-06-16",
+      "episodes": [
+        { "scriptId": 3, "name": "流浪猫小橘-EP01", "episodesId": 3 }
+      ],
       "note": "早期测试项目"
     },
     {
@@ -58,6 +68,9 @@
       "status": "active",
       "intro": "都市奇幻悬疑情感轻喜剧 8集×2分钟",
       "createdAt": "2026-05-30",
+      "episodes": [
+        { "scriptId": 2, "name": "P1800时间胶囊-EP01", "episodesId": 2 }
+      ],
       "note": "主项目，阿尔茨海默症反转剧情"
     },
     {
@@ -67,9 +80,10 @@
       "type": "movie-pipeline",
       "mode": "canvas-v2",
       "status": "active",
-      "intro": "",
-      "createdAt": "2026-06-20",
-      "note": "手动注册已有项目"
+      "intro": "5分钟微电影 | 时光·旅行·唯爱与生命不可辜负",
+      "createdAt": "2026-06-14",
+      "episodes": [],
+      "note": "剧本完成，尚未跑管线"
     },
     {
       "projectId": 1802,
@@ -80,7 +94,8 @@
       "status": "active",
       "intro": "",
       "createdAt": "2026-06-20",
-      "note": "手动注册已有项目"
+      "episodes": [],
+      "note": "空项目"
     }
   ],
   "nextProjectId": 1803
