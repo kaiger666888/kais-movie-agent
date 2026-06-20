@@ -15,6 +15,7 @@
 
 import { Pipeline } from '../lib/pipeline.js';
 import { createCanvasSync } from '../lib/canvas-sync-hook.js';
+import { resolveProjectId } from './project-resolver.js';
 import crypto from 'node:crypto';
 
 const [,, command, ...args] = process.argv;
@@ -44,6 +45,7 @@ Commands:
 
 Options:
   --workdir <dir>     Project working directory (default: cwd)
+  --project <name>    Project dir name or projectId (overrides CANVAS_PROJECT_ID)
   --episode <id>      Episode identifier (default: EP01)
   --phase <phaseId>   Phase to resume from (only for resume, default: auto-detect)
 
@@ -57,10 +59,14 @@ Available phases:
 // ─── Commands ──────────────────────────────────────────────────
 
 async function runCommand(opts) {
+  // 解析 projectId（优先 --project 参数，其次 CANVAS_PROJECT_ID 环境变量）
+  const { projectId, error } = resolveProjectId(opts);
+  if (error) { console.error(error); process.exit(1); }
+
   // Canvas 自动同步
   const canvasSync = createCanvasSync({
     baseUrl: process.env.CANVAS_BASE_URL || 'http://192.168.71.176:10588',
-    projectId: parseInt(process.env.CANVAS_PROJECT_ID || '1', 10),
+    projectId,
     episodesId: parseInt(process.env.CANVAS_EPISODES_ID || '1', 10),
     agentName: 'kais-movie-agent',
   });
@@ -105,10 +111,14 @@ async function runCommand(opts) {
 }
 
 async function resumeCommand(opts) {
+  // 解析 projectId
+  const { projectId, error } = resolveProjectId(opts);
+  if (error) { console.error(error); process.exit(1); }
+
   // Canvas 自动同步
   const canvasSync = createCanvasSync({
     baseUrl: process.env.CANVAS_BASE_URL || 'http://192.168.71.176:10588',
-    projectId: parseInt(process.env.CANVAS_PROJECT_ID || '1', 10),
+    projectId,
     episodesId: parseInt(process.env.CANVAS_EPISODES_ID || '1', 10),
     agentName: 'kais-movie-agent',
   });
