@@ -164,8 +164,8 @@ TTS     → exec curl → gold-team :8002/api/v1/tasks (type: tts)
 | Step 2 | 故事框架+大纲 | 🔵 极低（纯文本） | **3个** | 选1个或要求合并/修改 |
 | Step 4 | 大纲 | 🔵 低（中等文本） | **6个** | 选1个或要求合并/修改 |
 | Step 6 | 剧本 | 🟡 中（长文本+LLM推理） | **3个** | 选1个或要求修改 |
-| Step 4 | 主角 | 🟠 高（图片生成） | L1×20+L2×N+L3/L4按需 | 选角色/重做 |
-| Step 5 | 场景 | 🟠 高（图片生成） | 1组（俯+4侧，5视图/场景） | 选1组或重做 |
+| Step 4 | 主角 | 🟠 高（图片生成） | L1正面×6选1 → 6造型各正面+侧面×3变体 = 6+36+L3/L4按需 | 选角色/选造型/重做 |
+| Step 5 | 场景 | 🟠 高（图片生成） | 俯视×3选1 → 4侧面每角度×3变体 = 3+12/场景 | 选俯视/选变体/重做 |
 | Step 6 | 时空剧本 | 🟡 中（文本） | **3个**运镜方案（含审计） | 审计≥阈值放行 |
 | Step 7 | 视觉种子+风格化 | 🔴 极高（多张图片） | 按场景数 | 逐场景审核 |
 | Step 10 | 终版视频 | 🔴 极高（云端渲染） | 三种模式按需 | 通过/重做 |
@@ -206,9 +206,9 @@ Step 3:  剧本×3 + 定量审计 (screenplay + script_auditor) → 🔒 REVIEW 
          └─ 📡 Toonflow: 同步剧本 (agent-sync --asset-type script)
 Step 4:  主角·L1/L2/L3/L4 资产库 (dreamina CLI)  → 🔒 REVIEW GATE  ← V8.6: 原 Step 7+8 合并编号
          🎙️ hermes-agent experts: character_designer (角色设定) + visual_executor (drawer sub-step, 出图 prompt)
-        └─ 4A: L1 身份锚点 — dreamina text2image × 20（面部特写，黄金标准检测，不合格重生≤3轮）
+        └─ 4A: L1 身份锚点 — dreamina text2image × 6（面部特写，黄金标准检测，不合格重生≤3轮）
         └─ 4B: L1 审核 (≥7) → 通过，注册到 CharacterAssetManager（永不更换）
-        └─ 4C: L2 造型卡片 — dreamina image2image（L1参考，每套服装正面+侧面，一造型一卡片不混放）
+        └─ 4C: L2 造型卡片×6 — dreamina image2image（L1参考），每个造型生成正面+侧面各3个变体（共36张），用户逐造型选最优变体
         └─ 4D: L2 一致性审核 (≥6, 与L1面部一致+服装正确)
         └─ 4E: L3 姿势包（按需）— dreamina image2image（L1+对应L2, 从剧本提取动作列表）
         └─ 4F: L4 表情标定（按需）— dreamina image2image（L1, 从剧本提取表情列表）
@@ -217,8 +217,9 @@ Step 4:  主角·L1/L2/L3/L4 资产库 (dreamina CLI)  → 🔒 REVIEW GATE  ←
         └─ 📡 Toonflow: 同步角色图 (agent-sync --asset-type character_image)
 Step 5:  场景·俯视+4侧 (dreamina CLI)              → 🔒 REVIEW GATE  ← V8.6: 原 Step 9+10 合并编号
          🎙️ hermes-agent experts: cinematographer (空间结构) + style_genome (视觉风格) + visual_executor (drawer sub-step)
-        └─ 5A: 俯视图生成 + 审核 (≥7)
-        └─ 5B: 参考5A生成4张侧面视图 (dreamina image2image) + 一致性审核 (≥6)
+        └─ 5A: 俯视图生成×3 + 审核 (≥7) → 用户选1个确认方向
+        └─ 5B: 参考确认的俯视图，4个侧面角度各生成3个变体（共12张），用户逐角度选最优变体
+        └─ 5C: 一致性审核 (≥6)
         └─ 🔒 用户确认场景 → geometry-bed.json
         └─ 📡 Toonflow: 同步场景图 (agent-sync --asset-type scene_image) ×5/scene
 Step 6:  时空剧本×3 含终审 (screenplay + cinematographer + script_auditor) → 🔒 REVIEW GATE  ← V8.6: 合并原 Step 11+12

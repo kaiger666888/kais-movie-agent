@@ -1,0 +1,27 @@
+{
+  "name": "TripoSplat PoC - Single Image to 3D Gaussian Splat",
+  "description": "Converts a scene image to a 3D Gaussian Splat (.ply) using ComfyUI built-in TripoSplat nodes",
+  "nodes": {
+    "LoadImage": "Input scene image (preprocessed: composite-on-black, 1024x1024)",
+    "CLIPVisionLoader": "DINOv3 ViT-H (dino_v3_vit_h.safetensors, 1.6GB)",
+    "UNETLoader": "TripoSplat fp16 (triposplat_fp16.safetensors, 707MB)",
+    "VAELoader(Flux2)": "Flux2 VAE for conditioning (flux2-vae.safetensors)",
+    "VAELoader(TripoSplat)": "TripoSplat VAE for decoding (triposplat_vae_decoder_fp16.safetensors, 550MB)",
+    "TripoSplatConditioning": "DINOv3 + Flux2 VAE encode → positive/negative/latent",
+    "KSampler": "25 steps, euler, cfg=1.0",
+    "VAEDecodeTripoSplat": "262144 gaussians",
+    "SplatToFile3D": "ply format",
+    "SaveGLB": "output_node, writes .ply to output/"
+  },
+  "models": {
+    "clip_vision/dino_v3_vit_h.safetensors": "1603MB",
+    "diffusion_models/triposplat_fp16.safetensors": "707MB",
+    "vae/flux2-vae.safetensors": "~300MB",
+    "vae/triposplat_vae_decoder_fp16.safetensors": "550MB",
+    "background_removal/birefnet.safetensors": "424MB (optional, for mask)"
+  },
+  "output": "triposplat_poc_00001_.ply (18MB, 262144 gaussians)",
+  "total_vram": "~3.5GB (decode peak)",
+  "execution_time": "~300s (25 steps + decode)",
+  "container": "comfyui-primary (yanwk/megapak)"
+}

@@ -1,0 +1,120 @@
+{
+  "project": "都市奇幻悬疑情感轻喜剧",
+  "format": "8集 × 2分钟",
+  "scan_summary": {
+    "dominant_emotions": ["好奇/神秘(10)", "悲伤/遗憾(9)", "惊喜/反转(9)", "温暖/治愈(9)"],
+    "hook_composite": "好奇驱动 × 情感兑现 × 反转笑点"
+  },
+  "topics": [
+    {
+      "id": "T03",
+      "title": "公司电梯多了一个按钮",
+      "core_conflict": "每天乘坐的电梯多出一个不存在楼层按钮，按下后进入平行职场人生",
+      "hook_pattern": "好奇+反转",
+      "virality_score": 9,
+      "safety_score": 10,
+      "composite_score": 9.4,
+      "topic_kernel": "职场焦虑 × 平行人生 × 幽默反差",
+      "episode_suspense": ["E1: 按钮出现-按下", "E2: 平行自己-成功版", "E3: 同事的秘密", "E4: 回不去的恐惧", "E5: 平行同事求救", "E6: 电梯规则破解", "E7: 真相浮现", "E8: 最终选择"]
+    },
+    {
+      "id": "T08",
+      "title": "我的AI助手开始说人话",
+      "core_conflict": "已故亲人留下的AI账号突然拥有独立意识，用亡者的口吻与主角对话",
+      "hook_pattern": "悬念+温暖",
+      "virality_score": 9,
+      "safety_score": 10,
+      "composite_score": 9.4,
+      "topic_kernel": "科技孤独 × 逝者告别 × 温暖救赎",
+      "episode_suspense": ["E1: AI首次自主发言", "E2: 说出只有ta知道的秘密", "E3: 是真的ta吗", "E4: AI开始有情感", "E5: 被平台威胁下线", "E6: 真相-谁创造了它", "E7: 最后的对话", "E8: 告别与放手"]
+    },
+    {
+      "id": "T02",
+      "title": "出租屋的墙缝在低语",
+      "core_conflict": "租到的便宜出租屋墙壁裂缝中传来另一个租客的求助声",
+      "hook_pattern": "悬念+反转",
+      "virality_score": 9,
+      "safety_score": 9,
+      "composite_score": 9.0,
+      "topic_kernel": "都市孤独 × 空间异常 × 救赎反转",
+      "episode_suspense": ["E1: 第一次听到声音", "E2: 声音在求救", "E3: 查无此人", "E4: 墙后的真相", "E5: 时间错位", "E6: 试图营救", "E7: 反转-身份揭露", "E8: 跨时空告别"]
+    },
+    {
+      "id": "T05",
+      "title": "便利店深夜班收到的奇怪硬币",
+      "core_conflict": "深夜便利店顾客用奇异硬币买东西，找零后现实开始微妙改变",
+      "hook_pattern": "悬念+温暖",
+      "virality_score": 8,
+      "safety_score": 10,
+      "composite_score": 8.8,
+      "topic_kernel": "都市温度 × 魔幻日常 × 温暖奇迹",
+      "episode_suspense": ["E1: 第一枚硬币", "E2: 找零后的小幸运", "E3: 硬币的规律", "E4: 代价浮现", "E5: 神秘顾客身份", "E6: 硬币用完了", "E7: 最后一次交易", "E8: 便利店的意义"]
+    },
+    {
+      "id": "T01",
+      "title": "我的外卖单通向过去",
+      "core_conflict": "外卖app上出现一家不存在的店，下单后收到的是已故之人为你做的饭",
+      "hook_pattern": "悬念+情感",
+      "virality_score": 8,
+      "safety_score": 9,
+      "composite_score": 8.4,
+      "topic_kernel": "都市孤独 × 逝者味道 × 情感救赎",
+      "episode_suspense": ["E1: 第一次下单", "E2: 味道-是谁做的", "E3: 店铺不存在", "E4: 线索浮现", "E5: 真相", "E6: 想点更多", "E7: 最后一份订单", "E8: 放手"]
+    },
+    {
+      "id": "T06",
+      "title": "我的手机相册里多了一个陌生人",
+      "core_conflict": "手机相册莫名出现一个陌生人的日常照片，渐渐发现这个人正在消失",
+      "hook_pattern": "悬念+反转",
+      "virality_score": 8,
+      "safety_score": 9,
+      "composite_score": 8.4,
+      "topic_kernel": "数字存在感 × 存在抹消 × 反转真相",
+      "episode_suspense": ["E1: 第一张照片", "E2: 更多照片", "E3: 查无此人", "E4: 照片里的人开始消失", "E5: 谁在删除ta", "E6: 真相-平行线", "E7: 试图拯救", "E8: 选择-记住还是忘记"]
+    },
+    {
+      "id": "T09",
+      "title": "二手书里的前任主人留了批注",
+      "core_conflict": "买的二手书上有人写批注，笔迹会随时间变化-前任书主正在书中活着",
+      "hook_pattern": "悬念+情感",
+      "virality_score": 8,
+      "safety_score": 9,
+      "composite_score": 8.4,
+      "topic_kernel": "知识连接 × 跨时空对话 × 遗憾弥补",
+      "episode_suspense": ["E1: 发现批注", "E2: 批注在变化", "E3: 开始对话", "E4: 前任主人的故事", "E5: 未完成的遗憾", "E6: 试图改变结局", "E7: 书要被回收", "E8: 最后的批注"]
+    },
+    {
+      "id": "T04",
+      "title": "相亲对象的影子会眨眼",
+      "core_conflict": "相亲发现对方影子有自己的意识，影子的表情和本人完全不同",
+      "hook_pattern": "悬念+情感",
+      "virality_score": 7,
+      "safety_score": 9,
+      "composite_score": 7.8,
+      "topic_kernel": "面具人格 × 真实自我 × 爱情本质",
+      "episode_suspense": ["E1: 第一次约会-影子异常", "E2: 影子在笑人在怒", "E3: 只有我能看到", "E4: 影子的秘密", "E5: 真实与虚假", "E6: 为什么只有影子真实", "E7: 被发现", "E8: 选择真相"]
+    },
+    {
+      "id": "T07",
+      "title": "地铁末班车多了一站",
+      "core_conflict": "每天坐的地铁末班车突然多出一站，下车后进入城市的另一面",
+      "hook_pattern": "悬念+情感",
+      "virality_score": 7,
+      "safety_score": 9,
+      "composite_score": 7.8,
+      "topic_kernel": "都市隐面 × 平行空间 × 自我和解",
+      "episode_suspense": ["E1: 多出的一站", "E2: 另一面城市", "E3: 这里的居民", "E4: 找到另一个自己", "E5: 两种人生", "E6: 想留下", "E7: 代价", "E8: 回归"]
+    },
+    {
+      "id": "T10",
+      "title": "每晚十一点的陌生来电",
+      "core_conflict": "每晚11点准时接到陌生人电话，对方知道你所有的秘密但拒绝透露身份",
+      "hook_pattern": "悬念+反转",
+      "virality_score": 7,
+      "safety_score": 9,
+      "composite_score": 7.8,
+      "topic_kernel": "都市匿名性 × 自我审视 × 存在证明",
+      "episode_suspense": ["E1: 第一通电话", "E2: 对方知道太多", "E3: 不接电话的后果", "E4: 试图追踪", "E5: 身份线索", "E6: 真相-是未来的自己", "E7: 为什么要打电话", "E8: 最后一通"]
+    }
+  ]
+}

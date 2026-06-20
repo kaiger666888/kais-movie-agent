@@ -1,0 +1,524 @@
+{
+  "type": "StyleGenome",
+  "version": "1.0.0",
+  "expert": "style_genome",
+  "pipeline": "kais-movie-agent V8.6 / Step 2B",
+  "generated_at": "2026-06-19",
+  "upstream_refs": [
+    "step1c-fantasy-design.json (visual_executor 确认的奇幻设计)",
+    "step2-story-framework.json"
+  ],
+  "project": {
+    "title": "红色P1800时间胶囊",
+    "subtitle": "我的AI助手开始说人话（重构版）",
+    "one_liner": "苏念收到死去奶奶名下的红色沃尔沃P1800，车内AI用奶奶的声音说'念念，上车。奶奶带你走最后一趟。'每次启动进入一个奶奶人生中她不知道的片段。",
+    "genre": "都市奇幻悬疑情感·轻喜剧",
+    "format": "8集 × 2分钟",
+    "timeline": "近未来 2035+（VR/AR为日常工具）",
+    "concept_core": "奇幻是基底(60-70%画面)，写实才是插入的异物",
+    "three_identities": [
+      "1) 旗袍设计师，P1800是神秘客人(南洋华侨)送的",
+      "2) 因时代错过的南洋华侨之恋(特殊年代政治隔阂)",
+      "3) 苏念的名字'念'来自那个华侨——奶奶用一辈子守护这份爱"
+    ]
+  },
+  "style_vector_5d": {
+    "encoding_format": "[composition, color, rhythm, light_shadow, sound]",
+    "vector": [
+      0.55,
+      0.69,
+      0.58,
+      0.62,
+      0.72
+    ],
+    "precision": 0.05,
+    "dimensions": {
+      "composition": {
+        "value": 0.55,
+        "axis": "中心构图(0.0)→三分法(0.5)→极端不对称(1.0)",
+        "intent": "P1800内饰为封闭私密中心构图；奇幻粒子/全息层从画面边缘与AR漏洞打破对称，制造'异物感'。1960s记忆用稳定三分法，近未来都市用失衡构图。"
+      },
+      "color": {
+        "value": 0.69,
+        "axis": "冷色主导(0.0)→中性(0.5)→暖色主导(1.0) | 去饱和(0.0)→高饱和(1.0)",
+        "intent": "暖色基底（P1800酒红+琥珀+1960s玫瑰金）主导情绪；近未来冷白霓虹/全息青作为冷色异物刺入。饱和度随奇幻等级递增(EP1→EP8)。"
+      },
+      "rhythm": {
+        "value": 0.58,
+        "axis": "极慢(0.0)→中等(0.5)→极快(1.0) | 长镜头(0.0)→快剪(1.0)",
+        "intent": "前段快节奏悬疑(EP1-4)→中段放慢揭秘(EP5-6)→末段收束留白(EP7-8)。喜剧节拍贯穿但密度递减。"
+      },
+      "light_shadow": {
+        "value": 0.62,
+        "axis": "高调(0.0)→自然(0.5)→低调(1.0) | 柔光(0.0)→硬光(1.0)",
+        "intent": "近未来都市低调+冷霓虹硬光；VR记忆奇幻自发光(粒子/极光)形成强高光；1960s记忆柔光自然。奇幻等级↑→自发光高光↑。"
+      },
+      "sound": {
+        "value": 0.72,
+        "axis": "寂静主义(0.0)→自然(0.5)→声音丰富(1.0) | 极简配乐(0.0)→全配乐(1.0)",
+        "intent": "话术/叙事驱动：VO旁白+音乐+空房间承担情感，减少面部表演依赖。全息奶奶声音可视化波纹为声音可视层。"
+      }
+    }
+  },
+  "director_profiles": [
+    {
+      "id": "spike_jonze",
+      "label": "Spike Jonze（主参考·近未来亲密质感）",
+      "role": "dominant",
+      "weight": 0.5,
+      "visual_dna": [
+        0.5,
+        0.65,
+        0.4,
+        0.35,
+        0.7
+      ],
+      "reference_films": [
+        "Her (她, 2013)",
+        "Adaptation (2002)",
+        "Being John Malkovich (1999)"
+      ],
+      "signature_elements": [
+        "近未来柔和暖调",
+        "VO驱动情感",
+        "人机亲密关系",
+        "空房间+音乐承担情绪"
+      ],
+      "color_palette": [
+        "#C98B6A",
+        "#E8C9A0",
+        "#6B5B4F",
+        "#A8B5A0"
+      ],
+      "common_focal_length": "35-50mm（亲切半身）",
+      "common_shot_duration": "4-6s"
+    },
+    {
+      "id": "wong_kar_wai",
+      "label": "王家卫（辅参考·时间/记忆/1960s旗袍美学）",
+      "role": "recessive_1",
+      "weight": 0.2,
+      "visual_dna": [
+        0.7,
+        0.8,
+        0.4,
+        0.3,
+        0.7
+      ],
+      "reference_films": [
+        "花样年华 (2000)",
+        "2046 (2004)",
+        "重庆森林 (1994)"
+      ],
+      "signature_elements": [
+        "暖色高饱和",
+        "时间/记忆主题",
+        "旗袍/年代美学",
+        "椭圆叙事/留白"
+      ],
+      "color_palette": [
+        "#8B2635",
+        "#D4A574",
+        "#3A2B2B",
+        "#C19A4B"
+      ],
+      "common_focal_length": "75-100mm（长焦压缩）",
+      "common_shot_duration": "3-5s 慢移"
+    },
+    {
+      "id": "guillermo_del_toro",
+      "label": "Guillermo del Toro（点缀·魔幻现实奇幻基底）",
+      "role": "recessive_2",
+      "weight": 0.1,
+      "visual_dna": [
+        0.45,
+        0.7,
+        0.35,
+        0.5,
+        0.7
+      ],
+      "reference_films": [
+        "潘神的迷宫 (2006)",
+        "水形物语 (2017)",
+        "猩红山峰 (2015)"
+      ],
+      "signature_elements": [
+        "奇幻作为现实基底",
+        "金色光粒子/水元素",
+        "材质变形",
+        "怪兽即情感投射"
+      ],
+      "color_palette": [
+        "#2C4A3E",
+        "#C9A24B",
+        "#7FE5D0",
+        "#5B2A2A"
+      ],
+      "common_focal_length": "27-40mm（奇幻广角）",
+      "common_shot_duration": "5-8s 缓推"
+    }
+  ],
+  "style_blend_protocol": {
+    "dominant": "spike_jonze",
+    "dominant_weight": 0.5,
+    "recessive": [
+      "wong_kar_wai",
+      "guillermo_del_toro"
+    ],
+    "recessive_weights": [
+      0.2,
+      0.1
+    ],
+    "total_weight": 0.8,
+    "weight_constraint_check": "权重和 0.80 ≤ 0.80 ✓（保留 0.20 写实基底）",
+    "blend_mode": "weighted",
+    "conflict_resolution": "dominant_overwrite",
+    "blend_formula": "result = Σ(profile_vector_i × weight_i) / total_weight",
+    "blend_baseline_vector": [
+      0.54,
+      0.69,
+      0.39,
+      0.37,
+      0.7
+    ],
+    "note": "混合基线在 rhythm(0.39) 与 light_shadow(0.37) 低于目标向量，由 genre_driven_overrides 校正——悬疑类型需更快节奏、奇幻自发光需更强高光。此为叙事类型驱动调整，非风格突变。"
+  },
+  "genre_driven_overrides": [
+    {
+      "dimension": "rhythm",
+      "blend_baseline": 0.39,
+      "target": 0.58,
+      "delta": 0.19,
+      "justification": "悬疑类型前段需 0.58 剪辑密度；mood-piece 参考导演偏慢。",
+      "narrative_tag": "genre:suspense → rhythm+0.19 (前段)；genre:farewell → rhythm-0.18 (末段)"
+    },
+    {
+      "dimension": "light_shadow",
+      "blend_baseline": 0.37,
+      "target": 0.62,
+      "delta": 0.25,
+      "justification": "奇幻自发光粒子(金色/极光/全息青)产生强高光；近未来低调霓虹需硬光。del Toro 仅 0.10 不足以覆盖。",
+      "narrative_tag": "fantasy_glow → light_shadow+0.25"
+    },
+    {
+      "dimension": "color",
+      "blend_baseline": 0.69,
+      "target": 0.69,
+      "delta": 0.0,
+      "justification": "无需校正——王家卫暖高饱和+del Toro 奇幻饱和已对齐酒红/琥珀/玫瑰金暖色基底。"
+    }
+  ],
+  "per_episode_gradient": {
+    "scale": "幕-by-幕（8集）",
+    "principle": "奇幻等级 3/10→9/10 递增；色彩饱和度与自发光随奇幻↑；节奏随揭秘进度先升后降（悬疑加速→揭秘减速→告别留白）",
+    "episodes": [
+      {
+        "ep": 1,
+        "fantasy_level": 0.3,
+        "vector": [
+          0.5,
+          0.6,
+          0.62,
+          0.55,
+          0.7
+        ],
+        "note": "微奇幻·钥匙登场·冷白都市对比"
+      },
+      {
+        "ep": 2,
+        "fantasy_level": 0.3,
+        "vector": [
+          0.5,
+          0.63,
+          0.64,
+          0.56,
+          0.71
+        ],
+        "note": "微奇幻·旗袍工坊记忆·暖色介入"
+      },
+      {
+        "ep": 3,
+        "fantasy_level": 0.5,
+        "vector": [
+          0.54,
+          0.68,
+          0.66,
+          0.6,
+          0.72
+        ],
+        "note": "超现实·华侨浪漫碎片·雨滴倒流"
+      },
+      {
+        "ep": 4,
+        "fantasy_level": 0.5,
+        "vector": [
+          0.56,
+          0.7,
+          0.68,
+          0.62,
+          0.73
+        ],
+        "note": "超现实·裂痕·愤怒·色彩冲突"
+      },
+      {
+        "ep": 5,
+        "fantasy_level": 0.7,
+        "vector": [
+          0.58,
+          0.75,
+          0.58,
+          0.66,
+          0.74
+        ],
+        "note": "失控·完整华侨之恋·车顶融化开始"
+      },
+      {
+        "ep": 6,
+        "fantasy_level": 0.7,
+        "vector": [
+          0.6,
+          0.78,
+          0.55,
+          0.68,
+          0.75
+        ],
+        "note": "失控·名字线索·记忆天空全开"
+      },
+      {
+        "ep": 7,
+        "fantasy_level": 0.9,
+        "vector": [
+          0.66,
+          0.83,
+          0.5,
+          0.74,
+          0.76
+        ],
+        "note": "坍塌·真相·多时空叠加·奇幻外溢"
+      },
+      {
+        "ep": 8,
+        "fantasy_level": 0.9,
+        "vector": [
+          0.7,
+          0.85,
+          0.42,
+          0.78,
+          0.78
+        ],
+        "note": "坍塌·告别·因果反转·留白收束"
+      }
+    ]
+  },
+  "color_palette": {
+    "core": {
+      "P1800_wine_red": "#6E1B1B",
+      "P1800_wine_red_light": "#8B2635",
+      "dashboard_amber_glow": "#E8A33D",
+      "dashboard_amber_bright": "#F2B544",
+      "vr_memory_rose_gold": "#D4A574",
+      "ink_blue": "#1B2A4A",
+      "ink_blue_light": "#2C3E5C",
+      "aurora": "#4FD1B5"
+    },
+    "fantasy_glow": {
+      "gold_particles": "#F5D061",
+      "gold_particles_bright": "#FFE08A",
+      "holographic_cyan": "#5DD4E8",
+      "holographic_grandma_qipao_light": "#E8C9A0"
+    },
+    "near_future_cold": {
+      "cold_white_neon": "#E8F1F5",
+      "neon_blue": "#7FB3D5",
+      "ar_layer_glitch": "#A8C9D8"
+    }
+  },
+  "signature_elements": [
+    "P1800酒红车身在近未来冷白都市中的暖色锚点",
+    "仪表盘琥珀光作为'时间'的可视化心跳",
+    "金色光粒子从车内部件溢出（奇幻基底）",
+    "全息奶奶碎片（旗袍轮廓光/手势碎片/背影剪影/声音波纹/照片碎片重组）",
+    "近未来冷白霓虹穿透酒红车身的冷暖冲突",
+    "悬浮车在头顶掠过 vs P1800贴地行驶的质感对比",
+    "AR层漏洞短暂露出1960s街景"
+  ],
+  "fantasy_escalation_map": {
+    "source": "step1c-fantasy-design.json (visual_executor 确认)",
+    "p1800_interior_parts": [
+      {
+        "ep": 1,
+        "part": "仪表盘",
+        "transform": "→年份表（车速表指针扫过1965/1972/1980刻度，表盘变年代）",
+        "function": "时间锚点/启动信号"
+      },
+      {
+        "ep": 2,
+        "part": "后视镜",
+        "transform": "→记忆定格（镜面冻结奶奶旗袍工坊画面，现实与记忆内外双时空）",
+        "function": "第一重身份入口"
+      },
+      {
+        "ep": 3,
+        "part": "副驾+收音机",
+        "transform": "副驾→全息粒子轮廓（华侨剪影）；收音机自调频跨年代南洋歌谣",
+        "function": "神秘人物现身+听觉异常"
+      },
+      {
+        "ep": 4,
+        "part": "手套箱",
+        "transform": "→隐藏记忆层入口（金色光粒子+照片角/未寄信光/旗袍盘扣碎片飘出）",
+        "function": "裂痕/证据/分离"
+      },
+      {
+        "ep": 5,
+        "part": "方向盘",
+        "transform": "→手掌温度/纹理（皮革变为奶奶年轻时掌纹与余温）",
+        "function": "第二重身份情感锚"
+      },
+      {
+        "ep": 6,
+        "part": "车顶",
+        "transform": "→融化变记忆天空（车顶溶解，车内直接暴露在1960s南洋天空下）",
+        "function": "完整记忆全开"
+      },
+      {
+        "ep": 7,
+        "part": "全车",
+        "transform": "奇幻外溢+苏念操控记忆（拨仪表盘旋钮切换时间线）",
+        "function": "真相·第三重身份"
+      },
+      {
+        "ep": 8,
+        "part": "全车",
+        "transform": "多时空叠加+因果反转（奶奶意识一直在车中等苏念启动现实）",
+        "function": "告别·驶向未来"
+      }
+    ],
+    "recurring_audio_trigger": {
+      "component": "收音机",
+      "fantasy": "自调频播放跨年代声音碎片（1960s南洋歌谣/1970s送车广播/不同年代环境音），频率数字融化，扬声器网孔飘出可视声波粒子(年代=颜色)",
+      "role": "贯穿8集的'奇幻语法'触发器，建立观众认知"
+    },
+    "vr_memory_surreal": [
+      "雨滴倒流",
+      "路面化金色光带",
+      "天空=情感色谱",
+      "建筑边缘溶解为粒子",
+      "影子脱离身体"
+    ],
+    "hologram_grandma_fragments": [
+      "旗袍轮廓光",
+      "手势碎片",
+      "声音可视化波纹",
+      "背影剪影",
+      "照片碎片重组"
+    ],
+    "ceiling_breakthroughs": [
+      {
+        "id": 1,
+        "name": "奇幻外溢",
+        "ep_target": 7,
+        "desc": "奇幻从车内溢出到外部世界（记忆元素残留在现实街道）"
+      },
+      {
+        "id": 2,
+        "name": "苏念操控记忆",
+        "ep_target": 7,
+        "desc": "苏念主动改写/调度记忆片段（旋钮=时间线，手套箱=隐藏层）"
+      },
+      {
+        "id": 3,
+        "name": "多时空叠加",
+        "ep_target": 8,
+        "desc": "多个年代记忆在车内共存（1950s雨/1970s送车/2000s独坐）"
+      },
+      {
+        "id": 4,
+        "name": "因果反转",
+        "ep_target": 8,
+        "desc": "P1800是时间锚点——奶奶意识一直在车中等苏念启动现实"
+      }
+    ],
+    "near_future_contrast": [
+      "全息广告穿透车身",
+      "AR层漏洞露出1960s",
+      "悬浮车vs贴地P1800"
+    ]
+  },
+  "cross_module_signals": {
+    "drawer": [
+      0.55,
+      0.69,
+      0.62
+    ],
+    "colorist": [
+      0.69,
+      0.62
+    ],
+    "editor": [
+      0.58
+    ],
+    "composer": [
+      0.72
+    ],
+    "scene_builder": [
+      0.55,
+      0.62
+    ],
+    "performer": [
+      0.58,
+      0.72
+    ]
+  },
+  "emotion_dominant_axis": {
+    "primary": {
+      "好奇": 10,
+      "共鸣": 9,
+      "惊喜": 9,
+      "温暖": 8
+    },
+    "secondary": {
+      "敬畏": 7,
+      "悲伤": 6
+    },
+    "arc": "好奇(EP1-2)→惊喜(EP3-4)→共鸣/愤怒(EP4-5)→温暖(EP6)→敬畏(EP7-8)",
+    "comedy_density": "轻喜剧贯穿，EP1-4密度高（缓解悬疑紧张），EP5-8递减（情感加重）"
+  },
+  "conflict_warnings": [
+    {
+      "warning": "王家卫长焦压缩构图 vs Spike Jonze亲切半身焦段冲突",
+      "resolution": "dominant_overwrite：P1800内饰与近未来都市用 Jonze 35-50mm；仅1960s旗袍记忆段降为王家卫75-100mm长焦，作为记忆材质区分",
+      "narrative_tag": "memory_mode → focal_long"
+    },
+    {
+      "warning": "del Toro奇幻广角(27-40mm)与近未来写实需求冲突",
+      "resolution": "del Toro权重仅0.10，奇幻广角仅用于'奇幻外溢'天花板突破瞬间(EP7-8)，不贯穿",
+      "narrative_tag": "breakthrough → focal_wide"
+    }
+  ],
+  "quality_thresholds_check": {
+    "style_consistency": {
+      "target": 0.88,
+      "estimate": 0.9,
+      "note": "8集奇幻递增为设计内渐变，非突变"
+    },
+    "gene_extraction_accuracy": {
+      "target": 0.85,
+      "estimate": 0.87
+    },
+    "blend_coherence": {
+      "target": 0.8,
+      "estimate": 0.82,
+      "note": "genre overrides 已声明叙事依据"
+    },
+    "cross_module_alignment": {
+      "target": 0.82,
+      "estimate": 0.88
+    }
+  },
+  "injection_points": {
+    "pre_generation": "提示词层注入 Y(光影)/L(光影)/C(色彩)/W(构图)/S(声音) 五维参数到 drawer/colorist",
+    "post_generation": "剪辑层：editor 按 rhythm 信号控制剪辑密度；奇幻等级递增通过转场过渡体现",
+    "sound_design": "composer 按 sound=0.72 设定 VO+音乐主导；全息奶奶声音可视化波纹作为声音可视层；收音机跨年代声波粒子为听觉奇幻锚"
+  }
+}

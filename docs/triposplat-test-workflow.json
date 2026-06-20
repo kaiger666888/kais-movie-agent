@@ -1,0 +1,77 @@
+{
+  "last_node_id": 9,
+  "last_link_id": 9,
+  "nodes": [
+    {
+      "id": 1,
+      "type": "LoadImage",
+      "pos": [0, 0],
+      "size": [320, 314],
+      "widgets_values": ["example_scene.png"]
+    },
+    {
+      "id": 2,
+      "type": "TripoSplatPreprocessImage",
+      "pos": [400, 0],
+      "size": [320, 200],
+      "widgets_values": [1024, 1024]
+    },
+    {
+      "id": 3,
+      "type": "CLIPLoader",
+      "pos": [400, 300],
+      "size": [320, 100],
+      "widgets_values": ["dino_v3_vit_h.safetensors", "clip_vision"]
+    },
+    {
+      "id": 4,
+      "type": "UNETLoader",
+      "pos": [400, 500],
+      "size": [320, 100],
+      "widgets_values": ["triposplat_fp16.safetensors", "fp16"]
+    },
+    {
+      "id": 5,
+      "type": "VAELoader",
+      "pos": [400, 680],
+      "size": [320, 100],
+      "widgets_values": ["triposplat_vae_decoder_fp16.safetensors"]
+    },
+    {
+      "id": 6,
+      "type": "TripoSplatConditioning",
+      "pos": [800, 0],
+      "size": [320, 200]
+    },
+    {
+      "id": 7,
+      "type": "TripoSplatSampler",
+      "pos": [1200, 0],
+      "size": [320, 200],
+      "widgets_values": [15, 4.0, "euler", "simple", 42]
+    },
+    {
+      "id": 8,
+      "type": "VAEDecodeTripoSplat",
+      "pos": [1600, 0],
+      "size": [320, 200]
+    },
+    {
+      "id": 9,
+      "type": "SaveSplat",
+      "pos": [2000, 0],
+      "size": [320, 200],
+      "widgets_values": ["triposplat_output"]
+    }
+  ],
+  "links": [
+    [1, 1, 0, 2, 0, "IMAGE"],
+    [2, 2, 0, 6, 0, "IMAGE"],
+    [3, 3, 0, 6, 1, "CLIP_VISION"],
+    [4, 4, 0, 7, 0, "MODEL"],
+    [5, 5, 0, 8, 1, "VAE"],
+    [6, 6, 0, 7, 1, "CONDITIONING"],
+    [7, 7, 0, 8, 0, "LATENT"],
+    [8, 8, 0, 9, 0, "SPLAT"]
+  ]
+}

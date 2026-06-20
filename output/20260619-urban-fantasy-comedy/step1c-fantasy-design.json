@@ -1,0 +1,1023 @@
+{
+  "project": {
+    "title": "红色P1800时间胶囊",
+    "subtitle": "我的AI助手开始说人话",
+    "genre": "都市奇幻悬疑情感·轻喜剧",
+    "format": "8集 × 2分钟",
+    "timeline": "近未来 2035+",
+    "core_setting": "苏念收到奶奶的红色沃尔沃P1800，车内AI用奶奶声音说'念念，上车。奶奶带你走最后一趟'。每次启动进入一个奶奶记忆片段（车内变VR舱，车窗外是记忆场景）",
+    "design_goal": "解决'奇幻场景太少/变成室内对话剧'问题，提升每集奇幻视觉密度"
+  },
+  "theory_critic_analysis": {
+    "expert": "theory_critic",
+    "framework": {
+      "primary_school": "形式主义 (formalism) — 超现实视觉奇观优先于写实还原",
+      "secondary_schools": [
+        "精神分析 (记忆作为圣状/sinthome)",
+        "文化研究 (技术奇观 vs 情感内核的辩证)"
+      ],
+      "cited_theorists": [
+        "André Bazin (影像本体论 — VR记忆的反本体论)",
+        "Slavoj Žižek (圣状 — 红色P1800作为欲望客体)",
+        "Christian Metz (想象能指 — 记忆碎片的能指游戏)",
+        "戴锦华 (视听维度批评)"
+      ]
+    },
+    "Q1_fantasy_density": {
+      "question": "'都市奇幻'类型在8×2分钟短片中的奇幻元素占比应该多少？当前方案缺什么？",
+      "diagnosis": {
+        "current_problem": "当前方案的结构缺陷在于：奇幻设定（车内VR时间胶囊）只在'启动-进入记忆'的转场时刻被激活，一旦进入记忆段就退回写实叙事。这导致奇幻变成了'门把手'而非'房间'——观众每次摸到门把手就进了普通房间，奇幻承诺被背叛。",
+        "ideal_ratio": {
+          "per_episode_fantasy_screen_time": "60-70%（约72-84秒/120秒）",
+          "breakdown": {
+            "奇幻转场与车内异常": "15-20秒（启动/退出VR的视觉事件）",
+            "VR记忆空间超现实视觉": "40-50秒（记忆段不是写实还原，是主观感受视觉化）",
+            "全息碎片与AI界面": "10-15秒（车内UI/全息奶奶碎片）",
+            "写实锚点": "30-40秒（必要的情感落地，让观众知道'这是真的'）"
+          },
+          "principle": "奇幻不是点缀，是基底。写实片段反而应该是'插入的异物'，让奇幻显得更奇。"
+        },
+        "what_is_missing": [
+          "缺'日常奇幻'层：近未来2035+都市本身应该是奇幻的（全息广告、AR层、悬浮交通），但当前方案把都市当成中性背景",
+          "缺'渐进失控'曲线：8集的奇幻强度应该是递增的，从Ep1的微小异常（仪表盘指针自己动）到Ep8的全面坍塌（现实与记忆边界溶解）。当前方案各集奇幻强度平齐",
+          "缺'物件奇幻化'体系：P1800有大量可奇幻化的部件（仪表盘/后视镜/收音机/手套箱/方向盘），但没有建立'每个部件对应一个记忆维度'的系统",
+          "缺'感官交叉'：奇幻不应只有视觉，应涉及听觉异常（收音机跨越年代）、触觉异常（方向盘温度变化）、嗅觉异常（记忆空间的气味暗示）",
+          "缺'观众参与解谜'的奇幻：悬疑维度没有利用奇幻元素做线索——奇幻画面本身应该隐藏叙事信息（如全息碎片中的文字、记忆空间中的年代错位细节）"
+        ]
+      }
+    },
+    "Q2_vr_capsule_ceiling": {
+      "question": "'车内VR时间胶囊'设定的天花板在哪？怎么突破？",
+      "ceiling_analysis": {
+        "structural_ceiling": "车内空间是一个固定容器。如果每集都'启动→进入记忆→退出'，8集就是8次相同的结构循环，观众会在Ep3-4产生结构疲劳。这是单一奇幻设定的结构性天花板。",
+        "spatial_ceiling": "车内部件有限（仪表盘/后视镜/副驾/手套箱/收音机/车窗），奇幻化素材会在Ep5-6耗尽。",
+        "emotional_ceiling": "'听奶奶讲故事'的情感模式被动——苏念是观众，不是参与者。奇幻如果只服务于展示记忆，苏念始终是旁观者，情感深度受限。"
+      },
+      "breakthrough_strategies": [
+        {
+          "strategy": "奇幻外溢 — 让奇幻溢出车外",
+          "description": "Ep5-6开始，记忆空间的奇幻开始影响车外现实。比如：苏念从VR记忆退出后，发现车窗外的现实街道还残留着记忆中的元素（南洋的雨还在下、华侨时代的建筑投影叠在玻璃幕墙上）。奇幻不再是'车内的事'，开始侵蚀现实。",
+          "theoretical_grounding": "Žižek的三界穿越——想象界（记忆VR）开始侵入实在界（现实），符号界（苏念的认知框架）出现裂缝。"
+        },
+        {
+          "strategy": "奇幻主动化 — 苏念操控记忆",
+          "description": "Ep6-7，苏念不再被动观看记忆，而是发现自己能操控记忆空间（拨动某个仪表盘旋钮=切换记忆时间线、打开手套箱=解锁被隐藏的记忆层）。奇幻从'展示'变为'互动'，苏念从观众变成侦探/考古学家。",
+          "theoretical_grounding": "打破Metz的'想象的能指'被动凝视结构，转向Baudry的双重认同中的主动认同。"
+        },
+        {
+          "strategy": "奇幻叠加 — 多重记忆时空交叠",
+          "description": "Ep7-8，不同年代的记忆不再分集呈现，而是在同一个车内空间叠加。1950年代南洋的雨、1970年代送车场景、2000年代奶奶独坐车中的画面，三者同时在车窗上交叠。时间是液态的。",
+          "theoretical_grounding": "Tarkovsky的'雕刻时光'——时间不是线性推进的，而是可以被雕塑成块状同时存在的整体。"
+        },
+        {
+          "strategy": "奇幻反转 — 现实才是VR",
+          "description": "Ep8高潮：苏念发现也许不是'车里进入记忆VR'，而是'奶奶一直在记忆VR中等待苏念来启动现实'。现实与记忆的因果关系反转。P1800不是时间胶囊，是时间锚点——奶奶的意识一直在车里，等待苏念。",
+          "theoretical_grounding": "Bazin的影像本体论反转——如果影像（记忆VR）比现实更真实（因为承载了情感），那么本体论优先级翻转。"
+        }
+      ]
+    },
+    "Q3_reference_methodology": {
+      "question": "参考经典案例在短篇幅内高效呈现奇幻的方法论",
+      "case_studies": [
+        {
+          "reference": "《黑镜》(Black Mirror)",
+          "key_technique": "单一奇幻前提 + 日常化呈现",
+          "applicable_insight": "黑镜从不'展示奇幻'，而是把奇幻当成日常（所有人都用记忆回放设备，没人觉得奇怪）。P1800的VR记忆应该也是'自然发生'的——苏念第一次进入时不惊恐，因为2035+的VR/AR已是日常，她只是惊讶于'这是奶奶的记忆'而非'车会VR'。",
+          "concrete_application": "奇幻与日常的反差才是冲击点：用最平淡的态度对待最奇幻的事。"
+        },
+        {
+          "reference": "《爱，死亡和机器人》(Love Death & Robots)",
+          "key_technique": "视觉奇观密度优先 — 每个镜头都有'wow moment'",
+          "applicable_insight": "爱死机在5-15分钟内塞入极高密度的视觉奇观，秘诀是'每个画面都是概念图级别'。P1800项目应该追求：每个记忆片段至少一个可以截图当壁纸的奇幻画面。",
+          "concrete_application": "不要用'过渡镜头'填充时间。每一秒要么推进叙事，要么制造奇观。"
+        },
+        {
+          "reference": "《午夜福音》(Midnight Gospel)",
+          "key_technique": "超现实视觉 + 真实对话内容的反差",
+          "applicable_insight": "午夜福音的画面极度超现实（外星球/变形/色彩爆炸），但音频是真实播客对话。这种'视觉奇幻+听觉真实'的反差产生了独特的情感深度。P1800可以借鉴：VR记忆的视觉极度超现实，但奶奶的声音/对话极其真实朴素。",
+          "concrete_application": "奇幻视觉与真实声音的反差 = 情感张力的引擎。"
+        },
+        {
+          "reference": "《瞬息全宇宙》(Everything Everywhere All at Once)",
+          "key_technique": "用日常物件触发多元宇宙跳跃",
+          "applicable_insight": "瞬息全宇宙的'跳跃'机制极其简洁——通过特定的荒谬动作（贴眼睛/吃口红）触发。P1800也应该建立简洁的奇幻触发机制：某个仪表盘旋钮、某个收音机频率、打开手套箱的特定方式。简洁的触发机制让奇幻'可理解'，观众能跟上。",
+          "concrete_application": "建立3-4个固定的奇幻触发动作，贯穿8集，形成观众的'奇幻语法'认知。"
+        }
+      ]
+    },
+    "Q4_triple_balance_recommendation": {
+      "question": "如何在'悬疑+情感+喜剧'三重需求中，找到奇幻的恰当密度和呈现方式？",
+      "diagnosis": {
+        "current_imbalance": "当前方案中，情感是主线（奶奶的爱情故事），悬疑是线索（三重身份解谜），喜剧几乎缺失，奇幻是载体但密度不足。",
+        "ideal_balance": {
+          "奇幻": "40% — 视觉基底和氛围，持续存在",
+          "情感": "30% — 在奇幻高潮中自然释放，不单独占用时段",
+          "悬疑": "20% — 通过奇幻元素中的线索传递，不需要单独的'侦探戏'",
+          "喜剧": "10% — 点缀式存在，通过苏念对奇幻的吐槽反应制造轻喜剧感"
+        }
+      },
+      "density_principle": {
+        "name": "奇幻即叙事 (Fantasy-As-Narrative)",
+        "core": "奇幻画面本身就是叙事——不要'先讲故事再配奇幻画面'，而要让'奇幻画面讲述故事'。奶奶记忆中超现实的雨滴倒流，既呈现了奇幻，又暗示了'时光倒流'的主题，又隐藏了'这个记忆是奶奶反复回放的'的悬疑线索。",
+        "anti_pattern": "对话解释奇幻 → 对话解释等于承认奇幻不够有力。如果画面需要对话解释，说明画面没做到位。"
+      },
+      "presentation_method": {
+        "rule_1": "奇幻画面 = 情感载体（超现实视觉激发情感共鸣，而非展示特效）",
+        "rule_2": "奇幻细节 = 悬疑线索（每个超现实元素中嵌入一个可解谜的细节）",
+        "rule_3": "苏念反应 = 喜剧出口（苏念对奇幻的'吐槽'是轻喜剧的唯一合法出口——'奶奶你的记忆里怎么一直在下雨？你是雨神吗？'）",
+        "rule_4": "渐进失控 = 节奏控制（奇幻强度逐集递增，Ep1微异常→Ep4中等超现实→Ep8现实坍塌）"
+      },
+      "progressive_curve": {
+        "Ep1_2": "微奇幻期 — 仪表盘自转、收音机跨年代杂音。观众'这是不是闹鬼？'的悬疑感",
+        "Ep3_4": "超现实期 — VR记忆空间开始变形（雨倒流/路面光带）。观众'这很美但不太对'的不安感",
+        "Ep5_6": "失控期 — 奇幻溢出车外，记忆侵蚀现实。观众'现实和记忆混淆了'的紧张感",
+        "Ep7_8": "坍塌期 — 多时空叠加/因果反转。观众'分不清真假'的眩晕感→情感释放"
+      }
+    }
+  },
+  "visual_executor_design": {
+    "expert": "visual_executor",
+    "design_philosophy": {
+      "core_principle": "每个奇幻元素必须同时满足：1) 视觉冲击力（可截图当壁纸）2) 叙事信息量（隐藏线索或情感暗示）3) AI生成友好（用强项避弱项）",
+      "ai_strength_priorities": [
+        "光影变幻",
+        "粒子特效",
+        "形态变形/融化",
+        "色彩转换",
+        "大场景运镜",
+        "材质转换"
+      ],
+      "ai_weakness_avoidance": [
+        "细腻面部微表情（用背影/剪影/碎片替代）",
+        "精确手指（用手套/握方向盘特写替代）",
+        "复杂多人互动（用单人+环境替代）",
+        "文字渲染（用图形符号替代）"
+      ],
+      "fantasy_grammar": {
+        "trigger_mechanisms": [
+          "仪表盘旋钮 → 切换记忆时间线",
+          "收音机调频 → 跨越年代的声音",
+          "手套箱开启 → 解锁隐藏记忆层",
+          "后视镜注视 → 看见全息奶奶碎片"
+        ]
+      }
+    },
+    "fantasy_dimensions": {
+      "D1_car_interior_enchantment": {
+        "name": "P1800车内奇幻化",
+        "concept": "P1800每个部件对应一个记忆维度，部件异常是奇幻的'日常层'",
+        "elements": [
+          {
+            "component": "仪表盘",
+            "fantasy": "车速表指针在VR启动时不指向速度，而指向'年份'（指针扫过1965/1972/1980等刻度，表盘数字变成年代）",
+            "visual": "金属指针扫过，表盘数字从km/h融化为四位年份，指针停在某个年份时车窗外的记忆场景对应亮起",
+            "ai_feasibility": {
+              "level": "高",
+              "reason": "数字变形+指针运动是AI强项，材质转换和数字融化效果好做"
+            }
+          },
+          {
+            "component": "后视镜",
+            "fantasy": "后视镜不反射车后景象，而反射奶奶记忆中的某个定格画面——后视镜是'记忆的相框'",
+            "visual": "后视镜框内是一个朦胧的记忆画面（奶奶年轻时的剪影/南洋街道/旗袍工坊），与现实车窗形成内外两个时空",
+            "ai_feasibility": {
+              "level": "高",
+              "reason": "镜面反射变形是AI擅长场景，朦胧画面回避了精细面部要求"
+            }
+          },
+          {
+            "component": "副驾驶座",
+            "fantasy": "副驾座上出现全息碎片——不是完整人像，而是衣物褶皱的光影、手的轮廓光影、发丝的粒子流，拼成'有人坐过'的感觉",
+            "visual": "空座椅上浮现半透明光粒子，勾勒出旗袍领口的弧线、手腕搭在扶手上的轮廓，像3D全息投影未完成渲染",
+            "ai_feasibility": {
+              "level": "高",
+              "reason": "粒子轮廓+光影是AI绝对强项，不追求面部一致性"
+            }
+          },
+          {
+            "component": "收音机",
+            "fantasy": "老式收音机自己调频，播放不同年代的声音碎片——1960年代的南洋歌谣、1970年代的送车时的收音机广播、不同年代的环境音",
+            "visual": "收音机指针自己在频段上滑动，频率数字融化变形，扬声器网孔中飘出视觉化的声波粒子（不同年代不同颜色）",
+            "ai_feasibility": {
+              "level": "中",
+              "reason": "指针滑动+声波粒子可行，但需要音频同步设计"
+            }
+          },
+          {
+            "component": "手套箱",
+            "fantasy": "手套箱是隐藏记忆层的入口——每次打开会涌出与当前记忆不同的碎片（一张老照片的边缘、一封未寄出的信的折叠光、一枚旗袍盘扣）",
+            "visual": "手套箱打开时，金色光粒子和实体碎片（照片角/信纸/盘扣）缓缓飘出，在车内悬浮旋转",
+            "ai_feasibility": {
+              "level": "高",
+              "reason": "悬浮粒子+小物件是AI强项，布光好做"
+            }
+          },
+          {
+            "component": "方向盘",
+            "fantasy": "方向盘的皮革纹理在VR启动时变为奶奶年轻时的手掌纹理/温度——方向盘是'被握过的记忆'",
+            "visual": "方向盘表面皮革纹理流动变化，浮现出手掌按压的暖色光影印记，像热成像留下的人体温度痕迹",
+            "ai_feasibility": {
+              "level": "中",
+              "reason": "材质流动变形可行，但需要精确的纹理控制"
+            }
+          },
+          {
+            "component": "车顶内饰",
+            "fantasy": "车顶内饰板在VR记忆中变为'天空'——显示当前记忆场景的天空（南洋的暴雨云、1970年代的晴天、不同年代的天色）",
+            "visual": "车顶布面材质融化变形为天空画面，云层缓慢流动，光线从车顶洒下，改变车内色温",
+            "ai_feasibility": {
+              "level": "高",
+              "reason": "天空+云层流动+光线变化是AI顶级强项"
+            }
+          }
+        ]
+      },
+      "D2_vr_memory_enchantment": {
+        "name": "VR记忆空间奇幻化",
+        "concept": "记忆不是写实还原，是奶奶主观感受的超现实视觉化——'记忆感'而非'记忆事实'",
+        "elements": [
+          {
+            "technique": "雨滴倒流",
+            "application": "南洋记忆中的雨从地面升起回到天空——暗示这是'被反复回放的记忆'，时间在记忆中是可逆的",
+            "visual": "无数雨滴从湿润的石板路面升起，向上飘向天空，雨滴在逆行中折射出彩虹色微光，整个画面呈现时间倒流的静谧感",
+            "ai_feasibility": {
+              "level": "高",
+              "reason": "粒子逆行运动是AI强项，雨滴折射光线效果好"
+            }
+          },
+          {
+            "technique": "路面化为光带",
+            "application": "记忆中的道路不是柏油路，而是流动的光带——奶奶感受中的'与他同行的那段路'是发光的",
+            "visual": "P1800行驶的道路表面从灰色柏油融化变形为流动的暖金色光带，光带随车辆前进而延展，像河流一样流淌",
+            "ai_feasibility": {
+              "level": "高",
+              "reason": "材质变形+发光流动路面是AI强项"
+            }
+          },
+          {
+            "technique": "天空变色",
+            "application": "每个记忆的天空色调不同——初恋记忆是玫瑰金天空，分离记忆是墨蓝色天空，重逢记忆是极光色天空。天空色调=情感色谱",
+            "visual": "记忆空间的天空呈现不可能的自然色——玫瑰金/墨蓝/极光绿紫渐变，云层缓慢流动，光线洒落改变整个场景的色温",
+            "ai_feasibility": {
+              "level": "高",
+              "reason": "天空色彩渲染是AI顶级强项"
+            }
+          },
+          {
+            "technique": "建筑溶解",
+            "application": "记忆边缘的建筑/景物逐渐溶解为光粒子——记忆不是完整的，边缘是模糊的",
+            "visual": "街道两侧的建筑从实体逐渐分解为发光粒子，飘散在空气中，只有苏念注意力集中的中心区域保持清晰",
+            "ai_feasibility": {
+              "level": "高",
+              "reason": "实体溶解为粒子是AI经典强项效果"
+            }
+          },
+          {
+            "technique": "影子分离",
+            "application": "记忆中人物的影子脱离身体独立活动——暗示记忆中的人'不完整'，只有情感是真的",
+            "visual": "地面上人物的影子缓慢脱离人物本体，做出不同的动作（影子回头/影子停留/影子挥手），与本体分离",
+            "ai_feasibility": {
+              "level": "中",
+              "reason": "影子分离需要精确的人物-影子匹配，AI可能不稳定，建议用剪影简化"
+            }
+          },
+          {
+            "technique": "旗袍布料流体化",
+            "application": "旗袍工坊记忆中，丝绸布料像液体一样流动——记忆中奶奶为'那个人'做旗袍时的专注感被视觉化",
+            "visual": "工作台上的丝绸布料脱离重力流动，像发光的红色液体在空中蜿蜒盘旋，最终凝聚成旗袍的轮廓",
+            "ai_feasibility": {
+              "level": "高",
+              "reason": "布料流体化是AI强项，丝绸光泽渲染效果好"
+            }
+          },
+          {
+            "technique": "时间层叠",
+            "application": "同一空间呈现多个年代的痕迹叠加——同一条街道上，1950年代的马车、1970年代的P1800、现在的悬浮车同时存在",
+            "visual": "同一画面中不同年代的物体半透明叠加，像多重曝光摄影，不同年代的色温在画面中分区共存",
+            "ai_feasibility": {
+              "level": "中",
+              "reason": "多重叠加需要精确的空间控制，AI可能产生混乱，建议分层渲染合成"
+            }
+          }
+        ]
+      },
+      "D3_holographic_grandmother": {
+        "name": "全息奶奶影像",
+        "concept": "不追求完整全息人像（AI弱项：面部一致性），追求'记忆碎片拼成的轮廓'——用衣物光影、手势轮廓、声音可视化代替面部",
+        "elements": [
+          {
+            "technique": "旗袍轮廓光",
+            "application": "全息奶奶不是'看到脸'，而是看到旗袍领口的光影轮廓——旗袍是奶奶的身份符号",
+            "visual": "副驾位置浮现半透明红色旗袍的领口弧线光影，没有头部没有四肢，只有旗袍上半身的发光轮廓，像未渲染完的全息投影",
+            "ai_feasibility": {
+              "level": "高",
+              "reason": "衣物轮廓光影是AI强项，回避了面部一致性要求"
+            }
+          },
+          {
+            "technique": "手势碎片",
+            "application": "全息奶奶只有手势——搭在扶手上的手、整理旗袍的手、伸向苏念的手。手势是最亲密的记忆碎片",
+            "visual": "车内空间浮现半透明的手势光影——一只手轻轻搭在副驾扶手上、一只手在整理无形的衣领、一只手向苏念方向伸出又收回",
+            "ai_feasibility": {
+              "level": "中",
+              "reason": "手势轮廓可行但手指精度不足，建议用发光手套或逆光剪影简化"
+            }
+          },
+          {
+            "technique": "声音可视化",
+            "application": "奶奶的声音在车内可视化——不是看到奶奶，而是'看到声音'。声波变为发光的波纹、粒子流、在车窗玻璃上形成涟漪",
+            "visual": "奶奶说话时，声波从收音机/仪表盘位置扩散，变为金色发光波纹在车内空气中传播，触碰到车窗玻璃形成涟漪",
+            "ai_feasibility": {
+              "level": "高",
+              "reason": "声波粒子可视化是AI强项，光影效果好做"
+            }
+          },
+          {
+            "technique": "背影轮廓",
+            "application": "偶尔出现完整的全息奶奶，但永远是背影——坐在副驾看向窗外、站在记忆街道远处、走入门廊。背影回避面部，保留情感",
+            "visual": "记忆空间远处出现一个红色旗袍的背影轮廓，逆光剪影效果，边缘发光粒子飘散，看不清面容但姿态清晰",
+            "ai_feasibility": {
+              "level": "高",
+              "reason": "逆光背影剪影是AI顶级强项，完全回避面部"
+            }
+          },
+          {
+            "technique": "照片碎片重组",
+            "application": "车内飘浮的老照片碎片（照片边缘/一角/撕裂的半张脸）在空中旋转，偶尔短暂拼合显示奶奶某个瞬间的画面",
+            "visual": "多张老照片的碎片在车内空间悬浮旋转，边缘泛着金色微光，偶尔碎片短暂靠拢拼合成一个瞬间画面又散开",
+            "ai_feasibility": {
+              "level": "中",
+              "reason": "碎片旋转可行但拼合瞬间需要精确控制，建议碎片为主拼合为辅"
+            }
+          }
+        ]
+      },
+      "D4_future_city_contrast": {
+        "name": "近未来都市对比",
+        "concept": "2035+都市的全息广告/AR层/悬浮交通 vs P1800的1970年代复古质感，视觉冲突本身是奇幻",
+        "elements": [
+          {
+            "technique": "全息广告穿越车身",
+            "application": "P1800行驶在2035+街道上，巨型全息广告的影像穿过车身——现代科技与复古车的时空错位",
+            "visual": "P1800在霓虹全息广告林立的未来街道行驶，半透明的全息巨人/产品影像穿过红色车身，车身反射着赛博色彩",
+            "ai_feasibility": {
+              "level": "高",
+              "reason": "全息投影+车身反射是AI强项，大场景渲染"
+            }
+          },
+          {
+            "technique": "AR层叠加",
+            "application": "苏念戴AR眼镜时，现实街道上叠加着各种数据层/导航线/信息标签，但P1800的AR标签是空白的——这辆车'不在系统中'",
+            "visual": "未来街道上所有物体都有AR数据标签浮动，唯独红色P1800周围是一片干净的空白，像现实中的一个'漏洞'",
+            "ai_feasibility": {
+              "level": "中",
+              "reason": "AR标签UI元素需要精确控制，建议简化为发光线条"
+            }
+          },
+          {
+            "technique": "悬浮交通vs地面行驶",
+            "application": "其他车辆悬浮飞行，P1800是唯一贴地行驶的车——物理上的'异类'视觉化",
+            "visual": "未来城市天空中悬浮车流穿梭，地面空旷，只有红色P1800孤独地贴地行驶，形成强烈的视觉对比",
+            "ai_feasibility": {
+              "level": "高",
+              "reason": "大场景+物体对比是AI强项"
+            }
+          },
+          {
+            "technique": "天气控制系统",
+            "application": "2035+城市有人工天气控制系统，天空被投影为完美晴朗，但P1800经过的区域天气控制系统'失灵'——开始下起记忆中的南洋暴雨",
+            "visual": "完美蓝色人工天空下，P1800经过的街道上方出现一片局部的乌云和暴雨，像现实中的一个故障区域",
+            "ai_feasibility": {
+              "level": "高",
+              "reason": "天气对比+局部降雨是AI强项效果"
+            }
+          }
+        ]
+      }
+    },
+    "episode_breakdown": [
+      {
+        "episode": "Ep1",
+        "title": "葬礼后的钥匙",
+        "summary": "苏念在奶奶葬礼后收到红色P1800，第一次启动，听到奶奶声音",
+        "fantasy_phase": "微奇幻期 — 不确定性",
+        "fantasy_elements": [
+          {
+            "timestamp": "0:15-0:25",
+            "type": "车内奇幻",
+            "name": "仪表盘自转",
+            "description": "苏念第一次启动P1800，车速表指针无人触碰自行转动，扫过表盘后停在某个位置，表盘数字短暂闪烁为年份'1968'后恢复",
+            "narrative_function": "建立奇幻基调——这辆车'不正常'。悬疑钩子：1968是什么意思？",
+            "emotional_function": "葬礼后的不安与好奇",
+            "ai_feasibility": {
+              "level": "高",
+              "reason": "指针运动+数字闪烁变形是AI强项"
+            },
+            "ai_prompt_keywords": [
+              "vintage car dashboard",
+              "speedometer needle rotating by itself",
+              "digits morphing",
+              "close-up",
+              "golden light",
+              "cinematic"
+            ]
+          },
+          {
+            "timestamp": "0:45-1:05",
+            "type": "车内奇幻",
+            "name": "收音机跨年代杂音",
+            "description": "老式收音机自行开启，指针在频段上滑动，播放出1960年代的老歌碎片，声波从扬声器网孔中可视化飘出",
+            "narrative_function": "听觉奇幻首次出现。老歌是线索（后来揭示是华侨青年唱过的歌）",
+            "emotional_function": "熟悉又陌生的乡愁感",
+            "ai_feasibility": {
+              "level": "高",
+              "reason": "声波粒子可视化是AI强项"
+            },
+            "ai_prompt_keywords": [
+              "vintage car radio",
+              "radio dial tuning itself",
+              "golden sound wave particles emanating",
+              "warm light",
+              "retro interior",
+              "macro shot"
+            ]
+          },
+          {
+            "timestamp": "1:20-1:40",
+            "type": "全息碎片",
+            "name": "副驾旗袍轮廓",
+            "description": "苏念听到奶奶声音'念念，上车'后，副驾驶座浮现半透明红色旗袍领口的光影轮廓，持续2秒后消散",
+            "narrative_function": "全息奶奶首次出现（碎片形式）。情感冲击：奶奶'在'车里",
+            "emotional_function": "震惊+思念的涌起",
+            "ai_feasibility": {
+              "level": "高",
+              "reason": "衣物轮廓光影回避面部要求"
+            },
+            "ai_prompt_keywords": [
+              "empty car passenger seat",
+              "translucent red qipao collar outline",
+              "holographic light particles",
+              "fading apparition",
+              "cinematic interior",
+              "warm glow"
+            ]
+          }
+        ]
+      },
+      {
+        "episode": "Ep2",
+        "title": "第一次启动",
+        "summary": "进入第一个记忆——奶奶年轻时第一次见到P1800和神秘送车人",
+        "fantasy_phase": "微奇幻期 — 奇幻确认",
+        "fantasy_elements": [
+          {
+            "timestamp": "0:10-0:30",
+            "type": "VR记忆空间",
+            "name": "车窗变为记忆屏幕",
+            "description": "苏念启动P1800，车窗玻璃逐渐变为半透明屏幕，外面的2035+都市融化为1970年代的街道，过渡如水墨晕开",
+            "narrative_function": "VR记忆机制首次完整展示。奇幻的' wow moment'",
+            "emotional_function": "穿越时空的惊叹",
+            "ai_feasibility": {
+              "level": "高",
+              "reason": "玻璃屏幕材质变形+场景融化转换是AI强项"
+            },
+            "ai_prompt_keywords": [
+              "car window glass transforming",
+              "modern city dissolving into 1970s street",
+              "ink wash transition",
+              "cinematic",
+              "time travel effect",
+              "warm vintage color"
+            ]
+          },
+          {
+            "timestamp": "0:50-1:20",
+            "type": "VR记忆空间",
+            "name": "路面光带+玫瑰金天空",
+            "description": "记忆中年轻的奶奶第一次看到P1800的场景。道路变为流动的暖金色光带，天空呈现不可能的玫瑰金色，记忆边缘的建筑溶解为光粒子",
+            "narrative_function": "记忆超现实化——这是奶奶'初恋感'的视觉化。玫瑰金=初恋色谱",
+            "emotional_function": "心动瞬间的永恒化",
+            "ai_feasibility": {
+              "level": "高",
+              "reason": "光带路面+天空色彩+建筑粒子溶解全是AI顶级强项"
+            },
+            "ai_prompt_keywords": [
+              "vintage red sports car",
+              "road surface as flowing golden light",
+              "rose gold impossible sky",
+              "buildings dissolving into particles at edges",
+              "dreamlike memory",
+              "cinematic wide shot",
+              "warm ethereal"
+            ]
+          },
+          {
+            "timestamp": "1:40-1:55",
+            "type": "全息碎片",
+            "name": "送车人背影",
+            "description": "记忆空间远处出现一个男性背影轮廓（华侨青年），逆光剪影，边缘发光粒子飘散，走向P1800放下钥匙后消散",
+            "narrative_function": "神秘送车人首次出现（背影）。悬疑钩子：他是谁？",
+            "emotional_function": "神秘感+遗憾的预感",
+            "ai_feasibility": {
+              "level": "高",
+              "reason": "逆光背影剪影是AI顶级强项，完全回避面部"
+            },
+            "ai_prompt_keywords": [
+              "male figure silhouette from behind",
+              "backlit glowing edges",
+              "walking toward vintage red car",
+              "particles dispersing",
+              "mysterious",
+              "cinematic",
+              "1960s asian man clothing"
+            ]
+          }
+        ]
+      },
+      {
+        "episode": "Ep3",
+        "title": "旗袍工坊",
+        "summary": "旗袍工坊记忆，奶奶为谁做旗袍？神秘客人的线索",
+        "fantasy_phase": "微奇幻期 — 奇幻体系化",
+        "fantasy_elements": [
+          {
+            "timestamp": "0:15-0:40",
+            "type": "VR记忆空间",
+            "name": "丝绸液体化",
+            "description": "旗袍工坊记忆中，工作台上的红色丝绸脱离重力流动，像发光的红色液体在空中蜿蜒盘旋，最终凝聚成旗袍的轮廓形状",
+            "narrative_function": "奶奶'为那个人做旗袍'的专注感视觉化。旗袍=情感载体",
+            "emotional_function": "匠人的痴迷与爱的投射",
+            "ai_feasibility": {
+              "level": "高",
+              "reason": "布料流体化+丝绸光泽是AI经典强项"
+            },
+            "ai_prompt_keywords": [
+              "red silk fabric flowing like liquid",
+              "defying gravity",
+              "floating in air",
+              "forming qipao dress shape",
+              "glowing",
+              "traditional workshop",
+              "cinematic macro",
+              "luminous"
+            ]
+          },
+          {
+            "timestamp": "1:00-1:20",
+            "type": "车内奇幻",
+            "name": "手套箱碎片涌出",
+            "description": "记忆进行中，苏念本能地打开手套箱，金色光粒子和实体碎片（旗袍盘扣/丝线/老照片角）缓缓飘出在车内悬浮旋转",
+            "narrative_function": "手套箱=隐藏记忆层首次揭示。盘扣是线索（与Ep6名字由来关联）",
+            "emotional_function": "发现秘密的兴奋与温柔",
+            "ai_feasibility": {
+              "level": "高",
+              "reason": "悬浮粒子+小物件是AI强项"
+            },
+            "ai_prompt_keywords": [
+              "vintage car glove box open",
+              "golden light particles floating out",
+              "silk threads and old photo corners and qipao buttons suspended in air",
+              "rotating slowly",
+              "warm magical glow",
+              "interior shot"
+            ]
+          },
+          {
+            "timestamp": "1:35-1:50",
+            "type": "全息碎片",
+            "name": "缝纫手势",
+            "description": "车内浮现半透明的手势光影——一双手在缝纫的动作，手指穿针引线的轮廓，但没有手臂没有身体只有手部",
+            "narrative_function": "全息奶奶以'工作时的手'出现。匠人记忆的亲密碎片",
+            "emotional_function": "触觉记忆的思念",
+            "ai_feasibility": {
+              "level": "中",
+              "reason": "手势轮廓可行但手指精度不足，建议用发光手套效果简化"
+            },
+            "ai_prompt_keywords": [
+              "translucent glowing hands sewing",
+              "threading needle gesture",
+              "only hands visible as light",
+              "holographic",
+              "qipao workshop memory",
+              "warm golden particles",
+              "cinematic close-up"
+            ]
+          }
+        ]
+      },
+      {
+        "episode": "Ep4",
+        "title": "南洋相遇",
+        "summary": "南洋记忆，华侨青年与奶奶的相遇",
+        "fantasy_phase": "超现实期 — 奇幻升级",
+        "fantasy_elements": [
+          {
+            "timestamp": "0:10-0:40",
+            "type": "VR记忆空间",
+            "name": "雨滴倒流+热带极光",
+            "description": "南洋记忆中的暴雨从地面升起回到天空，雨滴在逆行中折射出彩虹色微光。同时天空呈现热带不可能的极光色（绿紫渐变），整个画面是时间倒流的静谧感",
+            "narrative_function": "相遇记忆的超现实化。雨倒流=这段记忆奶奶反复回放了无数次",
+            "emotional_function": "命运相遇的神圣感",
+            "ai_feasibility": {
+              "level": "高",
+              "reason": "粒子逆行+天空极光是AI顶级强项"
+            },
+            "ai_prompt_keywords": [
+              "rain drops rising from ground to sky",
+              "reverse rain",
+              "tropical aurora sky green purple",
+              "rainbow refraction in droplets",
+              "1960s Southeast Asian street",
+              "dreamlike",
+              "cinematic wide",
+              "ethereal"
+            ]
+          },
+          {
+            "timestamp": "1:00-1:30",
+            "type": "VR记忆空间",
+            "name": "影子分离",
+            "description": "记忆中两人相遇的瞬间，地面上的影子脱离身体独立活动——两个影子先于本人相向而行、触碰、停留，暗示这是'命中注定'",
+            "narrative_function": "奇幻暗示灵魂层面的相遇。影子=潜意识的欲望",
+            "emotional_function": "宿命感与浪漫",
+            "ai_feasibility": {
+              "level": "中",
+              "reason": "影子分离需要精确匹配，建议简化为影子拉长+变形"
+            },
+            "ai_prompt_keywords": [
+              "two people meeting on street",
+              "their shadows on ground separating and moving independently",
+              "shadows reaching toward each other",
+              "surreal",
+              "tropical golden hour",
+              "cinematic",
+              "1960s Southeast Asia"
+            ]
+          },
+          {
+            "timestamp": "1:40-1:55",
+            "type": "近未来对比",
+            "name": "记忆侵蚀现实",
+            "description": "VR记忆结束后，苏念发现车窗外的2035+现实街道上还残留着南洋的雨——雨还在下，但其他车辆毫不在意。记忆开始侵蚀现实",
+            "narrative_function": "奇幻外溢首次出现——记忆不再是'车内的事'。悬疑升级：现实在被改写",
+            "emotional_function": "不安与着迷并存",
+            "ai_feasibility": {
+              "level": "高",
+              "reason": "局部天气异常+大场景是AI强项"
+            },
+            "ai_prompt_keywords": [
+              "future city street",
+              "rain falling only around red vintage car",
+              "other hovering vehicles ignoring",
+              "localized weather anomaly",
+              "neon reflections",
+              "cyberpunk",
+              "cinematic wide"
+            ]
+          }
+        ]
+      },
+      {
+        "episode": "Ep5",
+        "title": "时代阻隔",
+        "summary": "时代阻隔，分离的记忆",
+        "fantasy_phase": "失控期 — 奇幻外溢",
+        "fantasy_elements": [
+          {
+            "timestamp": "0:15-0:50",
+            "type": "VR记忆空间",
+            "name": "墨蓝天空+建筑黑白化",
+            "description": "分离记忆中天空变为浓重的墨蓝色，记忆边缘的建筑失去色彩变为黑白，只有两人的红色衣物保持色彩——分离的痛苦让世界褪色",
+            "narrative_function": "分离情感视觉化。墨蓝=失去色谱。选择性保留色彩=执念",
+            "emotional_function": "心碎与无力",
+            "ai_feasibility": {
+              "level": "高",
+              "reason": "选择性色彩+天空渲染是AI强项"
+            },
+            "ai_prompt_keywords": [
+              "dark ink blue sky",
+              "surroundings desaturated to black and white",
+              "only red qipao retains color",
+              "separation scene",
+              "1960s dock",
+              "cinematic",
+              "melancholy",
+              "selective color"
+            ]
+          },
+          {
+            "timestamp": "1:00-1:25",
+            "type": "车内奇幻",
+            "name": "车窗裂纹=心碎",
+            "description": "记忆中分离的瞬间，P1800的车窗玻璃出现一道发光的裂纹，裂纹形状像血管/像泪水流痕，金色光从裂纹中渗出",
+            "narrative_function": "车内物件与情感同步——车在'共情'。裂纹是伤痛的物理化",
+            "emotional_function": "痛感的视觉化",
+            "ai_feasibility": {
+              "level": "高",
+              "reason": "玻璃裂纹+发光渗光是AI强项效果"
+            },
+            "ai_prompt_keywords": [
+              "car window glass crack",
+              "glowing crack like veins",
+              "golden light seeping from crack",
+              "tear-like pattern",
+              "vintage car interior",
+              "dramatic lighting",
+              "cinematic close-up"
+            ]
+          },
+          {
+            "timestamp": "1:35-1:55",
+            "type": "全息碎片",
+            "name": "伸出的手收回",
+            "description": "车内浮现全息手势——一只手向苏念方向伸出，停顿后缓慢收回消散。未完成的告别",
+            "narrative_function": "华侨青年的最后告别（以奶奶记忆中的他的手势呈现）。悬疑：为什么没在一起？",
+            "emotional_function": "未完成的遗憾",
+            "ai_feasibility": {
+              "level": "中",
+              "reason": "手势动画可行但收回动作需精确控制"
+            },
+            "ai_prompt_keywords": [
+              "translucent glowing hand reaching out",
+              "then slowly retracting and dissolving",
+              "holographic",
+              "male hand",
+              "golden particles",
+              "car interior",
+              "melancholy",
+              "cinematic"
+            ]
+          }
+        ]
+      },
+      {
+        "episode": "Ep6",
+        "title": "念字由来",
+        "summary": "'念'字的由来——那个华侨给奶奶取的名字/承诺",
+        "fantasy_phase": "失控期 — 奇幻互动化",
+        "fantasy_elements": [
+          {
+            "timestamp": "0:10-0:40",
+            "type": "VR记忆空间",
+            "name": "中文字符粒子化",
+            "description": "记忆空间中，巨大的汉字'念'在空中由无数金色光粒子组成，缓慢旋转，粒子偶尔散开重组。背景是华侨青年为奶奶写下这个字的那一刻",
+            "narrative_function": "核心揭示——名字由来。'念'=思念=铭记。奇幻视觉承担叙事核心",
+            "emotional_function": "誓言的神圣感",
+            "ai_feasibility": {
+              "level": "中",
+              "reason": "中文字符渲染是AI弱项（文字），建议用粒子聚散暗示字形而非精确渲染"
+            },
+            "ai_prompt_keywords": [
+              "giant Chinese character formed by golden particles",
+              "floating in air",
+              "slowly rotating",
+              "particles dispersing and reforming",
+              "ethereal",
+              "cinematic",
+              "warm glow",
+              "abstract"
+            ]
+          },
+          {
+            "timestamp": "0:55-1:25",
+            "type": "车内奇幻",
+            "name": "仪表盘年代刻度",
+            "description": "苏念拨动仪表盘旋钮，表盘数字依次显示1965/1968/1972...不同年份，每个年份车窗外闪过对应的记忆片段（快速蒙太奇）",
+            "narrative_function": "奇幻互动化——苏念主动操控记忆时间线。每个年份=一段等待",
+            "emotional_function": "时间流逝的厚重感",
+            "ai_feasibility": {
+              "level": "高",
+              "reason": "数字变形+快速场景闪切是AI强项"
+            },
+            "ai_prompt_keywords": [
+              "vintage dashboard with year digits 1965 1968 1972",
+              "digits morphing",
+              "car window showing different memory flashes",
+              "time control",
+              "golden glow",
+              "cinematic montage"
+            ]
+          },
+          {
+            "timestamp": "1:35-1:55",
+            "type": "全息碎片",
+            "name": "奶奶独坐车中",
+            "description": "后视镜中反射出奶奶晚年的背影——独自坐在P1800驾驶座，望向窗外，等了一辈子。背影逆光，旗袍轮廓发光",
+            "narrative_function": "奶奶用一生守护这份爱的揭示。后视镜=记忆相框的完整运用",
+            "emotional_function": "心疼与敬意",
+            "ai_feasibility": {
+              "level": "高",
+              "reason": "后视镜反射+逆光背影是AI强项"
+            },
+            "ai_prompt_keywords": [
+              "rearview mirror reflection",
+              "elderly woman back silhouette",
+              "sitting alone in vintage car",
+              "qipao outline glowing",
+              "backlit",
+              "warm melancholy light",
+              "cinematic"
+            ]
+          }
+        ]
+      },
+      {
+        "episode": "Ep7",
+        "title": "真相拼合",
+        "summary": "真相逐渐拼合——奶奶用一生守护这份爱",
+        "fantasy_phase": "坍塌期 — 多时空叠加",
+        "fantasy_elements": [
+          {
+            "timestamp": "0:10-0:50",
+            "type": "VR记忆空间",
+            "name": "三时空叠加",
+            "description": "1950年代南洋的雨、1970年代送车场景、2000年代奶奶独坐车中的画面，三者同时在车窗上叠加呈现，不同色温在画面中共存，像多重曝光",
+            "narrative_function": "时间不再是线性的——奶奶的一生同时存在于这辆车里。奇幻达到最高点",
+            "emotional_function": "时间坍塌的眩晕+一生的厚度",
+            "ai_feasibility": {
+              "level": "中",
+              "reason": "多重时空叠加需要分层渲染合成，AI单次生成可能混乱"
+            },
+            "ai_prompt_keywords": [
+              "three time periods overlaid in same frame",
+              "1950s rain + 1970s car scene + 2000s woman alone",
+              "multiple exposure",
+              "different color temperatures coexisting",
+              "dreamlike",
+              "cinematic",
+              "layered reality"
+            ]
+          },
+          {
+            "timestamp": "1:00-1:30",
+            "type": "近未来对比",
+            "name": "现实全面侵蚀",
+            "description": "苏念从VR退出后发现：2035+现实街道上同时存在多个年代的元素——1960年代的建筑投影叠在玻璃幕墙上、老式路牌悬在现代交通灯旁、不同年代的人影走过",
+            "narrative_function": "奇幻完全侵蚀现实——苏念分不清记忆与现实。悬疑推向顶点",
+            "emotional_function": "现实崩塌的恐惧与顿悟",
+            "ai_feasibility": {
+              "level": "中",
+              "reason": "多年代元素叠加需要精确控制，建议重点做好建筑投影叠加"
+            },
+            "ai_prompt_keywords": [
+              "future city street with past overlapping",
+              "1960s building projections on glass towers",
+              "vintage signs next to modern traffic lights",
+              "time layers collapsing",
+              "surreal",
+              "cinematic wide",
+              "cyberpunk meets vintage"
+            ]
+          },
+          {
+            "timestamp": "1:40-1:55",
+            "type": "车内奇幻",
+            "name": "方向盘温度印记",
+            "description": "苏念握住方向盘，皮革表面浮现出暖色的人体温度光影——是奶奶几十年握过的痕迹，也是华侨青年交付钥匙时的手温叠加",
+            "narrative_function": "所有温度/触觉记忆汇聚在方向盘——车是所有爱的容器",
+            "emotional_function": "跨越时间的温暖",
+            "ai_feasibility": {
+              "level": "中",
+              "reason": "材质温度可视化可行但需要精确纹理控制"
+            },
+            "ai_prompt_keywords": [
+              "hands gripping vintage steering wheel",
+              "warm thermal handprint patterns appearing on leather",
+              "glowing heat traces",
+              "multiple overlapping handprints",
+              "intimate",
+              "cinematic close-up",
+              "golden warm light"
+            ]
+          }
+        ]
+      },
+      {
+        "episode": "Ep8",
+        "title": "最后一趟",
+        "summary": "苏念理解一切，完成'最后一趟'",
+        "fantasy_phase": "坍塌期 — 奇幻反转与情感释放",
+        "fantasy_elements": [
+          {
+            "timestamp": "0:15-0:50",
+            "type": "VR记忆空间",
+            "name": "现实与记忆融合",
+            "description": "苏念最后一次启动P1800，车窗内外的界限消失——VR记忆空间与现实完全融合，她同时在奶奶的所有记忆中和2035+的现实中。画面是超现实的融合",
+            "narrative_function": "奇幻反转——不是苏念进入记忆，而是苏念终于'和奶奶在一起了'。记忆与现实不再分离",
+            "emotional_function": "释然与圆满",
+            "ai_feasibility": {
+              "level": "高",
+              "reason": "场景融合+超现实光影是AI强项，大场景渲染"
+            },
+            "ai_prompt_keywords": [
+              "reality and memory merging",
+              "car interior dissolving into memory landscape",
+              "multiple time periods unified",
+              "ethereal golden light",
+              "red vintage car driving through dreamlike space",
+              "cinematic epic",
+              "emotional climax"
+            ]
+          },
+          {
+            "timestamp": "1:00-1:30",
+            "type": "全息碎片",
+            "name": "奶奶转身",
+            "description": "全息奶奶的背影在记忆空间远处终于转身——但仍然没有面容，转身后是旗袍正面轮廓+发光的光团代替面部，她向苏念微笑（以光影弯曲暗示微笑）",
+            "narrative_function": "全息奶奶的'第一次也是最后一次正面出现'。回避面部但完成告别",
+            "emotional_function": "最终的告别与祝福",
+            "ai_feasibility": {
+              "level": "高",
+              "reason": "旗袍轮廓+光团面部回避了AI弱项，光影弯曲暗示表情"
+            },
+            "ai_prompt_keywords": [
+              "red qipao silhouette turning around",
+              "face replaced by glowing orb of light",
+              "light bending to suggest smile",
+              "holographic grandmother",
+              "warm golden particles",
+              "emotional farewell",
+              "cinematic",
+              "backlit"
+            ]
+          },
+          {
+            "timestamp": "1:40-2:00",
+            "type": "车内奇幻",
+            "name": "P1800驶入光中",
+            "description": "最后一幕：红色P1800驶向记忆空间尽头的光中，车身逐渐变为光粒子消散，车内仪表盘指针归零，收音机最后一声杂音归于安静。不是结束，是另一种存在",
+            "narrative_function": "奇幻升华——P1800不是消失，是化为纯粹的记忆/光。开放式结局",
+            "emotional_function": "释怀与永恒",
+            "ai_feasibility": {
+              "level": "高",
+              "reason": "车身粒子消散+发光是AI顶级强项"
+            },
+            "ai_prompt_keywords": [
+              "red vintage car driving into light",
+              "car body dissolving into golden particles",
+              "fading into brightness",
+              "instrument panel going dark",
+              "ethereal ending",
+              "cinematic epic wide shot",
+              "emotional",
+              "transcendent"
+            ]
+          }
+        ]
+      }
+    ],
+    "ai_feasibility_summary": {
+      "high_feasibility_count": 18,
+      "medium_feasibility_count": 7,
+      "low_feasibility_count": 0,
+      "strategy": "优先实现所有高可行性元素（18个），中可行性元素（7个）通过简化策略（用剪影/轮廓/粒子替代精细渲染）提升至可执行。无低可行性元素——方案设计已全面回避AI弱项。",
+      "risk_mitigation": {
+        "shadow_separation": "Ep4影子分离 — 简化为影子拉长+变形，不做完全脱离",
+        "holographic_hands": "Ep3/Ep5全息手势 — 用发光手套效果或逆光剪影简化手指",
+        "chinese_character": "Ep6中文字符 — 用粒子聚散暗示字形而非精确文字渲染",
+        "multi_timeline_overlay": "Ep7三时空叠加 — 分层渲染后合成，不做单次生成",
+        "reality_erosion": "Ep7现实侵蚀 — 重点做好建筑投影叠加，减少多元素同时呈现"
+      }
+    },
+    "fantasy_progression_curve": {
+      "principle": "奇幻强度逐集递增，从Ep1微异常到Ep8现实坍塌",
+      "curve": [
+        {
+          "episodes": "Ep1-2",
+          "phase": "微奇幻期",
+          "intensity": 3,
+          "description": "仪表盘自转/收音机杂音/车窗变屏幕。观众：'这辆车不正常'"
+        },
+        {
+          "episodes": "Ep3-4",
+          "phase": "超现实期",
+          "intensity": 5,
+          "description": "丝绸液体化/雨滴倒流/影子分离。观众：'记忆好美但不真实'"
+        },
+        {
+          "episodes": "Ep5-6",
+          "phase": "失控期",
+          "intensity": 7,
+          "description": "奇幻外溢车外/苏念操控记忆/车窗裂纹。观众：'现实在被改写'"
+        },
+        {
+          "episodes": "Ep7-8",
+          "phase": "坍塌期",
+          "intensity": 9,
+          "description": "多时空叠加/现实全面侵蚀/因果反转。观众：'分不清真假'→释然"
+        }
+      ]
+    }
+  },
+  "metadata": {
+    "created": "20260619",
+    "experts_invoked": [
+      "theory_critic",
+      "visual_executor"
+    ],
+    "model": "glm-5.2",
+    "total_fantasy_elements": 25,
+    "episodes_covered": 8,
+    "output_path": "/home/kai/workspace/kais-movie-agent/output/20260619-urban-fantasy-comedy/step1c-fantasy-design.json"
+  }
+}
