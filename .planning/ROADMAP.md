@@ -38,10 +38,12 @@ Decimal phases appear between their surrounding integers in numeric order.
   2. 调用 pipeline 跑到任意新阶段(pain-discovery/topic-selection/outline-generation/script-generation/character-generation/scene-generation/script-lock/consistency-guard/cloud-production/final-audio/delivery)不再因缺 handler 抛 "no handler" 错误,而是执行业务逻辑或显式降级
   3. `V2_MIGRATION_MAP` 中不再引用 PHASES 中已不存在的 legacy ID,且每个旧→新映射的目标 ID 在 PHASES 数组中能找到
   4. 单元测试覆盖 phaseHandlers 路由(对每个新 id 调用 handler 后,断言返回结构或降级日志),`npm test` 通过
-**Plans**: TBD
+**Plans**: 3 plans
 
 Plans:
-- [ ] 10-01: TBD
+- [ ] 10-01-PLAN.md — 补完 15 个 V6 stub handler (ARCH-01)
+- [x] 10-02-PLAN.md — V2_MIGRATION_MAP 审计与清理 (ARCH-03) ✓ 2026-06-23
+- [ ] 10-03-PLAN.md — 单元测试覆盖 (ARCH-01 SC-4)
 
 ### Phase 11: Hermes ID 对齐
 **Goal**: Hermes 决策/审计闭环对所有 20 个新阶段开放,不再因 VALID_PHASES 白名单缺失而静默失败

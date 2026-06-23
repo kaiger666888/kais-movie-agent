@@ -1,3 +1,19 @@
+---
+gsd_state_version: 1.0
+milestone: v2.0
+milestone_name: Pipeline Remediation
+status: executing
+stopped_at: 10-02-PLAN.md 完成 — V2_MIGRATION_MAP stale 清理 + 完整性自检
+last_updated: "2026-06-23T02:35:09Z"
+last_activity: 2026-06-23 — 10-02 V2_MIGRATION_MAP 审计清理完成
+progress:
+  total_phases: 8
+  completed_phases: 0
+  total_plans: 3
+  completed_plans: 2
+  percent: 8
+---
+
 # Project State
 
 ## Project Reference
@@ -10,28 +26,30 @@ See: .planning/PROJECT.md (updated 2026-06-22)
 ## Current Position
 
 Phase: 10 of 17 (PHASES/handler 架构对齐)
-Plan: 0 of ? in current phase (not yet planned)
-Status: Ready to plan
-Last activity: 2026-06-22 — Roadmap v2.0 created (Phases 10-17)
+Plan: 2 of 3 in current phase
+Status: 10-02 complete, ready for 10-03
+Last activity: 2026-06-23 — 10-02 V2_MIGRATION_MAP stale 清理 + 完整性自检
 
-Progress: [░░░░░░░░░░] 0% (v2.0: 0/8 phases, v1.0: 9/9 shipped)
+Progress: [█░░░░░░░░░] 8% (v2.0: 0/8 phases, 2/3 plans in Phase 10, v1.0: 9/9 shipped)
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 0 (v2.0)
-- Average duration: — min
-- Total execution time: — hours
+
+- Total plans completed: 1 (v2.0)
+- Average duration: ~2 min/plan (Phase 10 baseline)
+- Total execution time: ~2 min (Phase 10 so far)
 
 **By Phase:**
 
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
-| — (v2.0 未启动) | — | — | — |
+| Phase 10 (PHASES/handler 对齐) | 1 | 3 | 2 min |
 
 **Recent Trend:**
-- Last 5 plans: —
-- Trend: — (尚未执行)
+
+- Last 5 plans: 10-02 (2 min, 1 task commit, 1 file)
+- Trend: ↗ starting (single data point)
 
 *Updated after each plan completion*
 
@@ -45,6 +63,8 @@ Recent decisions affecting current work:
 - v2.0 启动: 评估发现 PHASES 数组与 phaseHandlers 严重错位(实际审计:15 个 missing handler, 5 个 legacy orphan),Hermes 闭环失效,一致性审计含假数据(`return 0.85`),质量门控默认 80% 兜底
 - Roadmap 拆为 8 phases (10-17),按"架构对齐 → 质量实化 → 工程安全 → E2E"依赖顺序
 - Phase 编号继续 v1.0 (1-9),v2.0 从 10 开始
+- **10-02**: 删除 `'soul-voice → character-generation'` 迁移映射 (voice soul v1.0 概念已废,voice → seed-skeleton 仍保留为 voice 路径的规范迁移)
+- **10-02**: V2_MIGRATION_MAP 完整性自检用 throw (非 console.warn) — 设计意图为启动时 fail-fast,防止 stale ref 进入运行态
 
 ### Pending Todos
 
@@ -68,6 +88,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-06-22
-Stopped at: Roadmap v2.0 (Phases 10-17) 已写入,等待 Phase 10 规划
-Resume file: None
+Last session: 2026-06-23
+Stopped at: 10-02-PLAN.md 完成 (V2_MIGRATION_MAP stale 清理 + 完整性自检)
+Resume file: None (ready for 10-03 if needed)
