@@ -3,15 +3,18 @@
  *
  * 用于 movie-agent (Node.js) 的回调签名/验证。
  *
- * 用法:
- *   const { sign, verify, getSecret } = require('./hmac_node');
+ * 用法 (ESM):
+ *   import { sign, verify, getSecret } from '../shared/hmac_node.js';
  *   const signature = sign(body, secret);
  *   verify(body, secret, headerValue);
+ *
+ * 用法 (CJS interop):
+ *   const { sign, verify, getSecret } = require('./hmac_node');
  */
 
-const crypto = require('crypto');
+import crypto from 'node:crypto';
 
-function sign(body, secret) {
+export function sign(body, secret) {
   /** 生成 HMAC-SHA256 签名，返回 header 值格式: sha256={hex} */
   const sig = crypto
     .createHmac('sha256', secret)
@@ -20,7 +23,7 @@ function sign(body, secret) {
   return `sha256=${sig}`;
 }
 
-function verify(body, secret, headerValue) {
+export function verify(body, secret, headerValue) {
   /**
    * 验证 HMAC-SHA256 签名。
    * body: 原始请求 body (string 或 Buffer)
@@ -35,7 +38,7 @@ function verify(body, secret, headerValue) {
   );
 }
 
-function getSecret(envVar) {
+export function getSecret(envVar) {
   /** 从环境变量读取密钥，缺失或为默认值时抛错。 */
   const secret = process.env[envVar];
   if (!secret) throw new Error(`环境变量 ${envVar} 未设置`);
@@ -45,4 +48,10 @@ function getSecret(envVar) {
   return secret;
 }
 
-module.exports = { sign, verify, getSecret };
+// CJS interop — allow require('./hmac_node') from legacy CommonJS callers.
+// Using a getter pattern avoids Node's ambiguous-module error that triggers
+// when both top-level `require()` and `export` appear in the same ESM file.
+const _cjsExports = { sign, verify, getSecret };
+if (typeof module !== 'undefined' && module.exports) {
+  module.exports = _cjsExports;
+}
