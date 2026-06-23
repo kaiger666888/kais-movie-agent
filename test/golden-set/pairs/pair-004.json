@@ -1,0 +1,13 @@
+{
+  "id": "pair-004",
+  "character": "主角 vs 配角",
+  "anchor_image": "pair-004.anchor.png",
+  "generated_image": "pair-004.generated.png",
+  "_placeholder": true,
+  "_note": "占位样本 — 不同角色(测试 false positive 防御)",
+  "ground_truth": {
+    "expected_score_range": [0.20, 0.50],
+    "same_identity": false,
+    "notes": "不同角色(同性/同年龄段),应判低分"
+  }
+}

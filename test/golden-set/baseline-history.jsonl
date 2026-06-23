@@ -1,0 +1,3 @@
+{"run_at":"2026-06-23T14:04:55.963Z","model_version":"glm-4.6v","tag":"unit-test-mock","samples":5,"mean":0.717,"std":0.206,"mock":true}
+{"run_at":"2026-06-23T14:05:05.959Z","model_version":"glm-4.6v","tag":"unit-test-mock","samples":5,"mean":0.732,"std":0.178,"mock":true}
+{"run_at":"2026-06-23T14:05:08.997Z","model_version":"glm-4.6v","tag":"unit-test-mock","samples":5,"mean":0.732,"std":0.177,"mock":true}

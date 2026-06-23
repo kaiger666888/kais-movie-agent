@@ -1,0 +1,92 @@
+{
+  "_schema_version": 1,
+  "_purpose": "Phase 19 D1-03 golden set baseline",
+  "model_version": "glm-4.6v",
+  "tag": "unit-test-mock",
+  "run_at": "2026-06-23T14:05:08.997Z",
+  "total_duration_ms": 2,
+  "samples": 5,
+  "valid_scores": 5,
+  "mock_count": 5,
+  "error_count": 0,
+  "_mock": true,
+  "score_distribution": {
+    "mean": 0.732,
+    "std": 0.177,
+    "min": 0.38969056956371456,
+    "max": 0.9012375683951588,
+    "n": 5
+  },
+  "same_identity_distribution": {
+    "mean": 0.818,
+    "std": 0.049,
+    "min": 0.780388235661386,
+    "max": 0.9012375683951588,
+    "n": 4
+  },
+  "diff_identity_distribution": {
+    "mean": 0.39,
+    "std": 0,
+    "min": 0.38969056956371456,
+    "max": 0.38969056956371456,
+    "n": 1
+  },
+  "threshold_recommendation": 0.585,
+  "pairs": [
+    {
+      "id": "pair-001",
+      "score": 0.9012375683951588,
+      "details": "mock(占位): anchor缺gen缺API_KEY缺",
+      "mock": true,
+      "expected_range": [
+        0.85,
+        0.95
+      ],
+      "same_identity": true
+    },
+    {
+      "id": "pair-002",
+      "score": 0.803734469510401,
+      "details": "mock(占位): anchor缺gen缺API_KEY缺",
+      "mock": true,
+      "expected_range": [
+        0.75,
+        0.9
+      ],
+      "same_identity": true
+    },
+    {
+      "id": "pair-003",
+      "score": 0.786418975427187,
+      "details": "mock(占位): anchor缺gen缺API_KEY缺",
+      "mock": true,
+      "expected_range": [
+        0.7,
+        0.85
+      ],
+      "same_identity": true
+    },
+    {
+      "id": "pair-004",
+      "score": 0.38969056956371456,
+      "details": "mock(占位): anchor缺gen缺API_KEY缺",
+      "mock": true,
+      "expected_range": [
+        0.2,
+        0.5
+      ],
+      "same_identity": false
+    },
+    {
+      "id": "pair-005",
+      "score": 0.780388235661386,
+      "details": "mock(占位): anchor缺gen缺API_KEY缺",
+      "mock": true,
+      "expected_range": [
+        0.7,
+        0.88
+      ],
+      "same_identity": true
+    }
+  ]
+}
