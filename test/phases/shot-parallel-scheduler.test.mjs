@@ -451,3 +451,239 @@ describe('ShotParallelScheduler.runWithRetry (Phase 16 PERF-04)', () => {
     }
   });
 });
+
+// ═══════════════════════════════════════════════════════════════════
+// Phase 21 B5-03: BlacklistEngine 集成单元测试
+//   - 黑名单命中: 跳过 (≠ retry ≠ fail)
+//   - 黑名单 miss / disabled / degraded: 正常重试流程
+//   - collectBlacklisted 静态工具
+// ═══════════════════════════════════════════════════════════════════
+
+describe('ShotParallelScheduler.runWithRetry + BlacklistEngine (Phase 21 B5-03)', () => {
+  async function freshScheduler() {
+    const dir = await mkdtemp(join(tmpdir(), 'phase21-b503-'));
+    const fakePipeline = { workdir: dir, episode: 'B503-EP' };
+    return {
+      dir,
+      scheduler: new ShotParallelScheduler({ parallelism: 4, pipeline: fakePipeline }),
+      cleanup: () => rm(dir, { recursive: true, force: true }),
+    };
+  }
+
+  // Fake blacklist: 'hit' for specific prompt substring
+  function makeFakeBlacklist(hitPrompts = []) {
+    const hitSet = new Set(hitPrompts);
+    return {
+      check: async ({ prompt }) => hitSet.has(prompt) ? 'hit' : 'miss',
+      record: async () => ({ recorded: true }),
+    };
+  }
+
+  // ═══════════════════════════════════════════════════════════════
+  // 1. 命中黑名单的 shot 被跳过,不调用 taskFn,不计为失败
+  // ═══════════════════════════════════════════════════════════════
+  it('B5-03 blacklist hit → shot 被跳过,taskFn 不被调用', async () => {
+    const { scheduler, cleanup } = await freshScheduler();
+    try {
+      const shots = [
+        { id: 'good-001', description: '正常 prompt A' },
+        { id: 'bad-002', description: '坏 prompt B' },
+        { id: 'good-003', description: '正常 prompt C' },
+      ];
+      const taskCalls = [];
+      const results = await scheduler.runWithRetry(shots, async (shot) => {
+        taskCalls.push(shot.id);
+        return { shot_id: shot.id, video_path: `/out/${shot.id}.mp4`, status: 'completed' };
+      }, {
+        maxRetries: 3,
+        blacklist: makeFakeBlacklist(['坏 prompt B']),
+      });
+
+      // good-001 / good-003 被调用,bad-002 跳过
+      assert.deepEqual(taskCalls.sort(), ['good-001', 'good-003']);
+      assert.ok(!taskCalls.includes('bad-002'), 'bad-002 不应进入 taskFn');
+
+      // 索引对齐
+      assert.strictEqual(results.length, 3);
+      assert.strictEqual(results[0].shot_id, 'good-001');
+      assert.strictEqual(results[1].shot_id, 'bad-002');
+      assert.strictEqual(results[2].shot_id, 'good-003');
+
+      // good 完成
+      assert.strictEqual(results[0].status, 'completed');
+      assert.ok(results[0].video_path);
+      assert.strictEqual(results[2].status, 'completed');
+      assert.ok(results[2].video_path);
+
+      // bad-002 黑名单跳过标记
+      assert.strictEqual(results[1].status, 'blacklisted');
+      assert.strictEqual(results[1].blacklist_skipped, true);
+      assert.match(results[1].reason, /blacklist hit/);
+
+      // 三个状态可区分 (skip vs retry vs fail)
+      assert.ok(!results[1]._failed, '黑名单跳过不应标 _failed');
+      assert.ok(!results[1].permanent_failure, '黑名单跳过不应 permanent_failure');
+      assert.ok(!results[1].retrying, '黑名单跳过不应 retrying');
+    } finally {
+      await cleanup();
+    }
+  });
+
+  // ═══════════════════════════════════════════════════════════════
+  // 2. blacklist miss → 走正常流程
+  // ═══════════════════════════════════════════════════════════════
+  it('B5-03 blacklist miss → 正常调用 taskFn', async () => {
+    const { scheduler, cleanup } = await freshScheduler();
+    try {
+      const shots = [{ id: 'shot-x', description: 'some prompt' }];
+      let taskCalled = false;
+      const results = await scheduler.runWithRetry(shots, async (shot) => {
+        taskCalled = true;
+        return { shot_id: shot.id, video_path: '/out/x.mp4', status: 'completed' };
+      }, {
+        maxRetries: 3,
+        blacklist: makeFakeBlacklist(['完全不同的 prompt']),
+      });
+
+      assert.strictEqual(taskCalled, true);
+      assert.strictEqual(results[0].status, 'completed');
+    } finally {
+      await cleanup();
+    }
+  });
+
+  // ═══════════════════════════════════════════════════════════════
+  // 3. blacklist disabled / degraded → 视同无黑名单
+  // ═══════════════════════════════════════════════════════════════
+  it('B5-03 blacklist disabled/degraded → 正常调用 taskFn', async () => {
+    const { scheduler, cleanup } = await freshScheduler();
+    try {
+      const disabledBl = { check: async () => 'disabled', record: async () => ({}) };
+      const degradedBl = { check: async () => 'degraded', record: async () => ({}) };
+
+      const shots = [{ id: 'a', description: 'p1' }, { id: 'b', description: 'p2' }];
+
+      let calls = 0;
+      const r1 = await scheduler.runWithRetry(shots, async (shot) => {
+        calls++;
+        return { shot_id: shot.id, video_path: '/x', status: 'completed' };
+      }, { maxRetries: 3, blacklist: disabledBl });
+
+      assert.strictEqual(calls, 2, 'disabled → 全部进入 taskFn');
+      assert.strictEqual(r1[0].status, 'completed');
+
+      const r2 = await scheduler.runWithRetry(shots, async (shot) => {
+        return { shot_id: shot.id, video_path: '/x', status: 'completed' };
+      }, { maxRetries: 3, blacklist: degradedBl });
+
+      assert.strictEqual(r2[0].status, 'completed');
+      assert.strictEqual(r2[1].status, 'completed');
+    } finally {
+      await cleanup();
+    }
+  });
+
+  // ═══════════════════════════════════════════════════════════════
+  // 4. blacklist.check 抛错 → 视为 miss 继续(防御性)
+  // ═══════════════════════════════════════════════════════════════
+  it('B5-03 blacklist.check 抛错时视为 miss 继续', async () => {
+    const { scheduler, cleanup } = await freshScheduler();
+    try {
+      const throwingBl = {
+        check: async () => { throw new Error('blacklist internal err'); },
+        record: async () => ({}),
+      };
+      let taskCalled = false;
+      const results = await scheduler.runWithRetry(
+        [{ id: 's1', description: 'p' }],
+        async (shot) => {
+          taskCalled = true;
+          return { shot_id: shot.id, video_path: '/x', status: 'completed' };
+        },
+        { maxRetries: 3, blacklist: throwingBl },
+      );
+
+      assert.strictEqual(taskCalled, true, '抛错应降级为 miss,正常进入 taskFn');
+      assert.strictEqual(results[0].status, 'completed');
+    } finally {
+      await cleanup();
+    }
+  });
+
+  // ═══════════════════════════════════════════════════════════════
+  // 5. 全部命中黑名单 → 不调用 taskFn,runWithRetry 立即返回
+  // ═══════════════════════════════════════════════════════════════
+  it('B5-03 全部 shots 命中黑名单 → 0 次 taskFn 调用', async () => {
+    const { scheduler, cleanup } = await freshScheduler();
+    try {
+      const shots = [
+        { id: 'b1', description: 'bad one' },
+        { id: 'b2', description: 'bad two' },
+      ];
+      let taskCalled = false;
+      const results = await scheduler.runWithRetry(shots, async () => {
+        taskCalled = true;
+        return { video_path: '/x' };
+      }, {
+        maxRetries: 3,
+        blacklist: makeFakeBlacklist(['bad one', 'bad two']),
+      });
+
+      assert.strictEqual(taskCalled, false);
+      assert.strictEqual(results.length, 2);
+      assert.strictEqual(results[0].status, 'blacklisted');
+      assert.strictEqual(results[1].status, 'blacklisted');
+    } finally {
+      await cleanup();
+    }
+  });
+
+  // ═══════════════════════════════════════════════════════════════
+  // 6. collectBlacklisted 静态工具
+  // ═══════════════════════════════════════════════════════════════
+  it('B5-03 collectBlacklisted 静态工具过滤 blacklisted 结果', () => {
+    const results = [
+      { shot_id: 's1', status: 'completed' },
+      { shot_id: 's2', status: 'blacklisted', blacklist_skipped: true },
+      { shot_id: 's3', _failed: true, permanent_failure: true },
+      { shot_id: 's4', status: 'blacklisted', blacklist_skipped: true },
+    ];
+    const bl = ShotParallelScheduler.collectBlacklisted(results);
+    assert.strictEqual(bl.length, 2);
+    assert.deepEqual(bl.map(r => r.shot_id), ['s2', 's4']);
+  });
+
+  // ═══════════════════════════════════════════════════════════════
+  // 7. 三态可区分: blacklisted vs permanent_failure vs retrying
+  // ═══════════════════════════════════════════════════════════════
+  it('B5-03 三态可区分: blacklisted / permanent_failure / retrying', async () => {
+    const { scheduler, cleanup } = await freshScheduler();
+    try {
+      const shots = [
+        { id: 'bl-1', description: 'bad' },             // blacklisted
+        { id: 'pf-1', description: 'perm fail' },       // permanent_failure (3x fail)
+      ];
+      const callCounts = new Map();
+      const results = await scheduler.runWithRetry(shots, async (shot) => {
+        const n = (callCounts.get(shot.id) || 0) + 1;
+        callCounts.set(shot.id, n);
+        if (shot.id === 'pf-1') throw new Error('always fails');
+        return { shot_id: shot.id, video_path: '/x' };
+      }, {
+        maxRetries: 3,
+        blacklist: makeFakeBlacklist(['bad']),  // 'bad' is substring? No, exact match
+      });
+
+      // bl-1: exact 'bad' match → blacklisted
+      assert.strictEqual(results[0].status, 'blacklisted');
+      assert.strictEqual(results[0].blacklist_skipped, true);
+      // pf-1: not matched, retry 3x, permanent_failure
+      assert.strictEqual(results[1].permanent_failure, true);
+      assert.strictEqual(callCounts.get('pf-1'), 3);
+      // bl-1 taskFn 0 calls
+      assert.strictEqual(callCounts.get('bl-1'), undefined);
+    } finally {
+      await cleanup();
+    }
+  });
+});
