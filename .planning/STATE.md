@@ -1,9 +1,9 @@
 ---
 gsd_state_version: 1.0
-milestone: v2.0-complete
-milestone_name: Pipeline Remediation (shipped)
+milestone: v3.0
+milestone_name: Industrial Pipeline Alignment
 status: planning
-last_updated: "2026-06-23T05:23:29.437Z"
+last_updated: "2026-06-23T13:22:38.297Z"
 last_activity: 2026-06-23
 progress:
   total_phases: 0
@@ -27,7 +27,7 @@ See: .planning/PROJECT.md (updated 2026-06-22)
 Phase: Not started (defining requirements)
 Plan: —
 Status: Defining requirements
-Last activity: 2026-06-23 — Milestone v2.0-complete started
+Last activity: 2026-06-23 — Milestone v3.0 started
 
 ## Performance Metrics
 
