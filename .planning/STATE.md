@@ -4,13 +4,13 @@ milestone: v2.0
 milestone_name: Pipeline Remediation
 status: verifying
 stopped_at: 10-02-PLAN.md 完成 (V2_MIGRATION_MAP stale 清理 + 完整性自检)
-last_updated: "2026-06-23T04:18:52.699Z"
+last_updated: "2026-06-23T04:32:39.647Z"
 last_activity: 2026-06-23
 progress:
   total_phases: 8
   completed_phases: 1
   total_plans: 3
-  completed_plans: 9
+  completed_plans: 10
   percent: 13
 ---
 
@@ -54,6 +54,7 @@ Progress: [██████████] 100%
 *Updated after each plan completion*
 | Phase 10 P01 | 434 | - tasks | - files |
 | Phase 10 P03 | 186s | 2 tasks | 1 files |
+| Phase 17 P17 | 60 | 3 tasks | 5 files |
 
 ## Accumulated Context
 
@@ -75,6 +76,9 @@ Recent decisions affecting current work:
 - [Phase 16]: ShotParallelScheduler.runWithRetry (maxRetries=3) + permanent_failure → failed_shots.json 供人工介入
 - [Phase 16]: HERMES_DEFAULTS[cloud-production].max_retries: 1→3 (镜头级失败重试预算)
 - [Phase 16]: EvaluationCollector 构造函数加 episodeId opts (向后兼容),_makeCollector 注入 pipeline.episode
+- [Phase ?]: E2E degraded test uses 127.0.0.1:0 for all external services
+- [Phase ?]: Quality gate bypass is opt-in via config; production keeps gate enforced
+- [Phase ?]: Three Rule-1 bug fixes unblocked E2E: undefined handler returns, stale state save, composition gate in degraded mode
 
 ### Pending Todos
 
@@ -98,6 +102,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-06-23T04:18:52.690Z
+Last session: 2026-06-23T04:32:21.042Z
 Stopped at: 10-02-PLAN.md 完成 (V2_MIGRATION_MAP stale 清理 + 完整性自检)
 Resume file: None

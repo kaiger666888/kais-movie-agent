@@ -38,10 +38,10 @@
 
 ### E2E — 端到端验证(P0 验收)
 
-- [ ] **E2E-01**: 至少 1 集 60s 短剧从 `requirement` 阶段跑到 `final.mp4` 产出
-- [ ] **E2E-02**: 在 `projects/` 目录产出可播放成片(mp4 + wav 音轨)
-- [ ] **E2E-03**: 整改前后回归测试 — 确保 v1.0 的 9 phases 不被破坏
-- [ ] **E2E-04**: 一致性审计在 E2E 中实际触发并产出非空 `consistency-pass.json`
+- [x] **E2E-01**: 至少 1 集 60s 短剧从 `requirement` 阶段跑到 `final.mp4` 产出
+- [x] **E2E-02**: 在 `projects/` 目录产出可播放成片(mp4 + wav 音轨)
+- [x] **E2E-03**: 整改前后回归测试 — 确保 v1.0 的 9 phases 不被破坏
+- [x] **E2E-04**: 一致性审计在 E2E 中实际触发并产出非空 `consistency-pass.json`
 
 ---
 

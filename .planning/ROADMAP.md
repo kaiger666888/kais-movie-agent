@@ -25,7 +25,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [ ] **Phase 14: character-generation 真实实现** - CharacterAssetManager + L1 候选 20 选 3 + L2 造型卡片
 - [ ] **Phase 15: 镜头级并行 + 工程安全** - parallel_shots Promise.all + waitForTask 阻塞 + CompositionEngine execFile 重写
 - [x] **Phase 16: 成本核算 + 重试预算** - cost-report.json 聚合 + max_retries 自适应
-- [ ] **Phase 17: E2E 端到端验证** - 跑通 1 集 60s 短剧产出 final.mp4 + v1.0 回归
+- [x] **Phase 17: E2E 端到端验证** - 跑通 1 集 60s 短剧产出 final.mp4 + v1.0 回归
 
 ## Phase Details
 
@@ -139,7 +139,7 @@ Plans:
 **Plans**: TBD
 
 Plans:
-- [ ] 17-01: TBD
+- [x] 17-01: E2E degraded-mode test + runbook (3 commits — 7 E2E tests + 3 Rule-1 bug fixes + E2E-RUNBOOK.md)
 
 ## Progress
 
