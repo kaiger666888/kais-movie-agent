@@ -1,0 +1,64 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "CrossEpisodeEval pairs.json schema",
+  "description": "Phase 24 B2-05: 50+50 evaluation pair set for threshold calibration. Operator fills in real image pairs; 5 placeholder pairs are seeded as examples.",
+  "type": "object",
+  "required": ["version", "generated_at", "pairs"],
+  "properties": {
+    "version": { "type": "integer", "minimum": 1 },
+    "generated_at": { "type": "string", "format": "date-time" },
+    "project": { "type": "string" },
+    "notes": { "type": "string" },
+    "pairs": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["pair_id", "category", "expected_label", "image_a", "image_b"],
+        "properties": {
+          "pair_id": {
+            "type": "string",
+            "description": "Stable identifier, e.g. 'same-char-001'",
+            "pattern": "^[a-z0-9-]+$"
+          },
+          "category": {
+            "type": "string",
+            "enum": [
+              "same_char_diff_episode",
+              "same_actor_diff_char",
+              "same_char_diff_costume",
+              "diff_actor"
+            ],
+            "description": "Ground-truth relationship between image_a and image_b"
+          },
+          "expected_label": {
+            "type": "string",
+            "enum": ["match", "no_match"],
+            "description": "Whether the library should report a match (find-by-identity)"
+          },
+          "image_a": {
+            "type": "object",
+            "required": ["path"],
+            "properties": {
+              "path": { "type": "string" },
+              "character_id": { "type": "string" },
+              "episode_id": { "type": "string" },
+              "costume_id": { "type": "string" }
+            }
+          },
+          "image_b": {
+            "type": "object",
+            "required": ["path"],
+            "properties": {
+              "path": { "type": "string" },
+              "character_id": { "type": "string" },
+              "episode_id": { "type": "string" },
+              "costume_id": { "type": "string" }
+            }
+          },
+          "notes": { "type": "string" }
+        }
+      }
+    }
+  }
+}

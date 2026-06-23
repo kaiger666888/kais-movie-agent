@@ -14,3 +14,6 @@ skills/kais-voice/
 node_modules/
 .backup/
 lib/bgm-selector.js
+
+# Phase 24 cross-episode eval: generated calibration reports (operator reruns on real pairs)
+test/cross-episode-eval/calibration-report.json

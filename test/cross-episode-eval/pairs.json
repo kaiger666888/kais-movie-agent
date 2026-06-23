@@ -1,0 +1,48 @@
+{
+  "version": 1,
+  "generated_at": "2026-06-23T00:00:00Z",
+  "project": "kais-movie-agent",
+  "notes": "Phase 24 B2-05 placeholder pair set. Contains 5 example pairs to validate the framework. Operator MUST add 45+45 real annotated pairs (50 same_char_diff_episode + 50 same_actor_diff_char / diff_actor) before calibration is reportable.",
+  "pairs": [
+    {
+      "pair_id": "same-char-001",
+      "category": "same_char_diff_episode",
+      "expected_label": "match",
+      "image_a": { "path": "PLACEHOLDER/projects/p1/ep01/characters/hero/L1_identity/anchor-1.png", "character_id": "hero", "episode_id": "ep01" },
+      "image_b": { "path": "PLACEHOLDER/projects/p1/ep02/characters/hero/L1_identity/anchor-1.png", "character_id": "hero", "episode_id": "ep02" },
+      "notes": "Same character Hero, different episode — should match."
+    },
+    {
+      "pair_id": "same-char-002",
+      "category": "same_char_diff_costume",
+      "expected_label": "match",
+      "image_a": { "path": "PLACEHOLDER/projects/p1/ep01/characters/hero/L1_identity/anchor-1.png", "character_id": "hero", "episode_id": "ep01", "costume_id": "casual" },
+      "image_b": { "path": "PLACEHOLDER/projects/p1/ep01/characters/hero/L1_identity/anchor-1.png", "character_id": "hero", "episode_id": "ep01", "costume_id": "battle" },
+      "notes": "Same character, different costume — face identity must still match."
+    },
+    {
+      "pair_id": "same-actor-001",
+      "category": "same_actor_diff_char",
+      "expected_label": "no_match",
+      "image_a": { "path": "PLACEHOLDER/projects/p1/ep01/characters/alice/L1_identity/anchor-1.png", "character_id": "alice", "episode_id": "ep01" },
+      "image_b": { "path": "PLACEHOLDER/projects/p1/ep02/characters/bob/L1_identity/anchor-1.png", "character_id": "bob", "episode_id": "ep02" },
+      "notes": "Same human actor playing two different characters — MUST NOT match (different fictional identity)."
+    },
+    {
+      "pair_id": "diff-actor-001",
+      "category": "diff_actor",
+      "expected_label": "no_match",
+      "image_a": { "path": "PLACEHOLDER/projects/p1/ep01/characters/hero/L1_identity/anchor-1.png", "character_id": "hero", "episode_id": "ep01" },
+      "image_b": { "path": "PLACEHOLDER/projects/p1/ep01/characters/villain/L1_identity/anchor-1.png", "character_id": "villain", "episode_id": "ep01" },
+      "notes": "Two different characters in the same episode — must not match."
+    },
+    {
+      "pair_id": "same-char-003",
+      "category": "same_char_diff_episode",
+      "expected_label": "match",
+      "image_a": { "path": "PLACEHOLDER/projects/p1/ep01/characters/hero/L1_identity/anchor-2.png", "character_id": "hero", "episode_id": "ep01" },
+      "image_b": { "path": "PLACEHOLDER/projects/p1/ep03/characters/hero/L1_identity/anchor-1.png", "character_id": "hero", "episode_id": "ep03" },
+      "notes": "Cross-episode Hero reuse — expected match."
+    }
+  ]
+}
