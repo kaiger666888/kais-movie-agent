@@ -20,8 +20,15 @@ HERMES_KEY = os.environ.get("HERMES_MCP_API_KEY", "")
 ZHIPU_API_URL = "https://open.bigmodel.cn/api/paas/v4/chat/completions"
 
 
-def call_hermes_vision(prompt: str, images_b64: list, api_key: str, model: str = "glm-4.6v") -> str:
+def _default_vision_model() -> str:
+    """Phase 19 D1-02: 视觉模型名经 env var 覆盖(单一来源,与 JS 侧 ZHIPU_VISION_MODEL 一致)。"""
+    return os.environ.get("ZHIPU_VISION_MODEL", "glm-4.6v")
+
+
+def call_hermes_vision(prompt: str, images_b64: list, api_key: str, model: str = None) -> str:
     """Route vision LLM call through Hermes or fall back to direct API."""
+    if model is None:
+        model = _default_vision_model()
     if HERMES_URL:
         try:
             return _call_hermes_tool("hermes_llm_vision", {

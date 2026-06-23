@@ -29,7 +29,9 @@ import json, base64, os, sys, argparse
 from hermes_helper import call_hermes_vision
 
 API_URL = "https://open.bigmodel.cn/api/paas/v4/chat/completions"
-MODEL = "glm-4.6v"
+# Phase 19 D1-02: 视觉模型名经 env var 覆盖(单一来源,与 JS 侧 ZHIPU_VISION_MODEL 一致)
+def _get_vision_model():
+    return os.environ.get("ZHIPU_VISION_MODEL", "glm-4.6v")
 MAX_IMG_SIZE = 4 * 1024 * 1024
 
 
@@ -161,7 +163,7 @@ def validate_anatomy(img_path, api_key, mode="full"):
     )
 
     payload = {
-        "model": MODEL,
+        "model": _get_vision_model(),
         "messages": [{
             "role": "user",
             "content": [
@@ -171,7 +173,7 @@ def validate_anatomy(img_path, api_key, mode="full"):
         }]
     }
 
-    raw = call_hermes_vision(prompt, [b64], api_key, model=MODEL)
+    raw = call_hermes_vision(prompt, [b64], api_key, model=_get_vision_model())
 
     # 清理临时文件
     if actual_path != img_path:
