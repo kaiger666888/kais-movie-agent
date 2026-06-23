@@ -127,10 +127,10 @@ describe('phaseHandlers 路由完整性 (ARCH-01 SC-1)', () => {
 
 
 // ═══════════════════════════════════════════════════════════════════
-// describe 2: stub handler 执行 (ARCH-01 SC-2)
+// describe 2: handler 执行 — Phase 18 实化后产出非空内容 (ARCH-01 SC-2 + Phase 18 SC-8)
 // ═══════════════════════════════════════════════════════════════════
 
-describe('stub handler 执行 (ARCH-01 SC-2)', () => {
+describe('handler 执行 — Phase 18 实化产出非空内容 (SC-8)', () => {
   let tmpDir;
   let pipeline;
 
@@ -176,17 +176,46 @@ describe('stub handler 执行 (ARCH-01 SC-2)', () => {
     });
   }
 
-  it('每个 stub 文件含 _stub: true 标记', async () => {
-    const files = Object.values(OUTPUT_FILES).flat();
-    for (const filename of files) {
+  it('每个 handler 产出文件包含 _phase 字段 (Phase 18 实化: 删除 _stub)', async () => {
+    // Phase 18 实化后: pain-discovery/topic-selection/delivery 不再含 _stub: true
+    // 注: consistency-guard 无 visuals 分支保留 _stub: true (Phase 12 特性,不在 Phase 18 范围)
+    // 注: cloud-production 降级时保留 stubbed: true (Phase 15 特性)
+    const PHASE18_FILES = ['pain-report.json', 'selected-topic.json', 'quality-report.json'];
+    for (const filename of PHASE18_FILES) {
       const filePath = join(tmpDir, filename);
       const raw = await readFile(filePath, 'utf-8');
       const parsed = JSON.parse(raw);
       assert.ok(
-        parsed._stub === true,
-        `${filename}._stub !== true (实际: ${parsed._stub})`,
+        parsed._phase !== undefined,
+        `${filename}._phase 缺失 (Phase 18 实化要求 _phase 字段)`,
+      );
+      assert.ok(
+        parsed._stub !== true,
+        `${filename}._stub === true — Phase 18 实化后应删除 _stub (实际: ${parsed._stub})`,
       );
     }
+  });
+
+  it('pain-report.json 含非空 pain_points 数组 (Phase 18 实化)', async () => {
+    const raw = await readFile(join(tmpDir, 'pain-report.json'), 'utf-8');
+    const parsed = JSON.parse(raw);
+    assert.ok(Array.isArray(parsed.pain_points), 'pain_points 必须是数组');
+    assert.ok(parsed.pain_points.length >= 1,
+      `pain_points 至少 1 条 (Phase 18 模板降级保证非空),实际 ${parsed.pain_points.length}`);
+    // 验证每条 pain_point 结构
+    const pp = parsed.pain_points[0];
+    assert.ok(pp.id, 'pain_point.id 缺失');
+    assert.ok(pp.pain_point, 'pain_point.pain_point 描述缺失');
+  });
+
+  it('selected-topic.json 含非空 candidates + selected (Phase 18 实化)', async () => {
+    const raw = await readFile(join(tmpDir, 'selected-topic.json'), 'utf-8');
+    const parsed = JSON.parse(raw);
+    assert.ok(Array.isArray(parsed.candidates), 'candidates 必须是数组');
+    assert.ok(parsed.candidates.length >= 1,
+      `candidates 至少 1 条 (Phase 18 模板降级),实际 ${parsed.candidates.length}`);
+    assert.ok(parsed.selected, 'selected 字段缺失 (Phase 18 实化)');
+    assert.ok(parsed._selectionMethod, '_selectionMethod 字段缺失');
   });
 });
 
@@ -352,23 +381,36 @@ describe('降级日志与容错 (ARCH-01 SC-2)', () => {
     }
   });
 
-  it('5 个代表性 phase 全部在降级模式下正常执行', async () => {
-    // 串联跑 5 个 phase — 任何一个 fatal 都会让测试失败
-    // Phase 12 实化后: consistency-guard 不再是 stub (有 visuals 走真实审计,无 visuals 走 no_visuals 分支)
-    const STILL_STUBBED = new Set(['pain-discovery', 'topic-selection', 'cloud-production', 'delivery']);
+  it('5 个代表性 phase 全部在降级模式下正常执行 (Phase 18 实化: 不再 stubbed)', async () => {
+    // Phase 18 实化后: pain-discovery/topic-selection/delivery 不再 stubbed (cloud-production 保留 stubbed — Phase 15 实现特性)
+    // cloud-production 仍是 degraded-only (无 gold-team 时仍标 stubbed: true)
+    const PHASE18_MATERIALIZED = new Set(['pain-discovery', 'topic-selection', 'delivery']);
     for (const phaseId of REPRESENTATIVE_PHASES) {
       const phase = Pipeline.getPhases().find(p => p.id === phaseId);
       const handler = phaseHandlers[phaseId];
       const result = await handler.after(pipeline, phase, {});
       assert.ok(result?.metrics, `${phaseId} 返回的 result.metrics 缺失`);
-      if (STILL_STUBBED.has(phaseId)) {
-        assert.strictEqual(result.metrics.stubbed, true, `${phaseId}.metrics.stubbed !== true`);
-      } else {
+      if (phaseId === 'consistency-guard') {
         // consistency-guard Phase 12 实化: 必须有 passed/overall 或 skipped 字段
         assert.ok(
           result.metrics.passed !== undefined || result.metrics.skipped,
           `${phaseId} 应该有 passed 或 skipped 字段 (Phase 12 实化)`,
         );
+      } else if (PHASE18_MATERIALIZED.has(phaseId)) {
+        // Phase 18 实化: 不再有 stubbed,改为 degraded/candidates_count/quality_report_written 等
+        assert.strictEqual(result.metrics.stubbed, undefined,
+          `${phaseId}.metrics.stubbed 应为 undefined (Phase 18 实化删除)`);
+        // 各 phase 有不同的实化指标:
+        // - pain-discovery: pain_points_count / audience_match_run / degraded
+        // - topic-selection: candidates_count / selection_method / degraded
+        // - delivery: quality_report_written / cost_report_written / final_mp4_status
+        const hasMaterializedMetric =
+          result.metrics.degraded !== undefined ||
+          result.metrics.candidates_count !== undefined ||
+          result.metrics.pain_points_count !== undefined ||
+          result.metrics.quality_report_written !== undefined;
+        assert.ok(hasMaterializedMetric,
+          `${phaseId} 应有 Phase 18 实化指标 (degraded/candidates_count/pain_points_count/quality_report_written)`);
       }
     }
   });
@@ -480,8 +522,12 @@ describe('Phase 12 一致性即时审计 hook (QUAL-04)', () => {
     const result = await handler.after(freshPipeline, phase, phaseConfig);
 
     assert.ok(result?.metrics, 'scene-generation 返回 metrics 缺失');
-    // 因无 LLM,审计会失败/降级 — 不应 fatal
-    assert.strictEqual(result.metrics.stubbed, true); // 仍是 stub (Phase 14 未实化生成)
+    // Phase 18 实化: scene-generation 不再 stub,产出非空 candidates 数组
+    // (无 JimengClient 时全降级为 placeholder;有 JimengClient 时生成真实图)
+    assert.strictEqual(result.metrics.stubbed, undefined,
+      'scene-generation.metrics.stubbed 应为 undefined (Phase 18 实化)');
+    assert.ok(result.metrics.candidates_count >= 1,
+      `candidates_count 应 >= 1 (Phase 18),实际 ${result.metrics.candidates_count}`);
 
     await rm(freshDir, { recursive: true, force: true });
   });
@@ -588,7 +634,13 @@ describe('Phase 16 delivery handler 实化 (PERF-03 cost-report)', () => {
     const qRaw = await readFile(qPath, 'utf-8');
     const qParsed = JSON.parse(qRaw);
     assert.strictEqual(qParsed._phase, 'delivery');
-    assert.strictEqual(qParsed._stub, true);  // 仍为 stub (实化推迟 phase-13)
+    // Phase 18 实化: 删除 _stub + _pendingRealImplementation
+    assert.strictEqual(qParsed._stub, undefined,
+      'quality-report._stub 应为 undefined (Phase 18 实化)');
+    assert.ok(qParsed.report, 'quality-report.report 字段缺失 (Phase 18 实化)');
+    assert.ok(qParsed.report.final_mp4, 'report.final_mp4 字段缺失 (Phase 18 实化)');
+    assert.ok(qParsed.report.final_mp4.status === 'absent' || qParsed.report.final_mp4.size_bytes,
+      'final_mp4 应有 status 或 size_bytes 字段');
 
     // cost-report.json 落盘 (Phase 16 新增)
     const cPath = join(tmpDir, 'cost-report.json');
