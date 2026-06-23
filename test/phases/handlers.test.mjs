@@ -302,17 +302,22 @@ describe('降级日志与容错 (ARCH-01 SC-2)', () => {
     assert.ok(result.metrics, 'result.metrics 缺失');
   });
 
-  it('返回 metrics 含 stubbed: true', async () => {
+  it('cloud-production 无 gold-team / 无 shots 时降级写 stub', async () => {
     const phase = Pipeline.getPhases().find(p => p.id === 'cloud-production');
     const handler = phaseHandlers['cloud-production'];
     const result = await handler.after(pipeline, phase, {});
+    // Phase 15 实化后:无 gold-team 或无 shots 时降级,仍返回 stubbed: true
     assert.strictEqual(
       result.metrics.stubbed, true,
       `cloud-production metrics.stubbed !== true (实际: ${result.metrics.stubbed})`,
     );
     assert.ok(
-      result.metrics._pendingRealImplementation,
-      'cloud-production _pendingRealImplementation 缺失',
+      result.metrics.degraded,
+      'cloud-production 应在降级模式下 metrics.degraded=true',
+    );
+    assert.ok(
+      result.metrics.reason,
+      `cloud-production 应给出降级原因 (实际: ${result.metrics.reason})`,
     );
   });
 
