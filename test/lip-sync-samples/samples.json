@@ -1,0 +1,42 @@
+{
+  "_schema_version": "1.0",
+  "_description": "Phase 22 A2-05: 中文 lip sync 测试集 — 实际音频由 operator 补充",
+  "_language": "zh-CN",
+  "_expected_threshold_range": [0.65, 0.85],
+  "_operator_note": "下列 3 个样本为 placeholder (无真实音频)。operator 需补充真实中文对白音频 (audio_path) 和 L1 身份锚点 (anchor_path) 后再运行 run-lip-sync-test.js",
+  "samples": [
+    {
+      "id": "zh-sample-001",
+      "prompt": "主角面向镜头，严肃地说出‘我们必须现在行动’，然后转身离开画面。",
+      "audio_path": "audio/zh-sample-001.wav",
+      "anchor_path": "anchors/zh-sample-001.png",
+      "expected_threshold": 0.75,
+      "scenario": "正面镜头，清晰对白，中等情绪强度",
+      "character": "主角",
+      "dialogue_text": "我们必须现在行动",
+      "emotion": "serious"
+    },
+    {
+      "id": "zh-sample-002",
+      "prompt": "配角快速反驳：‘不可能！这件事绝对不行！’，头部轻微摇晃。",
+      "audio_path": "audio/zh-sample-002.wav",
+      "anchor_path": "anchors/zh-sample-002.png",
+      "expected_threshold": 0.70,
+      "scenario": "快速反驳，高情绪强度，含头部运动 (lip sync 更难)",
+      "character": "配角",
+      "dialogue_text": "不可能！这件事绝对不行！",
+      "emotion": "angry"
+    },
+    {
+      "id": "zh-sample-003",
+      "prompt": "旁白低声叙述：‘多年以后，他终于回到了这片土地。’",
+      "audio_path": "audio/zh-sample-003.wav",
+      "anchor_path": "anchors/zh-sample-003.png",
+      "expected_threshold": 0.80,
+      "scenario": "旁白叙述，无强情绪，理想 lip sync 场景 (应为高分基线)",
+      "character": "旁白",
+      "dialogue_text": "多年以后，他终于回到了这片土地。",
+      "emotion": "calm"
+    }
+  ]
+}
