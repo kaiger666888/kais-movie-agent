@@ -2,16 +2,16 @@
 gsd_state_version: 1.0
 milestone: v2.0
 milestone_name: Pipeline Remediation
-status: executing
+status: verifying
 stopped_at: 10-02-PLAN.md 完成 (V2_MIGRATION_MAP stale 清理 + 完整性自检)
-last_updated: "2026-06-23T02:44:22.779Z"
+last_updated: "2026-06-23T02:53:31.423Z"
 last_activity: 2026-06-23
 progress:
   total_phases: 8
-  completed_phases: 0
+  completed_phases: 1
   total_plans: 3
-  completed_plans: 2
-  percent: 0
+  completed_plans: 3
+  percent: 13
 ---
 
 # Project State
@@ -27,10 +27,10 @@ See: .planning/PROJECT.md (updated 2026-06-22)
 
 Phase: 10 of 17 (PHASES/handler 架构对齐)
 Plan: 3 of 3 in current phase
-Status: Ready to execute
+Status: Phase complete — ready for verification
 Last activity: 2026-06-23
 
-Progress: [███████░░░] 67%
+Progress: [██████████] 100%
 
 ## Performance Metrics
 
@@ -53,6 +53,7 @@ Progress: [███████░░░] 67%
 
 *Updated after each plan completion*
 | Phase 10 P01 | 434 | - tasks | - files |
+| Phase 10 P03 | 186s | 2 tasks | 1 files |
 
 ## Accumulated Context
 
@@ -68,6 +69,8 @@ Recent decisions affecting current work:
 - **10-02**: V2_MIGRATION_MAP 完整性自检用 throw (非 console.warn) — 设计意图为启动时 fail-fast,防止 stale ref 进入运行态
 - [Phase ?]: V6 phase handlers follow V4.1 7-step skeleton — stub bodies deferred via _pendingRealImplementation field
 - [Phase ?]: Preexisting CJS/ESM ambiguity in shared/hmac_node.js fixed under Rule 3 — blocked all ESM imports of lib/phases/index.js
+- [Phase 10]: Invoke handler.after() directly in tests (bypass runPhase) — hermetic, 1.36s runtime
+- [Phase 10]: Added explicit V4.1 legacy-id regression assertion in describe 1 — protects back-compat for future Phase 11/12/14/15 handler edits
 
 ### Pending Todos
 
@@ -91,6 +94,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-06-23T02:44:18.514Z
+Last session: 2026-06-23T02:51:27.895Z
 Stopped at: 10-02-PLAN.md 完成 (V2_MIGRATION_MAP stale 清理 + 完整性自检)
 Resume file: None
