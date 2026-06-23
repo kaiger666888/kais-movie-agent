@@ -1,17 +1,16 @@
 ---
 gsd_state_version: 1.0
-milestone: v2.0
-milestone_name: Pipeline Remediation
-status: verifying
-stopped_at: 10-02-PLAN.md 完成 (V2_MIGRATION_MAP stale 清理 + 完整性自检)
-last_updated: "2026-06-23T04:32:39.647Z"
+milestone: v2.0-complete
+milestone_name: Pipeline Remediation (shipped)
+status: planning
+last_updated: "2026-06-23T05:23:29.437Z"
 last_activity: 2026-06-23
 progress:
-  total_phases: 8
-  completed_phases: 1
-  total_plans: 3
-  completed_plans: 10
-  percent: 13
+  total_phases: 0
+  completed_phases: 0
+  total_plans: 0
+  completed_plans: 0
+  percent: 0
 ---
 
 # Project State
@@ -25,12 +24,10 @@ See: .planning/PROJECT.md (updated 2026-06-22)
 
 ## Current Position
 
-Phase: 10 of 17 (PHASES/handler 架构对齐)
-Plan: 3 of 3 in current phase
-Status: Phase complete — ready for verification
-Last activity: 2026-06-23
-
-Progress: [██████████] 100%
+Phase: Not started (defining requirements)
+Plan: —
+Status: Defining requirements
+Last activity: 2026-06-23 — Milestone v2.0-complete started
 
 ## Performance Metrics
 
