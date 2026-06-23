@@ -67,10 +67,26 @@
 
 ## Traceability
 
-(filled by roadmapper)
+Filled by roadmapper on 2026-06-22. Coverage: 19/19 v1 requirements mapped (100%).
 
 | REQ-ID | Phase | Success Criterion |
 |--------|-------|-------------------|
-| ARCH-01 | TBD | TBD |
-| ARCH-02 | TBD | TBD |
-| ... | ... | ... |
+| ARCH-01 | Phase 10 | SC-1 (20/20 handler 对齐), SC-2 (无 no-handler 错误), SC-4 (单元测试通过) |
+| ARCH-02 | Phase 11 | SC-1 (VALID_PHASES 覆盖 20 阶段), SC-2 (decide 不被前端拒绝) |
+| ARCH-03 | Phase 10 | SC-3 (V2_MIGRATION_MAP 无 stale 引用) |
+| ARCH-04 | Phase 14 | SC-1 (L1 20选3), SC-2 (L2 造型卡片), SC-4 (候选非空) |
+| QUAL-01 | Phase 12 | SC-1 (真实 GLM-4V/DINOv2 打分,删除 return 0.85) |
+| QUAL-02 | Phase 13 | SC-1 (删除 80% 兜底), SC-2 (LLM 失败标记异常) |
+| QUAL-03 | Phase 12 | SC-2 (consistency-guard 调 auditContinuity 并阻断) |
+| QUAL-04 | Phase 12 | SC-3 (auditImageVsL1 即时触发,< 0.7 重试) |
+| PERF-01 | Phase 15 | SC-1 (parallel_shots:4 真正 Promise.all) |
+| PERF-02 | Phase 15 | SC-2 (waitForTask 阻塞,5s 轮询,10min 超时) |
+| PERF-03 | Phase 16 | SC-1 (cost-report.json 聚合), SC-2 (总 GPU-分钟) |
+| PERF-04 | Phase 16 | SC-3 (max_retries 自适应 1→3) |
+| SAFE-01 | Phase 15 | SC-3 (execFile + args 数组,禁止 shell 拼接) |
+| SAFE-02 | Phase 15 | SC-4 (FFmpeg 路径 sanitize,拒绝特殊字符) |
+| SAFE-03 | Phase 15 | SC-5 (删除 fallback 二次拼接降级链) |
+| E2E-01 | Phase 17 | SC-1 (60s 短剧 20 阶段跑通,退出码 0) |
+| E2E-02 | Phase 17 | SC-2 (final.mp4 可播放,wav 音轨) |
+| E2E-03 | Phase 17 | SC-4 (v1.0 9 phases 回归测试通过) |
+| E2E-04 | Phase 17 | SC-3 (consistency-pass.json 非空) |
