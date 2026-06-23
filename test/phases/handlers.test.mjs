@@ -550,3 +550,114 @@ describe('Phase 12 一致性即时审计 hook (QUAL-04)', () => {
     await rm(freshDir, { recursive: true, force: true });
   });
 });
+
+
+// ═══════════════════════════════════════════════════════════════════
+// describe 6: Phase 16 delivery handler 实化 (PERF-03)
+// ═══════════════════════════════════════════════════════════════════
+
+describe('Phase 16 delivery handler 实化 (PERF-03 cost-report)', () => {
+  let tmpDir;
+  let pipeline;
+
+  before(async () => {
+    tmpDir = await mkdtemp(join(tmpdir(), 'phase16-delivery-'));
+    pipeline = new Pipeline({
+      workdir: tmpDir,
+      config: createRequirementTemplate({
+        title: 'Phase16 delivery 测试',
+        genre: '科幻',
+        characters: [{ name: '主角', description: '测试角色' }],
+      }),
+      episode: 'P16-DEL-EP',
+    });
+  });
+
+  after(async () => {
+    if (tmpDir) await rm(tmpDir, { recursive: true, force: true });
+  });
+
+  it('delivery handler 同时产出 quality-report.json + cost-report.json', async () => {
+    const phase = Pipeline.getPhases().find(p => p.id === 'delivery');
+    const handler = phaseHandlers['delivery'];
+    const result = await handler.after(pipeline, phase, {});
+
+    // quality-report.json 落盘
+    const qPath = join(tmpDir, 'quality-report.json');
+    assert.ok(existsSync(qPath), 'quality-report.json 未落盘');
+    const qRaw = await readFile(qPath, 'utf-8');
+    const qParsed = JSON.parse(qRaw);
+    assert.strictEqual(qParsed._phase, 'delivery');
+    assert.strictEqual(qParsed._stub, true);  // 仍为 stub (实化推迟 phase-13)
+
+    // cost-report.json 落盘 (Phase 16 新增)
+    const cPath = join(tmpDir, 'cost-report.json');
+    assert.ok(existsSync(cPath), 'cost-report.json 未落盘');
+    const cRaw = await readFile(cPath, 'utf-8');
+    const cParsed = JSON.parse(cRaw);
+    assert.strictEqual(cParsed.episode, 'P16-DEL-EP');
+    assert.ok(cParsed.generated_at, 'cost-report 应有 generated_at');
+    assert.ok(cParsed.by_phase, 'cost-report 应有 by_phase');
+
+    // metrics 应包含 cost_report_written: true
+    assert.strictEqual(result.metrics.quality_report_written, true);
+    assert.strictEqual(result.metrics.cost_report_written, true);
+  });
+
+  it('delivery handler 在有 evaluation records 时 cost-report 反映聚合数据', async () => {
+    // 用全新 workdir 写入 2 条 evaluation 记录
+    const dir = await mkdtemp(join(tmpdir(), 'phase16-delivery-rec-'));
+    const p = new Pipeline({
+      workdir: dir,
+      config: createRequirementTemplate({
+        title: '成本聚合', genre: '科幻',
+        characters: [{ name: '主角', description: 'x' }],
+      }),
+      episode: 'COST-EP',
+    });
+
+    // 注入 2 条 record 通过 EvaluationCollector
+    const { EvaluationCollector } = await import('../../lib/evaluation-collector.js');
+    const collector = new EvaluationCollector(dir, { episodeId: 'COST-EP' });
+    await collector.recordBatch([
+      { task_id: 't1', phase: 'cloud-production', task_type: 'video_final',
+        gpu_time_sec: 100, peak_vram_gb: 4, success: true, retry_count: 0, oom_risk: false },
+      { task_id: 't2', phase: 'cloud-production', task_type: 'video_final',
+        gpu_time_sec: 200, peak_vram_gb: 5, success: false, retry_count: 1, oom_risk: false },
+    ]);
+
+    const phase = Pipeline.getPhases().find(p => p.id === 'delivery');
+    const handler = phaseHandlers['delivery'];
+    const result = await handler.after(p, phase, {});
+
+    // cost-report.json 应反映 2 条记录
+    const cRaw = await readFile(join(dir, 'cost-report.json'), 'utf-8');
+    const cParsed = JSON.parse(cRaw);
+    assert.strictEqual(cParsed.total_records, 2);
+    assert.strictEqual(cParsed.total_gpu_sec, 300);
+    assert.strictEqual(cParsed.summary.failed_count, 1);
+    assert.strictEqual(cParsed.summary.success_rate, '50.0%');
+
+    assert.strictEqual(result.metrics.cost_total_records, 2);
+
+    await rm(dir, { recursive: true, force: true });
+  });
+
+  it('cloud-production.max_retries HERMES_DEFAULTS 升级为 3 (Phase 16 PERF-04)', async () => {
+    // 源码静态断言: HERMES_DEFAULTS['cloud-production'].max_retries = 3
+    // 通过读源文件 grep 该行 (HERMES_DEFAULTS 未 named export)
+    const { readFile: rf } = await import('node:fs/promises');
+    const { fileURLToPath } = await import('node:url');
+    const src = await rf(fileURLToPath(new URL('../../lib/phases/index.js', import.meta.url)), 'utf-8');
+    assert.match(
+      src,
+      /'cloud-production':\s*{[^}]*?max_retries:\s*3,/m,
+      'HERMES_DEFAULTS[\'cloud-production\'].max_retries 应为 3 (Phase 16 升级)',
+    );
+    // 确保旧的 max_retries: 1 已被替换
+    assert.ok(
+      !/max_retries:\s*1\b/.test(src),
+      '源码不应再有 max_retries: 1 (Phase 15 旧值)',
+    );
+  });
+});
