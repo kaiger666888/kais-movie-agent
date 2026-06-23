@@ -4,6 +4,9 @@
   "private": true,
   "type": "module",
   "description": "kais-movie-agent — REST API + pipeline orchestration",
+  "scripts": {
+    "test": "node --test 'test/**/*.test.mjs' 'test/**/*.test.js'"
+  },
   "dependencies": {
     "socket.io-client": "^4.8.3"
   }

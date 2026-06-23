@@ -22,35 +22,42 @@ import { Pipeline, createRequirementTemplate, validateRequirement } from '../lib
 let tmpDir;
 before(() => { tmpDir = mkdtempSync(join(tmpdir(), 'v41-test-')); });
 
-// ─── 1. Pipeline PHASES Structure ──────────────────────────
+// ─── 1. Pipeline PHASES Structure (V6 — 20 phases) ──────────────────────────
 
-describe('V4.1 Pipeline Structure', () => {
+describe('V6 Pipeline Structure', () => {
   const phases = Pipeline.getPhases();
 
-  it('has 10 phases', () => {
-    assert.equal(phases.length, 10);
+  it('has 20 phases (V6 layout)', () => {
+    assert.equal(phases.length, 20);
   });
 
-  it('has correct phase IDs in order', () => {
+  it('has correct V6 phase IDs in order', () => {
     const ids = phases.map(p => p.id);
     assert.deepEqual(ids, [
-      'requirement-bible', 'soul-visual', 'soul-voice', 'geometry-bed',
-      'spatio-temporal-script', 'seed-skeleton', 'motion-preview',
-      'ai-preview', 'final-production', 'composition',
+      'pain-discovery', 'topic-selection', 'outline-generation', 'outline-selection',
+      'script-generation', 'script-selection', 'character-generation', 'character-selection',
+      'scene-generation', 'scene-selection', 'spatio-temporal-script',
+      'script-lock', 'seed-skeleton', 'motion-preview', 'ai-preview',
+      'consistency-guard', 'cloud-production', 'final-audio', 'composition', 'delivery',
     ]);
   });
 
-  it('has stageOrder 0-9', () => {
+  it('has stageOrder 0-19', () => {
     const orders = Pipeline.getPhases().map(p => p.stageOrder);
-    assert.deepEqual(orders, [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]);
+    assert.deepEqual(orders, Array.from({ length: 20 }, (_, i) => i));
   });
 
   it('review phases have review config', () => {
+    const reviewPhases = new Set([
+      'topic-selection', 'outline-selection', 'script-selection', 'character-selection',
+      'scene-selection', 'spatio-temporal-script', 'script-lock', 'seed-skeleton',
+      'motion-preview', 'ai-preview', 'cloud-production',
+    ]);
     for (const p of phases) {
-      if (['requirement-bible', 'geometry-bed', 'composition'].includes(p.id)) {
-        assert.equal(p.review, false, `${p.id} should not have review`);
-      } else {
+      if (reviewPhases.has(p.id)) {
         assert.ok(p.review, `${p.id} should have review config`);
+      } else {
+        assert.equal(p.review, false, `${p.id} should NOT have review config`);
       }
     }
   });
@@ -252,11 +259,11 @@ describe('V4.1 Requirement Template', () => {
   });
 });
 
-// ─── 9. V2 State Migration ─────────────────────────────────
+// ─── 9. V2 State Migration (V6 — migrates legacy IDs to V6 phases) ─────────────────────────────────
 
-describe('V2 State Migration', () => {
-  it('migrates V2 phase IDs to V4.1', async () => {
-    const workdir = mkdtempSync(join(tmpdir(), 'v41-migrate-'));
+describe('V2 State Migration (V6)', () => {
+  it('migrates V2/V4.1 phase IDs to V6 phases', async () => {
+    const workdir = mkdtempSync(join(tmpdir(), 'v6-migrate-'));
     const state = {
       episode: 'EP01', startedAt: '2026-01-01',
       phases: {
@@ -272,14 +279,17 @@ describe('V2 State Migration', () => {
     const p = new Pipeline({ workdir, episode: 'EP01' });
     const loaded = await p._loadState();
 
-    assert.equal(loaded.phases['requirement-bible']?.status, 'completed');
-    assert.equal(loaded.phases['soul-visual']?.status, 'completed');
-    assert.equal(loaded.phases['soul-voice']?.status, 'completed');
+    // V2_MIGRATION_MAP: requirement→pain-discovery, art-direction→character-generation,
+    // character→character-generation, voice→seed-skeleton
+    assert.equal(loaded.phases['pain-discovery']?.status, 'completed');
+    assert.equal(loaded.phases['character-generation']?.status, 'completed');
     assert.equal(loaded.phases['seed-skeleton']?.status, 'awaiting_review');
     assert.equal(loaded.currentPhaseId, 'seed-skeleton');
     // Old keys should not exist
     assert.equal(loaded.phases.requirement, undefined);
     assert.equal(loaded.phases['art-direction'], undefined);
+    assert.equal(loaded.phases.character, undefined);
+    assert.equal(loaded.phases.voice, undefined);
 
     rmSync(workdir, { recursive: true });
   });
