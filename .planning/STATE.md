@@ -1,15 +1,16 @@
 ---
 gsd_state_version: 1.0
-milestone: v1.0
-milestone_name: milestone
-status: Awaiting next milestone
-last_updated: "2026-05-19T23:12:51.800Z"
-last_activity: 2026-05-18 — Milestone v1.0 completed and archived
+milestone: v2.0
+milestone_name: Pipeline Remediation
+status: planning
+last_updated: "2026-06-23T01:50:51.982Z"
+last_activity: 2026-06-23
 progress:
   total_phases: 0
   completed_phases: 0
   total_plans: 0
   completed_plans: 0
+  percent: 0
 ---
 
 # STATE — kais-movie-agent 集成
@@ -49,10 +50,10 @@ progress:
 
 ## Current Position
 
-Phase: Milestone v1.0 complete
+Phase: Not started (defining requirements)
 Plan: —
-Status: Awaiting next milestone
-Last activity: 2026-05-18 — Milestone v1.0 completed and archived
+Status: Defining requirements
+Last activity: 2026-06-23 — Milestone v2.0 started
 
 ## Operator Next Steps
 
