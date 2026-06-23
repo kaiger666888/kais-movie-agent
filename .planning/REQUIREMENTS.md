@@ -10,7 +10,7 @@
 
 ### ARCH — 架构对齐(P0 致命)
 
-- [ ] **ARCH-01**: 补完 PHASES 数组中 14 个空 handler,使 `phaseHandlers` 与 `PHASES` 100% 对齐(20/20)
+- [x] **ARCH-01**: 补完 PHASES 数组中 14 个空 handler,使 `phaseHandlers` 与 `PHASES` 100% 对齐(20/20)
   - 涉及: `pain-discovery`, `topic-selection`, `outline-generation`, `outline-selection`, `script-generation`, `script-selection`, `character-generation`, `character-selection`, `scene-generation`, `scene-selection`, `script-lock`, `consistency-guard`, `cloud-production`, `final-audio`, `delivery`
 - [ ] **ARCH-02**: `HermesClient.VALID_PHASES` 与新 `PHASES` 数组同步,或改为服务端开放枚举
 - [x] **ARCH-03**: 验证 `V2_MIGRATION_MAP` 旧→新 ID 映射正确性,清理 stale 引用 ✓ 2026-06-23 (10-02)

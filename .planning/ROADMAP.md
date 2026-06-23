@@ -41,7 +41,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 **Plans**: 3 plans
 
 Plans:
-- [ ] 10-01-PLAN.md — 补完 15 个 V6 stub handler (ARCH-01)
+- [x] 10-01-PLAN.md — 补完 15 个 V6 stub handler (ARCH-01)
 - [x] 10-02-PLAN.md — V2_MIGRATION_MAP 审计与清理 (ARCH-03) ✓ 2026-06-23
 - [ ] 10-03-PLAN.md — 单元测试覆盖 (ARCH-01 SC-4)
 
@@ -149,7 +149,7 @@ Phases execute in numeric order: 10 → 11 → 12 → 13 → 14 → 15 → 16 �
 
 | Phase | Milestone | Plans Complete | Status | Completed |
 |-------|-----------|----------------|--------|-----------|
-| 10. PHASES/handler 架构对齐 | v2.0 | 0/? | Not started | - |
+| 10. PHASES/handler 架构对齐 | v2.0 | 2/3 | In Progress|  |
 | 11. Hermes ID 对齐 | v2.0 | 0/? | Not started | - |
 | 12. 一致性审计实化 | v2.0 | 0/? | Not started | - |
 | 13. 质量门控实化 | v2.0 | 0/? | Not started | - |

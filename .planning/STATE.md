@@ -3,15 +3,15 @@ gsd_state_version: 1.0
 milestone: v2.0
 milestone_name: Pipeline Remediation
 status: executing
-stopped_at: 10-02-PLAN.md 完成 — V2_MIGRATION_MAP stale 清理 + 完整性自检
-last_updated: "2026-06-23T02:35:09Z"
-last_activity: 2026-06-23 — 10-02 V2_MIGRATION_MAP 审计清理完成
+stopped_at: 10-02-PLAN.md 完成 (V2_MIGRATION_MAP stale 清理 + 完整性自检)
+last_updated: "2026-06-23T02:44:22.779Z"
+last_activity: 2026-06-23
 progress:
   total_phases: 8
   completed_phases: 0
   total_plans: 3
   completed_plans: 2
-  percent: 8
+  percent: 0
 ---
 
 # Project State
@@ -26,11 +26,11 @@ See: .planning/PROJECT.md (updated 2026-06-22)
 ## Current Position
 
 Phase: 10 of 17 (PHASES/handler 架构对齐)
-Plan: 2 of 3 in current phase
-Status: 10-02 complete, ready for 10-03
-Last activity: 2026-06-23 — 10-02 V2_MIGRATION_MAP stale 清理 + 完整性自检
+Plan: 3 of 3 in current phase
+Status: Ready to execute
+Last activity: 2026-06-23
 
-Progress: [█░░░░░░░░░] 8% (v2.0: 0/8 phases, 2/3 plans in Phase 10, v1.0: 9/9 shipped)
+Progress: [███████░░░] 67%
 
 ## Performance Metrics
 
@@ -52,6 +52,7 @@ Progress: [█░░░░░░░░░] 8% (v2.0: 0/8 phases, 2/3 plans in Ph
 - Trend: ↗ starting (single data point)
 
 *Updated after each plan completion*
+| Phase 10 P01 | 434 | - tasks | - files |
 
 ## Accumulated Context
 
@@ -65,6 +66,8 @@ Recent decisions affecting current work:
 - Phase 编号继续 v1.0 (1-9),v2.0 从 10 开始
 - **10-02**: 删除 `'soul-voice → character-generation'` 迁移映射 (voice soul v1.0 概念已废,voice → seed-skeleton 仍保留为 voice 路径的规范迁移)
 - **10-02**: V2_MIGRATION_MAP 完整性自检用 throw (非 console.warn) — 设计意图为启动时 fail-fast,防止 stale ref 进入运行态
+- [Phase ?]: V6 phase handlers follow V4.1 7-step skeleton — stub bodies deferred via _pendingRealImplementation field
+- [Phase ?]: Preexisting CJS/ESM ambiguity in shared/hmac_node.js fixed under Rule 3 — blocked all ESM imports of lib/phases/index.js
 
 ### Pending Todos
 
@@ -88,6 +91,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-06-23
+Last session: 2026-06-23T02:44:18.514Z
 Stopped at: 10-02-PLAN.md 完成 (V2_MIGRATION_MAP stale 清理 + 完整性自检)
-Resume file: None (ready for 10-03 if needed)
+Resume file: None
