@@ -349,12 +349,22 @@ describe('降级日志与容错 (ARCH-01 SC-2)', () => {
 
   it('5 个代表性 phase 全部在降级模式下正常执行', async () => {
     // 串联跑 5 个 phase — 任何一个 fatal 都会让测试失败
+    // Phase 12 实化后: consistency-guard 不再是 stub (有 visuals 走真实审计,无 visuals 走 no_visuals 分支)
+    const STILL_STUBBED = new Set(['pain-discovery', 'topic-selection', 'cloud-production', 'delivery']);
     for (const phaseId of REPRESENTATIVE_PHASES) {
       const phase = Pipeline.getPhases().find(p => p.id === phaseId);
       const handler = phaseHandlers[phaseId];
       const result = await handler.after(pipeline, phase, {});
       assert.ok(result?.metrics, `${phaseId} 返回的 result.metrics 缺失`);
-      assert.strictEqual(result.metrics.stubbed, true, `${phaseId}.metrics.stubbed !== true`);
+      if (STILL_STUBBED.has(phaseId)) {
+        assert.strictEqual(result.metrics.stubbed, true, `${phaseId}.metrics.stubbed !== true`);
+      } else {
+        // consistency-guard Phase 12 实化: 必须有 passed/overall 或 skipped 字段
+        assert.ok(
+          result.metrics.passed !== undefined || result.metrics.skipped,
+          `${phaseId} 应该有 passed 或 skipped 字段 (Phase 12 实化)`,
+        );
+      }
     }
   });
 });
