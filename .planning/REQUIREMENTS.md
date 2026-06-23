@@ -1,23 +1,106 @@
-# Requirements — kais-movie-agent
+# Milestone v3.0 Requirements — Industrial Pipeline Alignment
 
-> v2.0 milestone shipped 2026-06-22. This file is reset for the next milestone.
-> Run `/gsd:new-milestone` to define v3.0 requirements.
+> **Goal:** 对齐 2026 工业产线标准 —— 补齐 Seedance 2.0 原生音画同步、跨剧集资产复用、creative history 可追溯、bad case 黑名单、数据回流 fine-tuning 5 大能力,升级视觉评价至 GLM-4.6v
+>
+> **Scope driver:** 2026-06-22 工业产线评估 + 2026-06-23 用户甄选 + v3.0 domain research
 
-## Active Requirements
+---
 
-(No active requirements — awaiting next milestone)
+## Requirements
 
-## Validated
+### D1 — GLM-4.6V 升级 + callLLM 重构(P0 BLOCKER)
 
-See [PROJECT.md](./PROJECT.md) § "Validated" for the full list of shipped v1.0 + v2.0 requirements.
+- [ ] **D1-01**: `callLLM`/`callLLMJson` 重构为 OpenAI multimodal content blocks(`image_url` 而非 prompt 文本嵌入路径)
+- [ ] **D1-02**: `continuity-auditor.js:398` 的 `'glm-4v-flash'` 升级为 `'glm-4.6v'`,全 codebase 模型名碎片化(5 处)统一
+- [ ] **D1-03**: 50-pair golden set baseline 校准(升级前后 score 分布对比),验证 thinking 模式对评分确定性的影响
+- [ ] **D1-04**: `_scoreCache` 跨模型版本失效检查(避免旧 cache 污染新评分)
 
-## Out of Scope (carry-forward to v3.0+)
+### A2 — Seedance 2.0 原生音画同步(P0)
 
-- 真实 GPU E2E 验证(产出可播放 final.mp4)
-- GLM-4V 真实 API key 验证(端到端评分质量)
+- [ ] **A2-01**: `getOmniReferencePack()` 扩展 audio slot(添加 `audioRefs` 参数,产出 `@Audio1` prompt 绑定)
+- [ ] **A2-02**: `cloud-production` handler 接入 voice phase 输出(voice → cloud-production 时序锁)
+- [ ] **A2-03**: Seedance 任务提交时**强制校验** `@Audio1` prompt 绑定存在(避免 Pitfalls 陷阱 1 静默失败)
+- [ ] **A2-04**: 中文 lip sync 测试集(≥10 样本,中文短剧 douyin 平台场景),验证原生口型质量,不达标走 fallback(独立 lip sync phase)
+- [ ] **A2-05**: `delivery.lip_sync_threshold: 1`(100%)调整为现实阈值(基于测试集,预计 0.7-0.8)
+
+### B2 — 跨剧集资产复用库(P1)
+
+- [ ] **B2-01**: 重写 `_computeCostumeFingerprint` 从 `SHA-256(paths)` 改为 DINOv2 embedding(主)+ pHash(降级)
+- [ ] **B2-02**: 新增 `lib/perceptual-hash.js`(DCT-II,~80 LOC,零 npm 依赖)
+- [ ] **B2-03**: `CharacterAssetManager` 增加 `findByIdentity(fingerprint, threshold)` 跨 episode 查询接口
+- [ ] **B2-04**: 跨剧集资产库根路径约定(`projects/.shared/character-library/`)
+- [ ] **B2-05**: 50+50 pair 标注评估集(同演员不同角色 / 同角色跨剧集),empirical 校准 threshold
+- [ ] **B2-06**: 首次匹配 human gate(operator 审批后才写入 library)
+
+### B4 — creative_history trace 链(旗舰能力,P1)
+
+- [ ] **B4-01**: `AssetBus` schema 扩展 envelope 格式:`{ value, derived_from, content_hash }`(向后兼容)
+- [ ] **B4-02**: 新增 3 typed slots:`creative-history` / `failed-shots` / `finetune-dataset`
+- [ ] **B4-03**: 新增 `lib/creative-history-tracker.js` — adjacency-list DAG + BFS diff(改剧本自动定位受影响镜头)
+- [ ] **B4-04**: Blast radius cap(≤500ms 查询预算 + depth limit),防止 dependency explosion
+- [ ] **B4-05**: Hash-stamping 嵌入 cloud-production 下游 lineage(MVP)
+- [ ] **B4-06**: 上游 lineage(script→sts→shot) retrofit 留 v3.1,本 milestone 只做下游
+
+### B5 — Bad case 黑名单(P1)
+
+- [ ] **B5-01**: `failed_shots.json` 持久化跨 run 累积(当前是单 run 覆盖写)
+- [ ] **B5-02**: 新增 `lib/blacklist-engine.js` — 语义匹配(GLM-4.6v embedding 相似度,非 regex)
+- [ ] **B5-03**: `cloud-production` before-hook 注入 negative prompt 或跳过命中 shot
+- [ ] **B5-04**: Escape hatch(`config.blacklist.disabled: true` 紧急关闭,避免 pipeline 卡死)
+- [ ] **B5-05**: TTL 机制(默认 30 天过期,防止 stale blacklist 误拒)
+- [ ] **B5-06**: 黑名单操作日志(谁/何时/为何加入,便于审计)
+
+### B6 — 数据回流 fine-tuning(P1,最高风险)
+
+- [ ] **B6-01**: 新增 `lib/finetune-etl.js` — Hermes audit + failed_shots → JSONL manifest(`(failed_shot, anchor, audio, recommended_action)`)
+- [ ] **B6-02**: LoRA training 任务提交(`gtClient.submitTask({task_type: 'lora_training', ...})` via gold-team)
+- [ ] **B6-03**: **Human review gate as launch blocker**(operator 必须审批训练数据集,Pitfalls 陷阱 6)
+- [ ] **B6-04**: PII scrubber(检测 / 脱敏训练数据中的隐私内容)
+- [ ] **B6-05**: Golden-set regression test(训练前后跑 baseline,确保不破坏 v2.0 能力)
+- [ ] **B6-06**: Dataset poisoning 检测(基于 SilentBadDiffusion 论文,异常样本 outlier 检测)
+
+### SCHEMA — AssetBus keystone(P0 基础设施)
+
+- [ ] **SCHEMA-01**: AssetBus 扩展 3 typed slots(creative-history / failed-shots / finetune-dataset)
+- [ ] **SCHEMA-02**: Envelope 格式向后兼容(旧 v2.0 数据可读)
+- [ ] **SCHEMA-03**: 跨 phase 原子写入 + cache 失效逻辑
+
+### DEGRADE — 降级契约(横切关注点,所有 phase)
+
+- [ ] **DEGRADE-01**: 每个 v3.0 新模块必须保留 v2.0 < 5s E2E degraded-mode 承诺
+- [ ] **DEGRADE-02**: 单元测试覆盖每个新模块的降级路径(gold-team / Hermes / GLM 不可达)
+- [ ] **DEGRADE-03**: E2E 测试套件扩展,覆盖 v3.0 所有新模块的 degraded mode
+
+---
+
+## Future Requirements (deferred to v4.0+)
+
+- 多模型 A/B 测试(Runway/Kling/Sora 同镜头并跑选优)
+- 多平台导出(抖音 9:16 / B站 16:9 / YouTube 横屏 / 快手 1:1)
+- 多语言 dubbing(HeyGen 175+ 语言)
+- 独立 lip sync phase(sync.so / HeyGen API,作为 Seedance fallback)
+- 字幕生成 + 烧录 + 多语言 SRT
 - 分布式多机部署(Redis 队列 + N workers)
 - TypeScript 迁移(至少 lib/ 核心模块)
 - CI/CD pipeline(GitHub Actions)
-- 资产指纹去重 + 跨剧集复用
-- 镜头级 A/B 测试
-- 失败 case 库 + bad case 黑名单
+- 协作审核升级(review-platform 多人 + version diff)
+
+---
+
+## Out of Scope (this milestone)
+
+- 非<Node.js 运行时 / 非 GPU 任务类型
+- 真实 GPU E2E 验证(留 operator 按 docs/E2E-RUNBOOK.md 跑)
+- 上游 creative_history lineage retrofit(script→sts→shot,留 v3.1)
+- LoRA 实际训练(operator 配合,本 milestone 只产 manifest)
+- 预算告警 + 阻断(v2.0 已有 cost-report,阻断逻辑留 v3.1)
+
+---
+
+## Traceability
+
+(filled by roadmapper)
+
+| REQ-ID | Phase | Success Criterion |
+|--------|-------|-------------------|
+| (TBD by roadmapper) | | |
