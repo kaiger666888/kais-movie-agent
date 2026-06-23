@@ -368,3 +368,180 @@ describe('降级日志与容错 (ARCH-01 SC-2)', () => {
     }
   });
 });
+
+
+// ═══════════════════════════════════════════════════════════════════
+// describe 5: Phase 12 一致性即时审计 hook (QUAL-04)
+// ═══════════════════════════════════════════════════════════════════
+
+describe('Phase 12 一致性即时审计 hook (QUAL-04)', () => {
+  let tmpDir;
+  let pipeline;
+
+  before(async () => {
+    tmpDir = await mkdtemp(join(tmpdir(), 'phase12-audit-'));
+    pipeline = new Pipeline({
+      workdir: tmpDir,
+      config: createRequirementTemplate({
+        title: '一致性审计测试',
+        genre: '科幻',
+        characters: [{ name: '主角', description: '测试角色' }],
+      }),
+      episode: 'AUDIT-EP01',
+    });
+  });
+
+  after(async () => {
+    if (tmpDir) await rm(tmpDir, { recursive: true, force: true });
+  });
+
+  it('consistency-guard handler 无 visuals 时写 _reason: no_visuals_yet', async () => {
+    const phase = Pipeline.getPhases().find(p => p.id === 'consistency-guard');
+    const handler = phaseHandlers['consistency-guard'];
+    const result = await handler.after(pipeline, phase, {});
+    assert.strictEqual(result.metrics.skipped, 'no_visuals');
+
+    const raw = await readFile(join(tmpDir, 'consistency-pass.json'), 'utf-8');
+    const parsed = JSON.parse(raw);
+    assert.strictEqual(parsed._reason, 'no_visuals_yet');
+    assert.strictEqual(parsed.passed, true);
+    assert.ok(Array.isArray(parsed.retry_shots), 'retry_shots 应为数组');
+    assert.deepStrictEqual(parsed.retry_shots, []);
+  });
+
+  it('consistency-guard handler 有 visuals 时调用真实审计', async () => {
+    // 写入 spatio-temporal-script + character-assets 到 AssetBus
+    const { AssetBus } = await import('../../lib/asset-bus.js');
+    const bus = new AssetBus(tmpDir);
+    await bus.write('spatio-temporal-script', {
+      shots: [{
+        id: 'shot-001',
+        image_path: '/tmp/fake-image-001.png',
+        scene_id: 'scene-1',
+        character: '主角',
+      }],
+    });
+    await bus.write('character-assets', {
+      characters: [{
+        id: '主角', name: '主角',
+        assets: { L1_identity: [{ path: '/tmp/fake-anchor.png', status: 'approved' }] },
+      }],
+    });
+
+    const phase = Pipeline.getPhases().find(p => p.id === 'consistency-guard');
+    const handler = phaseHandlers['consistency-guard'];
+    const result = await handler.after(pipeline, phase, {});
+
+    // 调用真实 auditContinuity → 因无 API 配置,LLM 调用会失败但不应 throw
+    assert.ok(result.metrics.passed !== undefined, 'passed 字段缺失');
+    assert.strictEqual(result.metrics.audit_failed, false);
+
+    const raw = await readFile(join(tmpDir, 'consistency-pass.json'), 'utf-8');
+    const parsed = JSON.parse(raw);
+    assert.strictEqual(parsed._phase, 'consistency-guard');
+    assert.ok(!parsed._stub, '有 visuals 时不应写 _stub: true');
+    assert.strictEqual(parsed.visual_count, 1);
+    assert.ok(Array.isArray(parsed.retry_shots));
+  });
+
+  it('scene-generation handler 调用即时审计 hook (有候选图时)', async () => {
+    // 重置 workdir
+    const freshDir = await mkdtemp(join(tmpdir(), 'phase12-scene-'));
+    const freshPipeline = new Pipeline({
+      workdir: freshDir,
+      config: createRequirementTemplate({
+        title: '场景测试', genre: '科幻',
+        characters: [{ name: '主角', description: 'x' }],
+      }),
+      episode: 'SCENE-EP',
+    });
+
+    // 写入 character-assets with L1 anchor
+    const { AssetBus } = await import('../../lib/asset-bus.js');
+    const bus = new AssetBus(freshDir);
+    await bus.write('character-assets', {
+      characters: [{
+        id: '主角', name: '主角',
+        assets: { L1_identity: [{ path: '/tmp/fake-anchor.png', status: 'approved' }] },
+      }],
+    });
+
+    const phase = Pipeline.getPhases().find(p => p.id === 'scene-generation');
+    const handler = phaseHandlers['scene-generation'];
+    // phaseConfig.data.candidates 带图 → 触发 hook
+    const phaseConfig = { data: { candidates: [{
+      id: 'shot-s1', image_path: '/tmp/fake-scene.png', character: '主角',
+    }] } };
+    const result = await handler.after(freshPipeline, phase, phaseConfig);
+
+    assert.ok(result?.metrics, 'scene-generation 返回 metrics 缺失');
+    // 因无 LLM,审计会失败/降级 — 不应 fatal
+    assert.strictEqual(result.metrics.stubbed, true); // 仍是 stub (Phase 14 未实化生成)
+
+    await rm(freshDir, { recursive: true, force: true });
+  });
+
+  it('seed-skeleton handler 调用即时审计 hook (有 seed_frame 时)', async () => {
+    const freshDir = await mkdtemp(join(tmpdir(), 'phase12-seed-'));
+    const freshPipeline = new Pipeline({
+      workdir: freshDir,
+      config: createRequirementTemplate({
+        title: '种子帧测试', genre: '科幻',
+        characters: [{ name: '主角', description: 'x' }],
+      }),
+      episode: 'SEED-EP',
+    });
+
+    const { AssetBus } = await import('../../lib/asset-bus.js');
+    const bus = new AssetBus(freshDir);
+    await bus.write('spatio-temporal-script', {
+      shots: [{
+        id: 'shot-seed-1', seed_frame_path: '/tmp/fake-seed.png', scene_id: 's1',
+        character: '主角', description: '测试',
+      }],
+    });
+    await bus.write('character-assets', {
+      characters: [{
+        id: '主角', name: '主角',
+        assets: { L1_identity: [{ path: '/tmp/anchor.png', status: 'approved' }] },
+      }],
+    });
+    await bus.write('art-bible', { style_anchor: 'test', bgm_strategy: 'dual' });
+
+    const phase = Pipeline.getPhases().find(p => p.id === 'seed-skeleton');
+    const handler = phaseHandlers['seed-skeleton'];
+    const result = await handler.after(freshPipeline, phase, {});
+    assert.ok(result === undefined || result === null || typeof result === 'object',
+      'seed-skeleton handler 不应 fatal (审计失败应降级)');
+
+    await rm(freshDir, { recursive: true, force: true });
+  });
+
+  it('audit hook 无锚点时静默跳过 (audited: 0)', async () => {
+    // 无 character-assets → _loadCharactersForAudit 返回 []
+    const freshDir = await mkdtemp(join(tmpdir(), 'phase12-noanchor-'));
+    const freshPipeline = new Pipeline({
+      workdir: freshDir,
+      config: createRequirementTemplate({
+        title: '无锚点', genre: '科幻',
+        characters: [{ name: '主角', description: 'x' }],
+      }),
+      episode: 'NOANCHOR-EP',
+    });
+    const { AssetBus } = await import('../../lib/asset-bus.js');
+    const bus = new AssetBus(freshDir);
+    await bus.write('spatio-temporal-script', {
+      shots: [{ id: 's1', seed_frame_path: '/tmp/x.png', character: '主角' }],
+    });
+    // 不写 character-assets
+
+    const phase = Pipeline.getPhases().find(p => p.id === 'seed-skeleton');
+    const handler = phaseHandlers['seed-skeleton'];
+    await handler.after(freshPipeline, phase, {});
+    // 不应 fatal,也不应产生 seed-skeleton-audit.json
+    assert.ok(!existsSync(join(freshDir, 'seed-skeleton-audit.json')),
+      '无锚点时不应写审计结果文件');
+
+    await rm(freshDir, { recursive: true, force: true });
+  });
+});
