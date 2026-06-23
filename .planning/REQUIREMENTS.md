@@ -27,8 +27,8 @@
 
 - [ ] **PERF-01**: 实现 `parallel_shots: 4` 真正的 `Promise.all` 镜头级并行调度
 - [ ] **PERF-02**: GPU 任务 `waitForTask` 阻塞 pipeline(不再"提交即 completed"),轮询间隔 5s,超时 10min
-- [ ] **PERF-03**: 单集 GPU-分钟成本核算报表(`evaluation-collector` 聚合,产出 `cost-report.json`)
-- [ ] **PERF-04**: 镜头级失败重试预算(`max_retries: 1` 自适应至 3)
+- [x] **PERF-03**: 单集 GPU-分钟成本核算报表(`evaluation-collector` 聚合,产出 `cost-report.json`)
+- [x] **PERF-04**: 镜头级失败重试预算(`max_retries: 1` 自适应至 3)
 
 ### SAFE — 工程安全(P1)
 
@@ -81,8 +81,8 @@ Filled by roadmapper on 2026-06-22. Coverage: 19/19 v1 requirements mapped (100%
 | QUAL-04 | Phase 12 | SC-3 (auditImageVsL1 即时触发,< 0.7 重试) |
 | PERF-01 | Phase 15 | SC-1 (parallel_shots:4 真正 Promise.all) |
 | PERF-02 | Phase 15 | SC-2 (waitForTask 阻塞,5s 轮询,10min 超时) |
-| PERF-03 | Phase 16 | SC-1 (cost-report.json 聚合), SC-2 (总 GPU-分钟) |
-| PERF-04 | Phase 16 | SC-3 (max_retries 自适应 1→3) |
+| PERF-03 | Phase 16 ✅ | SC-1 (cost-report.json 聚合), SC-2 (总 GPU-分钟) |
+| PERF-04 | Phase 16 ✅ | SC-3 (max_retries 自适应 1→3) |
 | SAFE-01 | Phase 15 | SC-3 (execFile + args 数组,禁止 shell 拼接) |
 | SAFE-02 | Phase 15 | SC-4 (FFmpeg 路径 sanitize,拒绝特殊字符) |
 | SAFE-03 | Phase 15 | SC-5 (删除 fallback 二次拼接降级链) |

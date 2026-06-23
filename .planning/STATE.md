@@ -4,13 +4,13 @@ milestone: v2.0
 milestone_name: Pipeline Remediation
 status: verifying
 stopped_at: 10-02-PLAN.md 完成 (V2_MIGRATION_MAP stale 清理 + 完整性自检)
-last_updated: "2026-06-23T02:53:31.423Z"
+last_updated: "2026-06-23T04:18:52.699Z"
 last_activity: 2026-06-23
 progress:
   total_phases: 8
   completed_phases: 1
   total_plans: 3
-  completed_plans: 3
+  completed_plans: 9
   percent: 13
 ---
 
@@ -71,6 +71,10 @@ Recent decisions affecting current work:
 - [Phase ?]: Preexisting CJS/ESM ambiguity in shared/hmac_node.js fixed under Rule 3 — blocked all ESM imports of lib/phases/index.js
 - [Phase 10]: Invoke handler.after() directly in tests (bypass runPhase) — hermetic, 1.36s runtime
 - [Phase 10]: Added explicit V4.1 legacy-id regression assertion in describe 1 — protects back-compat for future Phase 11/12/14/15 handler edits
+- [Phase 16]: EvaluationCollector.aggregateForEpisode 实现幂等 cost-report.json (按 phase/task_type 聚合 GPU 时间 + retry waste)
+- [Phase 16]: ShotParallelScheduler.runWithRetry (maxRetries=3) + permanent_failure → failed_shots.json 供人工介入
+- [Phase 16]: HERMES_DEFAULTS[cloud-production].max_retries: 1→3 (镜头级失败重试预算)
+- [Phase 16]: EvaluationCollector 构造函数加 episodeId opts (向后兼容),_makeCollector 注入 pipeline.episode
 
 ### Pending Todos
 
@@ -94,6 +98,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-06-23T02:51:27.895Z
+Last session: 2026-06-23T04:18:52.690Z
 Stopped at: 10-02-PLAN.md 完成 (V2_MIGRATION_MAP stale 清理 + 完整性自检)
 Resume file: None
