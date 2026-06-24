@@ -94,8 +94,8 @@ Plans:
 
 Plans:
 
-- [x] 26-01-PLAN.md — PIPE-DATA-01 character data source migration (pain-report.json → requirement.json → pipeline.config fallback tiers)
-- [x] 26-02-PLAN.md — PIPE-DATA-02 PHASES array reorder (spatio-temporal-script moves before scene-generation) + sync VALID_PHASES
+- [ ] 27-01-PLAN.md — PIPE-RENDER-01 motion-preview Blender submitTask field-case fix (taskType/taskId camelCase) + regression test
+- [ ] 27-02-PLAN.md — PIPE-RENDER-02 jimeng-client deprecation warn at 3 call sites + strict degrade verification + regression test
 
 ### Phase 28: Cross-System Integrity & Safety Hardening
 
@@ -149,7 +149,7 @@ Phases execute in numeric order: 26 → 27 → 28 → 29 → 30
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 26. Data Spine Repair | 2/2 | Complete    | 2026-06-24 |
-| 27. Real Render Path Restoration | 0/TBD | Not started | - |
+| 27. Real Render Path Restoration | 0/2 | Planned | - |
 | 28. Cross-System Integrity & Safety Hardening | 0/TBD | Not started | - |
 | 29. Composition Tail + Quality Gate Activation | 0/TBD | Not started | - |
 | 30. End-to-End Shipping Verification | 0/TBD | Not started | - |
