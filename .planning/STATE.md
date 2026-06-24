@@ -1,10 +1,10 @@
 ---
 gsd_state_version: 1.0
-milestone: v3.0-shipped
-milestone_name: Industrial Pipeline Alignment (shipped)
+milestone: v4.0
+milestone_name: Production Pipeline Remediation
 status: planning
-last_updated: "2026-06-23T15:20:36.239Z"
-last_activity: 2026-06-23
+last_updated: "2026-06-24T02:28:51.997Z"
+last_activity: 2026-06-24
 progress:
   total_phases: 0
   completed_phases: 0
@@ -20,14 +20,14 @@ progress:
 See: .planning/PROJECT.md (updated 2026-06-22)
 
 **Core value:** 降级优先的 GPU 任务调度 — 外部服务不可用时系统仍可运行。
-**Current focus:** Phase 20 — Seedance 2.0 audio-driven lip sync (next)
+**Current focus:** v4.0 Production Pipeline Remediation — 修复 V6 管线 9 项沉默失败，让成片真正端到端产出
 
 ## Current Position
 
 Phase: Not started (defining requirements)
 Plan: —
 Status: Defining requirements
-Last activity: 2026-06-23 — Milestone v3.0-shipped started
+Last activity: 2026-06-24 — Milestone v4.0 started
 
 ## Performance Metrics
 
