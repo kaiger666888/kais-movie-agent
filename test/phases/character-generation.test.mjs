@@ -285,7 +285,7 @@ describe('Phase 14: _loadCharactersForGeneration', () => {
     if (tmpDir) await rm(tmpDir, { recursive: true, force: true });
   });
 
-  it('优先读 requirement.json', async () => {
+  it('tier 2: 当 pain-report.json 缺失时降级到 requirement.json (legacy)', async () => {
     const reqChars = [{ id: 'c1', name: 'A', face: 'fa', body: 'ba', costumes: ['uniform'] }];
     await writeFile(
       join(tmpDir, 'requirement.json'),
@@ -326,6 +326,135 @@ describe('Phase 14: _loadCharactersForGeneration', () => {
     };
     const chars = await _loadCharactersForGeneration(pipeline);
     assert.deepEqual(chars[0].costumes, ['default']);
+  });
+
+  // ─── Phase 26: pain-report.json tier coverage (PIPE-DATA-01) ───
+
+  it('tier 1: 优先读 pain-report.json 的 requirement.characters', async () => {
+    const t = await mkdtemp(join(tmpdir(), 'phase26-pain-report-'));
+    try {
+      await writeFile(
+        join(t, 'pain-report.json'),
+        JSON.stringify({ requirement: { characters: [{ id: 'p1', name: 'P', face: 'pf', body: 'pb', costumes: ['c'] }] } }),
+      );
+      await writeFile(
+        join(t, 'requirement.json'),
+        JSON.stringify({ characters: [{ name: 'LEGACY' }] }),
+      );
+      const chars = await _loadCharactersForGeneration({ workdir: t, config: { characters: [] } });
+      assert.strictEqual(chars[0].name, 'P');
+      assert.strictEqual(chars[0].id, 'p1');
+    } finally {
+      await rm(t, { recursive: true, force: true });
+    }
+  });
+
+  it('tier 1: pain-report.json 存在但 requirement.characters 为空时降级到 requirement.json', async () => {
+    const t = await mkdtemp(join(tmpdir(), 'phase26-empty-'));
+    try {
+      await writeFile(
+        join(t, 'pain-report.json'),
+        JSON.stringify({ requirement: { characters: [] } }),
+      );
+      await writeFile(
+        join(t, 'requirement.json'),
+        JSON.stringify({ characters: [{ name: 'RL' }] }),
+      );
+      const chars = await _loadCharactersForGeneration({ workdir: t, config: { characters: [] } });
+      assert.strictEqual(chars[0].name, 'RL');
+    } finally {
+      await rm(t, { recursive: true, force: true });
+    }
+  });
+
+  it('tier 1: pain-report.json 存在但缺 requirement 字段时降级到 requirement.json', async () => {
+    const t = await mkdtemp(join(tmpdir(), 'phase26-noreq-'));
+    try {
+      await writeFile(
+        join(t, 'pain-report.json'),
+        JSON.stringify({ pain_points: [] }),
+      );
+      await writeFile(
+        join(t, 'requirement.json'),
+        JSON.stringify({ characters: [{ name: 'RL2' }] }),
+      );
+      const chars = await _loadCharactersForGeneration({ workdir: t, config: { characters: [] } });
+      assert.strictEqual(chars[0].name, 'RL2');
+    } finally {
+      await rm(t, { recursive: true, force: true });
+    }
+  });
+
+  it('tier 1: pain-report.json 解析失败 (损坏 JSON) 降级到 requirement.json', async () => {
+    const t = await mkdtemp(join(tmpdir(), 'phase26-broken-'));
+    try {
+      await writeFile(join(t, 'pain-report.json'), '{ not valid json');
+      await writeFile(
+        join(t, 'requirement.json'),
+        JSON.stringify({ characters: [{ name: 'FROMREQ' }] }),
+      );
+      const chars = await _loadCharactersForGeneration({ workdir: t, config: { characters: [] } });
+      assert.strictEqual(chars[0].name, 'FROMREQ');
+    } finally {
+      await rm(t, { recursive: true, force: true });
+    }
+  });
+
+  it('normalization 一致性: pain-report tier 保留 costumes / face-from-description / id 默认值', async () => {
+    const t = await mkdtemp(join(tmpdir(), 'phase26-norm-'));
+    try {
+      await writeFile(
+        join(t, 'pain-report.json'),
+        JSON.stringify({ requirement: { characters: [{ name: 'NN', description: 'fd' }] } }),
+      );
+      const chars = await _loadCharactersForGeneration({ workdir: t, config: { characters: [] } });
+      assert.strictEqual(chars[0].id, 'char-1');
+      assert.ok(chars[0].face.includes('fd'), 'face should fall back to description');
+      assert.deepEqual(chars[0].costumes, ['default']);
+    } finally {
+      await rm(t, { recursive: true, force: true });
+    }
+  });
+
+  it('tier 2 fallback emits observable console.warn (SC#4)', async () => {
+    const t = await mkdtemp(join(tmpdir(), 'phase26-warn2-'));
+    const originalWarn = console.warn;
+    const warns = [];
+    console.warn = (msg, ...rest) => { warns.push(String(msg)); originalWarn(msg, ...rest); };
+    try {
+      await writeFile(
+        join(t, 'requirement.json'),
+        JSON.stringify({ characters: [{ name: 'RW' }] }),
+      );
+      const chars = await _loadCharactersForGeneration({ workdir: t, config: { characters: [] } });
+      assert.strictEqual(chars[0].name, 'RW');
+      assert.ok(
+        warns.some(w => w.includes('legacy') && w.includes('requirement.json')),
+        'expected legacy warn not emitted: ' + JSON.stringify(warns),
+      );
+    } finally {
+      console.warn = originalWarn;
+      await rm(t, { recursive: true, force: true });
+    }
+  });
+
+  it('tier 3 fallback emits observable console.warn (SC#4)', async () => {
+    const t = await mkdtemp(join(tmpdir(), 'phase26-warn3-'));
+    const originalWarn = console.warn;
+    const warns = [];
+    console.warn = (msg, ...rest) => { warns.push(String(msg)); originalWarn(msg, ...rest); };
+    try {
+      const config = { characters: [{ id: 'c1', name: 'CF', face: 'f', body: 'b', costumes: ['x'] }] };
+      const chars = await _loadCharactersForGeneration({ workdir: t, config });
+      assert.strictEqual(chars[0].name, 'CF');
+      assert.ok(
+        warns.some(w => w.includes('pipeline.config.characters fallback in use')),
+        'expected tier3 warn not emitted: ' + JSON.stringify(warns),
+      );
+    } finally {
+      console.warn = originalWarn;
+      await rm(t, { recursive: true, force: true });
+    }
   });
 });
 
