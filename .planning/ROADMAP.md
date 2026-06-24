@@ -109,7 +109,12 @@ Plans:
   3. `bin/repair-canvas-truncated-scenes.js --projectId X --episodesId Y` 的两个参数经整数校验（`\d+` 正则 + Number.isInteger），非整数输入直接退出且非零退出码，不拼入 SQL 字符串
   4. 即使输入 `--projectId "1; DROP TABLE"` 等注入串，sqlite3 CLI 不接受为多语句（校验失败前置阻断）；单测覆盖此注入向量
 
-**Plans**: TBD
+**Plans**: 2 plans
+
+Plans:
+
+- [ ] 28-01-PLAN.md — PIPE-INTEGRITY-01 canvas-content-sync saveGraph HTTP API migration + degrade-on-unreachable + mock-fetch regression test
+- [ ] 28-02-PLAN.md — PIPE-INTEGRITY-02 repair-canvas CLI \d+ + Number.isInteger validation + 6-case spawnSync injection regression test
 
 ### Phase 29: Composition Tail + Quality Gate Activation
 
