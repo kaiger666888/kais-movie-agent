@@ -1,5 +1,27 @@
 # Milestones
 
+## v4.0 Production Pipeline Remediation (Shipped: 2026-06-24)
+
+**Phases completed:** 5 phases (Phase 26-30), 12 plans, 9 REQs (PIPE-DATA/RENDER/INTEGRITY/COMPOSE/GUARD), 517 tests passing
+
+**Key accomplishments:**
+- 修复 2026-06-23 端到端数据流审计发现的 9 项沉默失败点
+- Data Spine Repair: character 数据源迁移到 pain-report.json + scene↔sts stageOrder reorder
+- Real Render Path Restoration: motion-preview Blender 字段 camelCase + jimeng-client deprecate warn
+- Cross-System Integrity & Safety: canvas HTTP API migration (消除双写竞态) + repair-canvas SQL 注入面修复
+- Composition Tail + Quality Gate: master.mp4 真实产出 + delivery 文件名对齐 + consistency-guard 阻塞化 + 746 行死代码删除
+- End-to-End Shipping Verification: degraded E2E 跑通产出 master.mp4 + 9-finding audit 自动化回归 + runbook 文档化
+
+**Audit status:** passed (9/9 REQs satisfied, 12/12 cross-phase wired, 0 blockers, 3 operator-deferred items)
+
+**v5.0 backlog:**
+- TD-v3-1: 上游 creative_history lineage retrofit (carry-forward)
+- W-v3-1~6: Real GPU E2E + GLM-4.6V golden set + DINOv2 calibration + LoRA training (operator-side carry-forward)
+- bin/pipeline.js CLI surface improvements (--to flag, status)
+- jimeng → dreamina CLI full migration (when platform provides)
+
+---
+
 ## v3.0 Industrial Pipeline Alignment (Shipped: 2026-06-23)
 
 **Phases completed:** 7 phases (Phase 19-25), 35 REQs, 461 tests passing
