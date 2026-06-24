@@ -3,10 +3,10 @@ gsd_state_version: 1.0
 milestone: v4.0
 milestone_name: Production Pipeline Remediation
 status: planning
-last_updated: "2026-06-24T02:28:51.997Z"
+last_updated: "2026-06-24T03:05:00.000Z"
 last_activity: 2026-06-24
 progress:
-  total_phases: 0
+  total_phases: 5
   completed_phases: 0
   total_plans: 0
   completed_plans: 0
@@ -17,34 +17,38 @@ progress:
 
 ## Project Reference
 
-See: .planning/PROJECT.md (updated 2026-06-22)
+See: .planning/PROJECT.md (updated 2026-06-24)
 
 **Core value:** 降级优先的 GPU 任务调度 — 外部服务不可用时系统仍可运行。
-**Current focus:** v4.0 Production Pipeline Remediation — 修复 V6 管线 9 项沉默失败，让成片真正端到端产出
+**Current focus:** v4.0 Production Pipeline Remediation — Phase 26 Data Spine Repair (first v4.0 phase)
 
 ## Current Position
 
-Phase: Not started (defining requirements)
+Phase: 26 of 30 (Data Spine Repair) — ready to plan
 Plan: —
-Status: Defining requirements
-Last activity: 2026-06-24 — Milestone v4.0 started
+Status: Roadmap defined, ready for `/gsd:plan-phase 26`
+Last activity: 2026-06-24 — v4.0 Roadmap created (Phases 26-30, 9 REQs mapped, 100% coverage)
+
+Progress: [░░░░░░░░░░] 0% (0/5 phases)
 
 ## Performance Metrics
 
 **Velocity:**
+- Total plans completed (cumulative v1.0+v2.0+v3.0): 19+
+- v3.0 plans completed: archived
+- v2.0 average duration: ~2 min/plan (Phase 10 baseline reference)
 
-- Total plans completed (cumulative v1.0+v2.0): 19
-- v3.0 plans completed: 0
-- v2.0 average duration: ~2 min/plan (Phase 10 baseline)
-
-**By Phase (v2.0 historical reference):**
+**By Phase (v4.0):**
 
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
-| Phase 10 (PHASES/handler 对齐) | 1 | 3 | 2 min |
-| Phase 17 P17 | 1 | 60s | 3 tasks / 5 files |
+| 26. Data Spine Repair | 0/TBD | - | - |
+| 27. Real Render Path Restoration | 0/TBD | - | - |
+| 28. Cross-System Integrity & Safety | 0/TBD | - | - |
+| 29. Composition Tail + Quality Gate | 0/TBD | - | - |
+| 30. End-to-End Shipping Verification | 0/TBD | - | - |
 
-*v3.0 metrics will populate as plans complete*
+*v4.0 metrics will populate as plans complete*
 
 ## Accumulated Context
 
@@ -53,40 +57,30 @@ Last activity: 2026-06-24 — Milestone v4.0 started
 Decisions are logged in PROJECT.md.
 Recent decisions affecting current work:
 
-- **v3.0 Roadmap (2026-06-23):** 7 phases (19-25), research-recommended order. Critical path: 19 → 20 → 21 → 22 → 23 → 25. Phase 24 parallel (depends only on 20).
-- **Phase 19 first (BLOCKER):** D1 callLLM refactor + GLM-4.6V upgrade. A2/B2/B5 all depend on trustworthy visual scoring. Pitfall 7 (content-block breakage) is most likely single failure in v3.0 — refactor callLLM BEFORE touching model name.
-- **Phase 20 keystone:** AssetBus schema extension (3 typed slots: creative-history / failed-shots / finetune-dataset) is integration spine for B4/B5/B6. Must exist before any consumer.
-- **Phase 21 before 22:** B5 BlacklistEngine has lower complexity than A2; cloud-production hook chain should stabilize before audio param surface added. B5 consumes persistence that B6 fine-tuning will read.
-- **Phase 22 (A2) research flag HIGH:** GoldTeam API surface for Seedance 2.0 audio task type / param names is unknown — requires operator consultation BEFORE implementation begins. `/gsd:plan-phase 22 --research-phase 22` likely needed.
-- **Phase 23 (B4) killer differentiator:** Git-for-AIGC-movies MVP — script edit → affected shot_id list. v3.0 ships report-only output; auto-rerender deferred to v3.1. Upstream lineage retrofit explicitly out of scope.
-- **Phase 24 (B2) parallel track:** research-grade matching, needs 50+50 pair labeled validation set. Can run parallel to 21/22/23. Two-stage match (hash retrieval → DINOv2 cosine ≥0.92 confirm) + human gate on first match.
-- **Phase 25 (B6) highest risk, last:** LoRA poisoning is irreversible. Human review gate + golden-set regression + PII scrubber + poisoning detection are launch blockers. v3.0 only emits manifest + submission API; actual training operator-triggered.
-- **Cross-cutting DEGRADE-01/02/03:** every v3.0 phase SC #5 covers degrade contract. Degraded E2E must stay <5s. Each new module has unit-test coverage for gold-team / Hermes / GLM unreachable paths.
-- v2.0 启动: 评估发现 PHASES 数组与 phaseHandlers 严重错位(实际审计:15 个 missing handler, 5 个 legacy orphan),Hermes 闭环失效,一致性审计含假数据(`return 0.85`),质量门控默认 80% 兜底
-- Roadmap 拆为 8 phases (10-17),按"架构对齐 → 质量实化 → 工程安全 → E2E"依赖顺序
-- Phase 编号继续 v1.0 (1-9),v2.0 从 10 开始,v3.0 从 19 开始
-- **Phase 19 D1 executed (2026-06-23):** callLLM/callLLMJson 原生支持 OpenAI multimodal content blocks (text + image_url);imagePathToDataUrl helper 自动转 base64(智谱不支持 file://);5 处硬编码视觉模型名统一到 ZHIPU_VISION_MODEL env (默认 glm-4.6v);_scoreCache 按 model_version 前缀失效;50-pair golden set baseline 框架就位。Pitfalls P7 根因修复。208/208 测试通过 (+43 新增)。Operator TODO: 补 45 对真实 golden set pair + 首次真实 API baseline 运行(W-3/B-1 carry-forward)。
+- **v4.0 Roadmap (2026-06-24):** 5 phases (26-30), derived from 2026-06-23 端到端数据流审计的 9 项沉默失败。数据流依赖链驱动 phase 划分（非按 REQ category）。
+- **Phase 26 first (foundation):** PIPE-DATA-01/02 是上游数据 spine 修复，不先修复则下游 composition/渲染测试都没有真实输入。character-generation 拿不到 character 列表 + scene-generation 拿不到 sts 产物 → 必须先修。
+- **Phase 29 (composition + gate)决战点:** PIPE-COMPOSE-01/02 + PIPE-GUARD-01 三个 REQ 耦合在一起 — composition 没 handler 则 consistency-guard 的"在 composition 阶段统一判定"无目标，文件名错位则即使 composition 实现也 delivery 失败。三者必须同 ship 或都不 ship。
+- **Phase 28 独立 hardening:** PIPE-INTEGRITY-01/02 与渲染/数据流无依赖（canvas 双写 + SQL 注入），可并行或前置。保守排在 26/27 之后便于 review。
+- **Phase 30 验收 gate (无新 REQ):** degraded E2E 跑通产出 master.mp4 + 重跑审计 checklist 100% pass + 测试基线 ≥461。是 v4.0 ship 决策点。
+- v3.0 关键决策保留: Phase 19 D1 callLLM multimodal 已 shipped; AssetBus V3 / BlacklistEngine / Seedance 2.0 / CreativeHistoryTracker / CrossEpisodeAssetIndex / FineTuneETL 已 shipped。
 
 ### Pending Todos
 
-- [x] `/gsd:plan-phase 19` — Phase 19 plan + execute (DONE — combined task)
-- [ ] **Operator: 补 45 对真实 golden set pair + 首次 baseline 运行 (Phase 19 D1-03 deferred)**
-- [ ] Operator consultation needed before Phase 22 implementation (Seedance 2.0 audio API surface — task type / param names)
-- [ ] 50+50 pair labeled eval set construction needed for Phase 24 (B2) — empirical threshold calibration
-- [ ] LoRA training workflow / kohya-ss dataset schema alignment needed for Phase 25 (B6)
+- [ ] `/gsd:plan-phase 26` — Phase 26 plan + execute (Data Spine Repair)
+- [ ] **Operator: 补 45 对真实 golden set pair + 首次 baseline 运行 (v3.0 Phase 19 D1-03 deferred — 仍 carry-forward)**
+- [ ] Operator consultation needed before any Seedance 2.0 audio real-API work (v3.1)
+- [ ] 50+50 pair labeled eval set construction for DINOv2 threshold calibration (v3.1)
 
 ### Blockers
 
-None. Phase 19 framework delivered. Next: `/gsd:plan-phase 20` (Seedance A2).
+None. v4.0 roadmap defined, ready for Phase 26 planning.
 
-### Key Risks (from research SUMMARY.md)
+### Key Risks (v4.0)
 
-1. **GLM-4.6V content-block breakage (Pitfall 7)** — most likely single failure in v3.0. Prevention: Phase 19 refactors callLLM BEFORE model name change.
-2. **Seedance audio silently ignored (Pitfall 1)** — Phase 22 SC-3 mandates @Audio1 validation. Cannot be caught in degraded mode.
-3. **Fine-tuning data poisoning (Pitfall 6)** — Phase 25 SC-3/SC-4 launch blockers (human gate + regression + PII + poisoning).
-4. **Cross-episode fingerprint false-positive (Pitfall 3)** — Phase 24 SC-3 two-stage match + SC-4 human gate.
-5. **Bad-case blacklist over-matching (Pitfall 5)** — Phase 21 SC-2 semantic match from day 1 + SC-4 TTL decay.
-6. **Degrade-chain breakage (Pitfall 8)** — every phase SC-5 covers degrade contract.
+1. **PIPE-RENDER-02 jimeng 迁移工作量未知** — 如果 dreamina CLI 迁移成本大，Phase 27 SC#3 允许"显式标注 fallback-only"快速路径。先 plan 时确认 dreamina CLI 现状再选路径。
+2. **PIPE-DATA-01 修复路径未知** — 恢复 requirement.json 写入 vs 从 pain-report.json 读，需在 Phase 26 plan 时确认哪个对 V6 数据流更自然。
+3. **PIPE-COMPOSE-01 真实渲染 vs degraded 模式** — composition handler 在 degraded 模式产出占位 mp4，真实 GPU 模式产出真实 mp4。真实 GPU 验证 operator 侧（out of scope），degraded 路径必须在 Phase 30 SC#1 可验证。
+4. **canvasGraph 写入路径统一方案未定** — Phase 28 需确认是统一走 kais-aigc-platform HTTP API 还是统一走本地 sqlite3（前者更安全但需平台 API 契约）。
 
 ## Deferred Items
 
@@ -95,28 +89,30 @@ None. Phase 19 framework delivered. Next: `/gsd:plan-phase 20` (Seedance A2).
 | v3.1 | 上游 creative_history lineage retrofit (script→sts→shot) | Deferred | v3.0 roadmap |
 | v3.1 | creative_history auto-rerender on script edit | Deferred | v3.0 roadmap |
 | v3.1 | 预算告警 + 阻断逻辑 | Deferred | v3.0 roadmap |
-| v4.0+ | 多模型 A/B 测试 (Runway/Kling/Sora) | Deferred | v3.0 roadmap |
-| v4.0+ | 多平台导出 (抖音/B站/YouTube/快手) | Deferred | v3.0 roadmap |
-| v4.0+ | 多语言 dubbing (HeyGen 175+) | Deferred | v3.0 roadmap |
-| v4.0+ | 分布式多机部署 | Deferred | v2.0 |
-| v4.0+ | TypeScript 迁移 / CI/CD pipeline | Deferred | v2.0 |
+| v4.1+ | 真实 GPU E2E 验证(产出可播放 final.mp4) | Deferred | v4.0 roadmap (operator 侧) |
+| v4.1+ | 多模型 A/B 测试 (Runway/Kling/Sora) | Deferred | v3.0 roadmap |
+| v4.1+ | 多平台导出 (抖音/B站/YouTube/快手) | Deferred | v3.0 roadmap |
+| v4.1+ | 多语言 dubbing (HeyGen 175+) | Deferred | v3.0 roadmap |
+| v4.1+ | 分布式多机部署 | Deferred | v2.0 |
+| v4.1+ | TypeScript 迁移 / CI/CD pipeline | Deferred | v2.0 |
 
 ## Session Continuity
 
-Last session: 2026-06-23 — v3.0 Roadmap created (Phases 19-25, 35 REQs mapped, 100% coverage).
-Stopped at: Roadmap complete, ready for Phase 19 planning.
+Last session: 2026-06-24 — v4.0 Roadmap created (Phases 26-30, 9 REQs mapped, 100% coverage).
+Stopped at: Roadmap complete, ready for Phase 26 planning.
 Resume file: `.planning/ROADMAP.md`
 
 **Next action:**
 
 ```
-/gsd:plan-phase 19
+/gsd:plan-phase 26
 ```
 
 **Critical context to preserve across sessions:**
 
-- Phase 19 is BLOCKER — must complete before any other v3.0 phase work begins
-- Phase 22 needs operator consultation on Seedance 2.0 audio API BEFORE implementation (`--research-phase 22`)
-- Phase 24 is parallel track (independent of 21/22/23, only depends on 20)
-- Phase 25 is highest risk (irreversible LoRA poisoning) — 4 launch blockers are non-negotiable
-- DEGRADE-01/02/03 cross-cutting — every phase SC #5 must preserve <5s degraded E2E
+- Phase 26 (Data Spine) is foundation — PIPE-DATA-01/02 必须先于 27/29，否则下游测试无真实输入
+- Phase 29 (Composition + Gate) 是 v4.0 决战点 — 三个耦合 REQ 必须 ship together
+- Phase 28 独立 hardening — canvas 双写 + SQL 注入，无渲染/数据流依赖
+- Phase 30 验收 gate — degraded E2E 产出 master.mp4 + 审计 checklist 100% pass
+- v4.0 不重置 phase 编号 — 继续 v3.0 的 25，从 26 起
+- 9 项审计点来自 2026-06-23 memory: project_pipeline-audit_2026-06-23.md

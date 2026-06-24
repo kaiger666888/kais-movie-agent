@@ -48,4 +48,17 @@ See [PROJECT.md](./PROJECT.md) § "Validated" for the full list of shipped v1.0 
 
 ## Traceability
 
-(Empty — filled by ROADMAP.md phase mapping.)
+| Requirement | Phase | Status |
+|-------------|-------|--------|
+| PIPE-DATA-01 | Phase 26 | Pending |
+| PIPE-DATA-02 | Phase 26 | Pending |
+| PIPE-RENDER-01 | Phase 27 | Pending |
+| PIPE-RENDER-02 | Phase 27 | Pending |
+| PIPE-INTEGRITY-01 | Phase 28 | Pending |
+| PIPE-INTEGRITY-02 | Phase 28 | Pending |
+| PIPE-COMPOSE-01 | Phase 29 | Pending |
+| PIPE-COMPOSE-02 | Phase 29 | Pending |
+| PIPE-GUARD-01 | Phase 29 | Pending |
+
+**Coverage:** 9/9 v4.0 requirements mapped ✓ (no orphans, no duplicates)
+**Acceptance gate:** Phase 30 (no new REQ-ID — verifies all 9 audit findings closed)
