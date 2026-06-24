@@ -2,15 +2,15 @@
 gsd_state_version: 1.0
 milestone: v4.0
 milestone_name: Production Pipeline Remediation
-status: ready_to_plan
-stopped_at: Phase 28 complete (2/2) — ready to discuss Phase 29
-last_updated: 2026-06-24T05:52:01.488Z
-last_activity: 2026-06-24
+status: executing
+stopped_at: Phase 28 complete — PIPE-INTEGRITY-01 (canvas saveGraph HTTP migration) + PIPE-INTEGRITY-02 (repair-canvas CLI SQL injection guard) both closed. Phase 29 next.
+last_updated: "2026-06-24T08:20:31.766Z"
+last_activity: 2026-06-24 -- Phase 29 execution started
 progress:
   total_phases: 5
   completed_phases: 3
-  total_plans: 6
-  completed_plans: 24
+  total_plans: 9
+  completed_plans: 6
   percent: 60
 ---
 
@@ -21,14 +21,14 @@ progress:
 See: .planning/PROJECT.md (updated 2026-06-24)
 
 **Core value:** 降级优先的 GPU 任务调度 — 外部服务不可用时系统仍可运行。
-**Current focus:** Phase 29 — composition tail + quality gate activation
+**Current focus:** Phase 29 — composition-tail-quality-gate-activation
 
 ## Current Position
 
-Phase: 29
-Plan: Not started
-Status: Ready to plan
-Last activity: 2026-06-24
+Phase: 29 (composition-tail-quality-gate-activation) — EXECUTING
+Plan: 2 of 3
+Status: Executing Phase 29 — Plan 01 complete (composition master.mp4 + web-preview.mp4 + degraded placeholders)
+Last activity: 2026-06-24 -- Phase 29 Plan 01 complete
 
 Progress: [██████████░░] 100% of v4.0 hardening trio (26/27/28); Phases 29-30 remain.
 
@@ -60,6 +60,7 @@ Progress: [██████████░░] 100% of v4.0 hardening trio (26
 | Phase 27 P02 | 12min | 2 tasks | 2 files |
 | Phase 28 P01 | 3.4min | 2 tasks | 2 files |
 | Phase 28 P02 | 4.0min | 2 tasks | 2 files |
+| Phase 29 P01 | 6min | 1 task | 2 files |
 
 ## Accumulated Context
 
@@ -80,6 +81,7 @@ Recent decisions affecting current work:
 - [Phase 27 P02]: PIPE-RENDER-02 closed: jimeng-client marked fallback-only at 3 production call sites (lines 651/2185/2606) with module-level dedup deprecate warn `_warnJimengDeprecate()` (one warn per process); strict degrade path verified at all 3 sites (soul-visual try/catch + character/scene-generation ping gates); `_resetJimengDeprecateFlagForTest()` test-only export added; 5-case regression test; baseline 483/483 pass
 - [Phase ?]: Phase 28 P01: canvas saveGraph migrated to HTTP API — PIPE-INTEGRITY-01 closed
 - [Phase 28 P02]: PIPE-INTEGRITY-02 closed: repair-canvas CLI assertPositiveInt (/^\d+$/ + Number.isInteger defense-in-depth) on --projectId/--episodesId; named-value stderr + exit 1; 6-case spawnSync regression (normal/negative/string/injection `1; DROP TABLE x`/float 5.5/episodesId-symmetric); baseline 487→493
+- [Phase 29 P01]: PIPE-COMPOSE-01 (handler slice) closed: composition handler writes master.mp4 (not final.mp4) + sibling web-preview.mp4 (854px H.264 -an transcode, best-effort) + 0-byte degraded placeholders when compose throws or returns {output:null}; 4-case regression test (2 ffmpeg-gated success + 2 unconditional degraded); compose() returns null-output-not-throw deviation auto-fixed (Rule 2); full PIPE-COMPOSE-01 closure pending Plan 02 (bin/pipeline.js invocation + delivery filename alignment)
 
 ### Pending Todos
 
@@ -115,8 +117,8 @@ None. Phase 28 (Cross-System Integrity & Safety Hardening) complete — PIPE-INT
 
 ## Session Continuity
 
-Last session: 2026-06-24T05:44:00.000Z
-Stopped at: Phase 28 complete — PIPE-INTEGRITY-01 (canvas saveGraph HTTP migration) + PIPE-INTEGRITY-02 (repair-canvas CLI SQL injection guard) both closed. Phase 29 next.
+Last session: 2026-06-24T08:24:00.000Z
+Stopped at: Phase 29 Plan 01 complete — composition handler outputs master.mp4 + web-preview.mp4 + degraded placeholders. Plans 02 (delivery filename alignment) and 03 (consistency-guard blocking) remain.
 Resume file: None
 
 **Next action:**
