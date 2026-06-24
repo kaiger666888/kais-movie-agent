@@ -3,15 +3,15 @@ gsd_state_version: 1.0
 milestone: v4.0
 milestone_name: Production Pipeline Remediation
 status: executing
-stopped_at: Phase 27 complete — PIPE-RENDER-01 + PIPE-RENDER-02 closed (motion-preview camelCase + jimeng-client fallback-only marking). Phase ready for verification.
-last_updated: "2026-06-24T05:38:51.837Z"
+stopped_at: Phase 28 complete — PIPE-INTEGRITY-01 (canvas HTTP migration) + PIPE-INTEGRITY-02 (repair-canvas CLI SQL injection guard) both closed. Phase 29 next.
+last_updated: "2026-06-24T05:44:00.000Z"
 last_activity: 2026-06-24
 progress:
   total_phases: 5
-  completed_phases: 2
+  completed_phases: 3
   total_plans: 6
-  completed_plans: 5
-  percent: 40
+  completed_plans: 6
+  percent: 60
 ---
 
 # Project State
@@ -25,12 +25,12 @@ See: .planning/PROJECT.md (updated 2026-06-24)
 
 ## Current Position
 
-Phase: 28 (cross-system-integrity-safety-hardening) — EXECUTING
-Plan: 2 of 2
-Status: Ready to execute
+Phase: 28 (cross-system-integrity-safety-hardening) — COMPLETE
+Plan: 2 of 2 (done)
+Status: Phase 28 closed. Ready for /gsd:plan-phase 29.
 Last activity: 2026-06-24
 
-Progress: [████████░░] 83%
+Progress: [██████████░░] 100% of v4.0 hardening trio (26/27/28); Phases 29-30 remain.
 
 ## Performance Metrics
 
@@ -58,6 +58,7 @@ Progress: [████████░░] 83%
 | Phase 27 P01 | 4min | 2 tasks | 2 files |
 | Phase 27 P02 | 12min | 2 tasks | 2 files |
 | Phase 28 P01 | 3.4min | 2 tasks | 2 files |
+| Phase 28 P02 | 4.0min | 2 tasks | 2 files |
 
 ## Accumulated Context
 
@@ -77,6 +78,7 @@ Recent decisions affecting current work:
 - [Phase 27 P01]: PIPE-RENDER-01 closed: motion-preview submitTask field-case fix (line 1074 task_type→taskType, line 1078 task.task_id→task.taskId) + 4-case regression test; line 1115 (collector schema) intentionally left snake_case per D-PIPE-RENDER-01
 - [Phase 27 P02]: PIPE-RENDER-02 closed: jimeng-client marked fallback-only at 3 production call sites (lines 651/2185/2606) with module-level dedup deprecate warn `_warnJimengDeprecate()` (one warn per process); strict degrade path verified at all 3 sites (soul-visual try/catch + character/scene-generation ping gates); `_resetJimengDeprecateFlagForTest()` test-only export added; 5-case regression test; baseline 483/483 pass
 - [Phase ?]: Phase 28 P01: canvas saveGraph migrated to HTTP API — PIPE-INTEGRITY-01 closed
+- [Phase 28 P02]: PIPE-INTEGRITY-02 closed: repair-canvas CLI assertPositiveInt (/^\d+$/ + Number.isInteger defense-in-depth) on --projectId/--episodesId; named-value stderr + exit 1; 6-case spawnSync regression (normal/negative/string/injection `1; DROP TABLE x`/float 5.5/episodesId-symmetric); baseline 487→493
 
 ### Pending Todos
 
@@ -87,7 +89,7 @@ Recent decisions affecting current work:
 
 ### Blockers
 
-None. Phase 27 (Real Render Path Restoration) complete — PIPE-RENDER-01 + PIPE-RENDER-02 both closed. Ready for Phase 28+ planning.
+None. Phase 28 (Cross-System Integrity & Safety Hardening) complete — PIPE-INTEGRITY-01 + PIPE-INTEGRITY-02 both closed. Ready for Phase 29 planning.
 
 ### Key Risks (v4.0)
 
@@ -112,14 +114,14 @@ None. Phase 27 (Real Render Path Restoration) complete — PIPE-RENDER-01 + PIPE
 
 ## Session Continuity
 
-Last session: 2026-06-24T05:38:40.012Z
-Stopped at: Phase 27 complete — PIPE-RENDER-01 + PIPE-RENDER-02 closed (motion-preview camelCase + jimeng-client fallback-only marking). Phase ready for verification.
+Last session: 2026-06-24T05:44:00.000Z
+Stopped at: Phase 28 complete — PIPE-INTEGRITY-01 (canvas saveGraph HTTP migration) + PIPE-INTEGRITY-02 (repair-canvas CLI SQL injection guard) both closed. Phase 29 next.
 Resume file: None
 
 **Next action:**
 
 ```
-/gsd:plan-phase 28   (Cross-System Integrity & Safety — canvas dual-write + SQL injection)
+/gsd:plan-phase 29   (Composition Tail + Quality Gate Activation — composition handler + filename alignment + consistency-guard blocking)
 ```
 
 **Critical context to preserve across sessions:**

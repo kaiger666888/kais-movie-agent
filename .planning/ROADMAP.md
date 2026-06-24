@@ -20,7 +20,7 @@
 
 - [ ] **Phase 26: Data Spine Repair** - 修复 V6 数据流上游断裂（requirement.json 失写 + scene↔sts 时序倒置），为下游 composition 提供真实输入
 - [ ] **Phase 27: Real Render Path Restoration** - 修复真实渲染沉默失败（motion-preview Blender 字段大小写 + jimeng-client 死引用清理）
-- [ ] **Phase 28: Cross-System Integrity & Safety Hardening** - canvas 双写竞态修复 + SQL 注入面修复（独立 hardening track）
+- [x] **Phase 28: Cross-System Integrity & Safety Hardening** - canvas 双写竞态修复 + SQL 注入面修复（独立 hardening track）
 - [ ] **Phase 29: Composition Tail + Quality Gate Activation** - composition phase 实现 + 文件名对齐 + consistency-guard 阻塞化 + 死代码清理（管线成片 + 质量门控统一在 composition 判定）
 - [ ] **Phase 30: End-to-End Shipping Verification** - 全链路 degraded E2E 跑通产出 master.mp4，验证 9 项审计点全部闭环
 
@@ -114,7 +114,7 @@ Plans:
 Plans:
 
 - [x] 28-01-PLAN.md — PIPE-INTEGRITY-01 canvas-content-sync saveGraph HTTP API migration + degrade-on-unreachable + mock-fetch regression test
-- [ ] 28-02-PLAN.md — PIPE-INTEGRITY-02 repair-canvas CLI \d+ + Number.isInteger validation + 6-case spawnSync injection regression test
+- [x] 28-02-PLAN.md — PIPE-INTEGRITY-02 repair-canvas CLI \d+ + Number.isInteger validation + 6-case spawnSync injection regression test
 
 ### Phase 29: Composition Tail + Quality Gate Activation
 
@@ -155,6 +155,6 @@ Phases execute in numeric order: 26 → 27 → 28 → 29 → 30
 |-------|----------------|--------|-----------|
 | 26. Data Spine Repair | 2/2 | Complete    | 2026-06-24 |
 | 27. Real Render Path Restoration | 2/2 | Complete    | 2026-06-24 |
-| 28. Cross-System Integrity & Safety Hardening | 1/2 | In Progress|  |
+| 28. Cross-System Integrity & Safety Hardening | 2/2 | Complete   | 2026-06-24 |
 | 29. Composition Tail + Quality Gate Activation | 0/TBD | Not started | - |
 | 30. End-to-End Shipping Verification | 0/TBD | Not started | - |
