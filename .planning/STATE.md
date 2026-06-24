@@ -2,16 +2,16 @@
 gsd_state_version: 1.0
 milestone: v4.0
 milestone_name: Production Pipeline Remediation
-status: executing
-stopped_at: Phase 29 Plan 03 complete — consistency-guard blocking activation + dead-code deletion. Phase 29 (all 3 plans) complete. Phase 30 (E2E shipping verification) remains.
-last_updated: "2026-06-24T08:48:00.000Z"
+status: ready_to_plan
+stopped_at: Phase 29 complete (3/3) — ready to discuss Phase 30
+last_updated: 2026-06-24T08:56:44.272Z
 last_activity: 2026-06-24 -- Phase 29 Plan 03 complete
 progress:
   total_phases: 5
   completed_phases: 4
   total_plans: 9
-  completed_plans: 8
-  percent: 89
+  completed_plans: 27
+  percent: 80
 ---
 
 # Project State
@@ -21,14 +21,14 @@ progress:
 See: .planning/PROJECT.md (updated 2026-06-24)
 
 **Core value:** 降级优先的 GPU 任务调度 — 外部服务不可用时系统仍可运行。
-**Current focus:** Phase 29 — composition-tail-quality-gate-activation
+**Current focus:** Phase 30 — end to end shipping verification
 
 ## Current Position
 
-Phase: 29 (composition-tail-quality-gate-activation) — COMPLETE (all 3 plans)
-Plan: 3 of 3 complete
-Status: Phase 29 complete — Plan 03 closed (consistency-guard blocking + dead-code deletion). Phase 30 (E2E shipping verification) is next.
-Last activity: 2026-06-24 -- Phase 29 Plan 03 complete
+Phase: 30
+Plan: Not started
+Status: Ready to plan
+Last activity: 2026-06-24
 
 Progress: [██████████░░] 100% of v4.0 hardening trio (26/27/28) + Phase 29 complete; Phase 30 remains.
 
@@ -52,6 +52,7 @@ Progress: [██████████░░] 100% of v4.0 hardening trio (26
 | 26 | 2 | - | - |
 | 27 | 2 | - | - |
 | 28 | 2 | - | - |
+| 29 | 3 | - | - |
 
 *v4.0 metrics will populate as plans complete*
 | Phase 26 P01 | 6min | 2 tasks | 2 files |
