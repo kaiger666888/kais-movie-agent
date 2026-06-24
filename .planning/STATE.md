@@ -2,15 +2,15 @@
 gsd_state_version: 1.0
 milestone: v4.0
 milestone_name: Production Pipeline Remediation
-status: ready_to_plan
-stopped_at: Phase 26 complete (2/2) — ready to discuss Phase 27
-last_updated: 2026-06-24T03:58:56.809Z
-last_activity: 2026-06-24
+status: executing
+stopped_at: Phase 27 plan 01 complete — PIPE-RENDER-01 closed (motion-preview camelCase fix). Ready for Phase 27 plan 02 (jimeng-client).
+last_updated: "2026-06-24T05:04:22.339Z"
+last_activity: 2026-06-24 -- Phase 27 plan 01 executed
 progress:
   total_phases: 5
   completed_phases: 1
-  total_plans: 2
-  completed_plans: 20
+  total_plans: 4
+  completed_plans: 3
   percent: 20
 ---
 
@@ -21,16 +21,16 @@ progress:
 See: .planning/PROJECT.md (updated 2026-06-24)
 
 **Core value:** 降级优先的 GPU 任务调度 — 外部服务不可用时系统仍可运行。
-**Current focus:** Phase 27 — real render path restoration
+**Current focus:** Phase 27 — real-render-path-restoration
 
 ## Current Position
 
-Phase: 27
-Plan: Not started
-Status: Ready to plan
-Last activity: 2026-06-24
+Phase: 27 (real-render-path-restoration) — EXECUTING
+Plan: 2 of 2
+Status: Plan 01 complete; ready to execute plan 02 (jimeng-client fallback-only)
+Last activity: 2026-06-24 -- Phase 27 plan 01 executed
 
-Progress: [█████░░░░░] 50% (phase 26 of 5 phases done)
+Progress: [████████░░] 75%
 
 ## Performance Metrics
 
@@ -45,7 +45,7 @@ Progress: [█████░░░░░] 50% (phase 26 of 5 phases done)
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
 | 26. Data Spine Repair | 0/TBD | - | - |
-| 27. Real Render Path Restoration | 0/TBD | - | - |
+| 27. Real Render Path Restoration | 1/2 | 4min | 2 tasks, 2 files |
 | 28. Cross-System Integrity & Safety | 0/TBD | - | - |
 | 29. Composition Tail + Quality Gate | 0/TBD | - | - |
 | 30. End-to-End Shipping Verification | 0/TBD | - | - |
@@ -54,6 +54,7 @@ Progress: [█████░░░░░] 50% (phase 26 of 5 phases done)
 *v4.0 metrics will populate as plans complete*
 | Phase 26 P01 | 6min | 2 tasks | 2 files |
 | Phase 26 P02 | 4min | 2 tasks | 4 files |
+| Phase 27 P01 | 4min | 2 tasks | 2 files |
 
 ## Accumulated Context
 
@@ -70,6 +71,7 @@ Recent decisions affecting current work:
 - v3.0 关键决策保留: Phase 19 D1 callLLM multimodal 已 shipped; AssetBus V3 / BlacklistEngine / Seedance 2.0 / CreativeHistoryTracker / CrossEpisodeAssetIndex / FineTuneETL 已 shipped。
 - [Phase 26]: PIPE-DATA-01 closed: pain-report.json main reader + observable legacy warns (SC#4) — V6 pain-discovery writes pain-report.json (not requirement.json); reader migrated accordingly
 - [Phase 26]: PIPE-DATA-02 closed: PHASES reordered so spatio-temporal-script (stageOrder 8) precedes scene-generation (9) precedes scene-selection (10) — scene-generation bus.read('spatio-temporal-script') now finds asset already written; VALID_PHASES synced; 6-test regression suite added; 2 pre-existing hardcoded phase-id lists (v41-integration.test.js, handlers.test.mjs) updated to match
+- [Phase 27 P01]: PIPE-RENDER-01 closed: motion-preview submitTask field-case fix (line 1074 task_type→taskType, line 1078 task.task_id→task.taskId) + 4-case regression test; line 1115 (collector schema) intentionally left snake_case per D-PIPE-RENDER-01
 
 ### Pending Todos
 
@@ -80,7 +82,7 @@ Recent decisions affecting current work:
 
 ### Blockers
 
-None. Phase 26 (Data Spine Repair) complete. Ready for Phase 27 planning.
+None. Phase 27 plan 01 (PIPE-RENDER-01) complete. Ready for Phase 27 plan 02 (PIPE-RENDER-02 jimeng-client).
 
 ### Key Risks (v4.0)
 
@@ -105,14 +107,14 @@ None. Phase 26 (Data Spine Repair) complete. Ready for Phase 27 planning.
 
 ## Session Continuity
 
-Last session: 2026-06-24T03:53:00.000Z
-Stopped at: Phase 26 plan 02 complete — PIPE-DATA-02 closed. Ready for Phase 27 planning.
+Last session: 2026-06-24T05:04:00Z
+Stopped at: Phase 27 plan 01 complete — PIPE-RENDER-01 closed (motion-preview camelCase fix). Ready for Phase 27 plan 02 (jimeng-client).
 Resume file: None
 
 **Next action:**
 
 ```
-/gsd:plan-phase 27
+/gsd:execute-phase 27   (continues with plan 02 — jimeng-client fallback-only)
 ```
 
 **Critical context to preserve across sessions:**

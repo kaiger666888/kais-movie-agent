@@ -13,7 +13,7 @@
 
 ### PIPE-RENDER — 真实渲染沉默失败
 
-- [ ] **PIPE-RENDER-01**: motion-preview 的 Blender 调用字段大小写修复（`gtClient.submitTask({ task_type })` 应为 `taskType`，`task.task_id` 应为 `task.taskId`；当前真实渲染路径沉默失败）
+- [x] **PIPE-RENDER-01**: motion-preview 的 Blender 调用字段大小写修复（`gtClient.submitTask({ task_type })` 应为 `taskType`，`task.task_id` 应为 `task.taskId`；当前真实渲染路径沉默失败）
 - [ ] **PIPE-RENDER-02**: jimeng-client.js 死引用清理（已 @deprecated "被 dreamina CLI 取代"，但 character-generation / scene-generation / soul-visual 仍 `new JimengClient(...)`；要么迁移到 dreamina CLI，要么显式标注不再调用并走 fallback）
 
 ### PIPE-DATA — 数据管道断裂
@@ -52,7 +52,7 @@ See [PROJECT.md](./PROJECT.md) § "Validated" for the full list of shipped v1.0 
 |-------------|-------|--------|
 | PIPE-DATA-01 | Phase 26 | Complete |
 | PIPE-DATA-02 | Phase 26 | Complete |
-| PIPE-RENDER-01 | Phase 27 | Pending |
+| PIPE-RENDER-01 | Phase 27 | Complete |
 | PIPE-RENDER-02 | Phase 27 | Pending |
 | PIPE-INTEGRITY-01 | Phase 28 | Pending |
 | PIPE-INTEGRITY-02 | Phase 28 | Pending |
