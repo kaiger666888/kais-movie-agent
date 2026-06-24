@@ -9,7 +9,7 @@
 ### PIPE-COMPOSE — 管线尾部断裂（成片根本无法产出）
 
 - [ ] **PIPE-COMPOSE-01**: composition phase 获得真实 handler，产出 `master.mp4` + `web-preview.mp4`（当前 PHASES 声明 outputFiles 但 `lib/phases/index.js` 无对应 entry，bin/pipeline.js 也不传 phasesConfig）
-- [ ] **PIPE-COMPOSE-02**: delivery phase 读取文件名与 composition 产出对齐（当前 delivery 检查 `final.mp4`，composition 声明产出 `master.mp4`，命名错位即使 composition 实现也无法交接）
+- [x] **PIPE-COMPOSE-02**: delivery phase 读取文件名与 composition 产出对齐（当前 delivery 检查 `final.mp4`，composition 声明产出 `master.mp4`，命名错位即使 composition 实现也无法交接）
 
 ### PIPE-RENDER — 真实渲染沉默失败
 
@@ -57,7 +57,7 @@ See [PROJECT.md](./PROJECT.md) § "Validated" for the full list of shipped v1.0 
 | PIPE-INTEGRITY-01 | Phase 28 | Complete |
 | PIPE-INTEGRITY-02 | Phase 28 | Complete |
 | PIPE-COMPOSE-01 | Phase 29 | Pending |
-| PIPE-COMPOSE-02 | Phase 29 | Pending |
+| PIPE-COMPOSE-02 | Phase 29 | Complete |
 | PIPE-GUARD-01 | Phase 29 | Pending |
 
 **Coverage:** 9/9 v4.0 requirements mapped ✓ (no orphans, no duplicates)

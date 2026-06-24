@@ -3,15 +3,15 @@ gsd_state_version: 1.0
 milestone: v4.0
 milestone_name: Production Pipeline Remediation
 status: executing
-stopped_at: Phase 28 complete — PIPE-INTEGRITY-01 (canvas saveGraph HTTP migration) + PIPE-INTEGRITY-02 (repair-canvas CLI SQL injection guard) both closed. Phase 29 next.
-last_updated: "2026-06-24T08:20:31.766Z"
-last_activity: 2026-06-24 -- Phase 29 execution started
+stopped_at: Phase 29 Plan 02 complete — delivery handler checks master.mp4 + degrade-tolerant web-preview + _composition marker. Plan 03 (consistency-guard blocking) remains.
+last_updated: "2026-06-24T08:30:00.000Z"
+last_activity: 2026-06-24 -- Phase 29 Plan 02 complete
 progress:
   total_phases: 5
   completed_phases: 3
   total_plans: 9
-  completed_plans: 6
-  percent: 60
+  completed_plans: 7
+  percent: 78
 ---
 
 # Project State
@@ -26,9 +26,9 @@ See: .planning/PROJECT.md (updated 2026-06-24)
 ## Current Position
 
 Phase: 29 (composition-tail-quality-gate-activation) — EXECUTING
-Plan: 2 of 3
-Status: Executing Phase 29 — Plan 01 complete (composition master.mp4 + web-preview.mp4 + degraded placeholders)
-Last activity: 2026-06-24 -- Phase 29 Plan 01 complete
+Plan: 3 of 3
+Status: Executing Phase 29 — Plan 02 complete (delivery master.mp4 alignment + web-preview degrade-tolerant + _composition marker)
+Last activity: 2026-06-24 -- Phase 29 Plan 02 complete
 
 Progress: [██████████░░] 100% of v4.0 hardening trio (26/27/28); Phases 29-30 remain.
 
@@ -61,6 +61,7 @@ Progress: [██████████░░] 100% of v4.0 hardening trio (26
 | Phase 28 P01 | 3.4min | 2 tasks | 2 files |
 | Phase 28 P02 | 4.0min | 2 tasks | 2 files |
 | Phase 29 P01 | 6min | 1 task | 2 files |
+| Phase 29 P02 | 4min | 1 task | 3 files |
 
 ## Accumulated Context
 
@@ -82,6 +83,7 @@ Recent decisions affecting current work:
 - [Phase ?]: Phase 28 P01: canvas saveGraph migrated to HTTP API — PIPE-INTEGRITY-01 closed
 - [Phase 28 P02]: PIPE-INTEGRITY-02 closed: repair-canvas CLI assertPositiveInt (/^\d+$/ + Number.isInteger defense-in-depth) on --projectId/--episodesId; named-value stderr + exit 1; 6-case spawnSync regression (normal/negative/string/injection `1; DROP TABLE x`/float 5.5/episodesId-symmetric); baseline 487→493
 - [Phase 29 P01]: PIPE-COMPOSE-01 (handler slice) closed: composition handler writes master.mp4 (not final.mp4) + sibling web-preview.mp4 (854px H.264 -an transcode, best-effort) + 0-byte degraded placeholders when compose throws or returns {output:null}; 4-case regression test (2 ffmpeg-gated success + 2 unconditional degraded); compose() returns null-output-not-throw deviation auto-fixed (Rule 2); full PIPE-COMPOSE-01 closure pending Plan 02 (bin/pipeline.js invocation + delivery filename alignment)
+- [Phase 29 P02]: PIPE-COMPOSE-02 closed: delivery handler now checks master.mp4 (not final.mp4) + degrade-tolerant web-preview.mp4 check (warn-not-fail, non-blocking) + top-level _composition.delivered_mastermp4 + delivered_webpreview operator markers in quality-report.json; 4-case regression test; _hermesAudit + return metrics renamed (master_mp4_status + web_preview_status); pre-existing handlers.test.mjs delivery assertion updated (Rule 1, final_mp4 -> master_mp4); baseline 29/29 preserved
 
 ### Pending Todos
 
@@ -117,8 +119,8 @@ None. Phase 28 (Cross-System Integrity & Safety Hardening) complete — PIPE-INT
 
 ## Session Continuity
 
-Last session: 2026-06-24T08:24:00.000Z
-Stopped at: Phase 29 Plan 01 complete — composition handler outputs master.mp4 + web-preview.mp4 + degraded placeholders. Plans 02 (delivery filename alignment) and 03 (consistency-guard blocking) remain.
+Last session: 2026-06-24T08:30:00.000Z
+Stopped at: Phase 29 Plan 02 complete — delivery handler checks master.mp4 + degrade-tolerant web-preview + _composition.delivered_mastermp4 marker in quality-report.json. Plan 03 (consistency-guard blocking) remains.
 Resume file: None
 
 **Next action:**
