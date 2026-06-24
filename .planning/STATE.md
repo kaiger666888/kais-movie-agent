@@ -2,15 +2,15 @@
 gsd_state_version: 1.0
 milestone: v4.0
 milestone_name: Production Pipeline Remediation
-status: ready_to_plan
-stopped_at: Phase 27 complete (2/2) — ready to discuss Phase 28
-last_updated: 2026-06-24T05:25:25.563Z
+status: executing
+stopped_at: Phase 27 complete — PIPE-RENDER-01 + PIPE-RENDER-02 closed (motion-preview camelCase + jimeng-client fallback-only marking). Phase ready for verification.
+last_updated: "2026-06-24T05:38:51.837Z"
 last_activity: 2026-06-24
 progress:
   total_phases: 5
   completed_phases: 2
-  total_plans: 4
-  completed_plans: 22
+  total_plans: 6
+  completed_plans: 5
   percent: 40
 ---
 
@@ -21,16 +21,16 @@ progress:
 See: .planning/PROJECT.md (updated 2026-06-24)
 
 **Core value:** 降级优先的 GPU 任务调度 — 外部服务不可用时系统仍可运行。
-**Current focus:** Phase 28 — cross system integrity & safety hardening
+**Current focus:** Phase 28 — cross-system-integrity-safety-hardening
 
 ## Current Position
 
-Phase: 28
-Plan: Not started
-Status: Ready to plan
+Phase: 28 (cross-system-integrity-safety-hardening) — EXECUTING
+Plan: 2 of 2
+Status: Ready to execute
 Last activity: 2026-06-24
 
-Progress: [██████████] 100%
+Progress: [████████░░] 83%
 
 ## Performance Metrics
 
@@ -57,6 +57,7 @@ Progress: [██████████] 100%
 | Phase 26 P02 | 4min | 2 tasks | 4 files |
 | Phase 27 P01 | 4min | 2 tasks | 2 files |
 | Phase 27 P02 | 12min | 2 tasks | 2 files |
+| Phase 28 P01 | 3.4min | 2 tasks | 2 files |
 
 ## Accumulated Context
 
@@ -75,6 +76,7 @@ Recent decisions affecting current work:
 - [Phase 26]: PIPE-DATA-02 closed: PHASES reordered so spatio-temporal-script (stageOrder 8) precedes scene-generation (9) precedes scene-selection (10) — scene-generation bus.read('spatio-temporal-script') now finds asset already written; VALID_PHASES synced; 6-test regression suite added; 2 pre-existing hardcoded phase-id lists (v41-integration.test.js, handlers.test.mjs) updated to match
 - [Phase 27 P01]: PIPE-RENDER-01 closed: motion-preview submitTask field-case fix (line 1074 task_type→taskType, line 1078 task.task_id→task.taskId) + 4-case regression test; line 1115 (collector schema) intentionally left snake_case per D-PIPE-RENDER-01
 - [Phase 27 P02]: PIPE-RENDER-02 closed: jimeng-client marked fallback-only at 3 production call sites (lines 651/2185/2606) with module-level dedup deprecate warn `_warnJimengDeprecate()` (one warn per process); strict degrade path verified at all 3 sites (soul-visual try/catch + character/scene-generation ping gates); `_resetJimengDeprecateFlagForTest()` test-only export added; 5-case regression test; baseline 483/483 pass
+- [Phase ?]: Phase 28 P01: canvas saveGraph migrated to HTTP API — PIPE-INTEGRITY-01 closed
 
 ### Pending Todos
 
@@ -110,7 +112,7 @@ None. Phase 27 (Real Render Path Restoration) complete — PIPE-RENDER-01 + PIPE
 
 ## Session Continuity
 
-Last session: 2026-06-24T05:19:00Z
+Last session: 2026-06-24T05:38:40.012Z
 Stopped at: Phase 27 complete — PIPE-RENDER-01 + PIPE-RENDER-02 closed (motion-preview camelCase + jimeng-client fallback-only marking). Phase ready for verification.
 Resume file: None
 

@@ -113,7 +113,7 @@ Plans:
 
 Plans:
 
-- [ ] 28-01-PLAN.md — PIPE-INTEGRITY-01 canvas-content-sync saveGraph HTTP API migration + degrade-on-unreachable + mock-fetch regression test
+- [x] 28-01-PLAN.md — PIPE-INTEGRITY-01 canvas-content-sync saveGraph HTTP API migration + degrade-on-unreachable + mock-fetch regression test
 - [ ] 28-02-PLAN.md — PIPE-INTEGRITY-02 repair-canvas CLI \d+ + Number.isInteger validation + 6-case spawnSync injection regression test
 
 ### Phase 29: Composition Tail + Quality Gate Activation
@@ -155,6 +155,6 @@ Phases execute in numeric order: 26 → 27 → 28 → 29 → 30
 |-------|----------------|--------|-----------|
 | 26. Data Spine Repair | 2/2 | Complete    | 2026-06-24 |
 | 27. Real Render Path Restoration | 2/2 | Complete    | 2026-06-24 |
-| 28. Cross-System Integrity & Safety Hardening | 0/TBD | Not started | - |
+| 28. Cross-System Integrity & Safety Hardening | 1/2 | In Progress|  |
 | 29. Composition Tail + Quality Gate Activation | 0/TBD | Not started | - |
 | 30. End-to-End Shipping Verification | 0/TBD | Not started | - |

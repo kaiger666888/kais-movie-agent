@@ -27,7 +27,7 @@
 
 ### PIPE-INTEGRITY — 跨系统数据完整性 + 安全
 
-- [ ] **PIPE-INTEGRITY-01**: canvasGraph 双写竞态修复（`lib/canvas-content-sync.js` 用 `execSync('sqlite3 ... UPDATE')` 直写 DB 与 kais-aigc-platform HTTP API 写同一 cell 互相覆盖，平台侧截断 content→150/signature_shot→200 会覆盖本仓库完整数据；统一到单一写入路径）
+- [x] **PIPE-INTEGRITY-01**: canvasGraph 双写竞态修复（`lib/canvas-content-sync.js` 用 `execSync('sqlite3 ... UPDATE')` 直写 DB 与 kais-aigc-platform HTTP API 写同一 cell 互相覆盖，平台侧截断 content→150/signature_shot→200 会覆盖本仓库完整数据；统一到单一写入路径）
 - [ ] **PIPE-INTEGRITY-02**: repair-canvas-truncated-scenes.js SQL 注入面修复（`--projectId` / `--episodesId` 未做整数校验直接拼进 sqlite3 CLI SQL 字符串；execFileSync 绕过 shell 但 sqlite3 CLI 接受 `;` 分隔多语句，需在 CLI 入口校验）
 
 ## Validated
@@ -54,7 +54,7 @@ See [PROJECT.md](./PROJECT.md) § "Validated" for the full list of shipped v1.0 
 | PIPE-DATA-02 | Phase 26 | Complete |
 | PIPE-RENDER-01 | Phase 27 | Complete |
 | PIPE-RENDER-02 | Phase 27 | Complete |
-| PIPE-INTEGRITY-01 | Phase 28 | Pending |
+| PIPE-INTEGRITY-01 | Phase 28 | Complete |
 | PIPE-INTEGRITY-02 | Phase 28 | Pending |
 | PIPE-COMPOSE-01 | Phase 29 | Pending |
 | PIPE-COMPOSE-02 | Phase 29 | Pending |
