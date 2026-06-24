@@ -13,6 +13,14 @@
  *   - Previously the fail path was a no-op console.warn (line 3050-3053),
  *     letting failed audits silently continue to composition + delivery.
  *
+ * Fail-path forcing strategy:
+ *   auditContinuity's internal LLM calls (_llmStructuralAudit, _llmIdentityScore)
+ *   all catch errors and return null scores — and null-scored dimensions are
+ *   treated as "not evaluated" (not failure). So in a bare test env without API
+ *   keys, auditContinuity returns passed=true (nothing was scored). To force a
+ *   real passed=false, we mock global.fetch so callLLMJson receives a response
+ *   where axis_compliance (threshold 1.0) scores 0.1 — below threshold → fail.
+ *
  * This test will fail if:
  *   - consistency-guard swallows an audit failure (does not throw)
  *   - consistency-blocked.json is missing or lacks `_consistencyBlocked: true`
@@ -43,29 +51,80 @@ after(async () => {
 
 const guardPhase = { id: 'consistency-guard', stageOrder: 15, name: '一致性守卫' };
 
+// ─── fetch mock helpers (pattern from continuity-auditor-multimodal.test.mjs) ─
+
 /**
- * Run consistency-guard handler in a workdir. If `forceFail` is true, pre-write
- * a spatio-temporal-script.json with shots that reference non-existent image
- * files — this makes the handler call auditContinuity (not short-circuit),
- * which in a bare test env throws or scores 0 → auditFailed → passed=false.
+ * Mock global.fetch to return an OpenAI-style chat completion whose content
+ * is a JSON string. callLLMJson in this codebase POSTs to an OpenAI-compatible
+ * endpoint and parses choices[0].message.content as JSON.
+ *
+ * The returned scores force auditContinuity to fail: axis_compliance has
+ * threshold 1.0 (strictest dimension), so any score < 1.0 makes allPassed=false.
+ */
+function mockFetchFailingAudit() {
+  const original = global.fetch;
+  // NOTE: callLLMJson parses content via `content.match(/\[[\s\S]*\]/) || content.match(/\{[\s\S]*\}/)`.
+  // The array regex is tried FIRST and is greedy — if the JSON contains any `[...]`,
+  // it extracts the array instead of the object. So we return ONLY a scores object
+  // with no array fields, ensuring the object regex matches the full payload.
+  // (_llmStructuralAudit tolerates missing findings: `result?.findings || []`.)
+  const mockBody = {
+    choices: [{
+      message: {
+        content: JSON.stringify({
+          scores: {
+            axis_compliance: 0.1,     // threshold 1.0 → FAIL
+            wardrobe_drift: 5,        // threshold 0 (0 violations) → FAIL
+            spatial_consistency: 0.2, // threshold 0.8 → FAIL
+            plot_continuity: 0.1,     // threshold 0.8 → FAIL
+          },
+        }),
+      },
+    }],
+  };
+  global.fetch = async () => ({
+    ok: true,
+    status: 200,
+    text: async () => JSON.stringify(mockBody),
+    json: async () => mockBody,
+  });
+  return () => { global.fetch = original; };
+}
+
+// ─── handler runner ─────────────────────────────────────────────────────────
+
+/**
+ * Run consistency-guard handler in a workdir.
+ * - forceFail=true: pre-write spatio-temporal-script with shots (so visuals are
+ *   non-empty → handler calls auditContinuity) AND mock fetch so the LLM-based
+ *   audit returns below-threshold scores → passed=false → blocking path fires.
+ * - forceFail=false: bare workdir, no visuals → handler short-circuits to pass.
  */
 async function runGuard(dir, { forceFail = false } = {}) {
+  let restoreFetch = null;
   if (forceFail) {
-    // AssetBus reads 'spatio-temporal-script' from spatio-temporal-script.json.
-    // Shots with image_path make visuals non-empty → handler calls auditContinuity.
-    // In a bare test workdir (no API keys, no real images, no character-assets),
-    // auditContinuity's _llmStructuralAudit / _getDINOv2Score will throw →
-    // the handler's catch block sets auditFailed=true, passed=false.
+    // AssetBus reads 'spatio-temporal-script' from
+    // {workdir}/.pipeline-assets/spatio-temporal-script.json.
+    const assetsDir = join(dir, '.pipeline-assets');
+    await mkdir(assetsDir, { recursive: true });
     const sts = {
       shots: [
         { id: 'shot-001', image_path: '/nonexistent/shot-001.png', scene_id: 'scene-A' },
         { id: 'shot-002', image_path: '/nonexistent/shot-002.png', scene_id: 'scene-B' },
       ],
     };
-    await writeFile(join(dir, 'spatio-temporal-script.json'), JSON.stringify(sts));
+    await writeFile(join(assetsDir, 'spatio-temporal-script.json'), JSON.stringify(sts));
+    // Mock fetch so callLLMJson (used by _llmStructuralAudit inside auditContinuity)
+    // returns below-threshold scores. Without this, auditContinuity returns all-null
+    // scores → passed=true (unscored dims don't count as failure).
+    restoreFetch = mockFetchFailingAudit();
   }
-  const pipeline = new Pipeline({ workdir: dir, config: { degradedMode: true } });
-  return phaseHandlers['consistency-guard'].after(pipeline, guardPhase, {});
+  try {
+    const pipeline = new Pipeline({ workdir: dir, config: { degradedMode: true } });
+    return await phaseHandlers['consistency-guard'].after(pipeline, guardPhase, {});
+  } finally {
+    if (restoreFetch) restoreFetch();
+  }
 }
 
 describe('consistency-guard blocking fail path (PIPE-GUARD-01)', () => {
