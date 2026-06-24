@@ -63,7 +63,11 @@ Full details: [v3.0-ROADMAP.md](./milestones/v3.0-ROADMAP.md)
   2. 运行 `bin/pipeline.js run --episode EP01 --to scene-generation` 后，scene-generation handler 读到非 null 的 spatio-temporal-script 产物（时序倒置已修复），scene 数据含真实分场景结构而非单场景默认值
   3. V6 数据流中不存在对已废弃的 `requirement-bible` legacy handler 的依赖（要么迁移写入路径，要么显式从 pain-discovery / pipeline.config 读）
   4. 相关单元/集成测试覆盖：character 列表为空 / sts 产物缺失时不再沉默 fallback，而是显式降级标记或失败
-**Plans**: TBD
+**Plans**: 2 plans
+
+Plans:
+- [ ] 26-01-PLAN.md — PIPE-DATA-01 character data source migration (pain-report.json reader tier)
+- [ ] 26-02-PLAN.md — PIPE-DATA-02 scene↔sts stageOrder reorder + tests
 
 ### Phase 27: Real Render Path Restoration
 **Goal**: 真实渲染路径不再沉默失败 — motion-preview 的 Blender 调用能成功提交任务并接收 taskId，jimeng-client 的 deprecated 调用要么迁移到 dreamina CLI 要么显式标注为 fallback-only（不再让 461 测试通过但渲染永远不发生）
@@ -74,7 +78,11 @@ Full details: [v3.0-ROADMAP.md](./milestones/v3.0-ROADMAP.md)
   2. motion-preview handler 接收 task 返回时从 `task.taskId`（而非 `task.task_id`）读取，单测断言 taskId 正确解析
   3. character-generation / scene-generation / soul-visual 三个 handler 不再 `new JimengClient(...)` 调用 deprecated 模块；要么迁移到 dreamina CLI，要么显式 try/catch 降级并标注 deprecation 不再调用（代码中无残留 active 调用）
   4. 降级路径：jimeng-client 不可达时 handler 不抛 silent error，而是按 DEGRADE 契约返回 degraded 标记
-**Plans**: TBD
+**Plans**: 2 plans
+
+Plans:
+- [ ] 26-01-PLAN.md — PIPE-DATA-01 character data source migration (pain-report.json → requirement.json → pipeline.config fallback tiers)
+- [ ] 26-02-PLAN.md — PIPE-DATA-02 PHASES array reorder (spatio-temporal-script moves before scene-generation) + sync VALID_PHASES
 
 ### Phase 28: Cross-System Integrity & Safety Hardening
 **Goal**: 修复跨系统数据完整性（canvas 双写竞态）+ 安全（SQL 注入面）— 两条独立 hardening，与渲染/数据流并行，使 canvasGraph 与 kais-aigc-platform 不再互相覆盖、repair CLI 不再可被注入
@@ -118,7 +126,7 @@ Phases execute in numeric order: 26 → 27 → 28 → 29 → 30
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 26. Data Spine Repair | 0/TBD | Not started | - |
+| 26. Data Spine Repair | 0/2 | Planning complete | - |
 | 27. Real Render Path Restoration | 0/TBD | Not started | - |
 | 28. Cross-System Integrity & Safety Hardening | 0/TBD | Not started | - |
 | 29. Composition Tail + Quality Gate Activation | 0/TBD | Not started | - |
