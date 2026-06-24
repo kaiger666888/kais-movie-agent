@@ -36,7 +36,9 @@ describe('V6 Pipeline Structure', () => {
     assert.deepEqual(ids, [
       'pain-discovery', 'topic-selection', 'outline-generation', 'outline-selection',
       'script-generation', 'script-selection', 'character-generation', 'character-selection',
-      'scene-generation', 'scene-selection', 'spatio-temporal-script',
+      // Phase 26 PIPE-DATA-02: spatio-temporal-script runs BEFORE scene-generation so
+      // scene-generation's bus.read('spatio-temporal-script') finds the sts asset already written.
+      'spatio-temporal-script', 'scene-generation', 'scene-selection',
       'script-lock', 'seed-skeleton', 'motion-preview', 'ai-preview',
       'consistency-guard', 'cloud-production', 'final-audio', 'composition', 'delivery',
     ]);

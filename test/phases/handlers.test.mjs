@@ -28,7 +28,8 @@ import { phaseHandlers } from '../../lib/phases/index.js';
 const PHASE_IDS = [
   'pain-discovery', 'topic-selection', 'outline-generation', 'outline-selection',
   'script-generation', 'script-selection', 'character-generation', 'character-selection',
-  'scene-generation', 'scene-selection', 'spatio-temporal-script', 'script-lock',
+  // Phase 26 PIPE-DATA-02: spatio-temporal-script reordered before scene-generation
+  'spatio-temporal-script', 'scene-generation', 'scene-selection', 'script-lock',
   'seed-skeleton', 'motion-preview', 'ai-preview', 'consistency-guard',
   'cloud-production', 'final-audio', 'composition', 'delivery',
 ];
