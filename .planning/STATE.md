@@ -2,15 +2,15 @@
 gsd_state_version: 1.0
 milestone: v4.0
 milestone_name: Production Pipeline Remediation
-status: ready_to_plan
-stopped_at: Phase 29 complete (3/3) — ready to discuss Phase 30
-last_updated: 2026-06-24T08:56:44.272Z
-last_activity: 2026-06-24 -- Phase 29 Plan 03 complete
+status: executing
+stopped_at: Phase 30 Plan 01 complete — degraded E2E shipping test (test/e2e/degraded-shipping.test.mjs) verifies SC#1 (master.mp4 produced in degraded mode) + SC#3 (npm baseline 508 preserved; e2e suite 7 -> 10). Rule 3 deviation: CLI subprocess interface replaced with direct Pipeline construction.
+last_updated: "2026-06-24T11:45:50.243Z"
+last_activity: 2026-06-24
 progress:
   total_phases: 5
   completed_phases: 4
-  total_plans: 9
-  completed_plans: 27
+  total_plans: 12
+  completed_plans: 10
   percent: 80
 ---
 
@@ -21,16 +21,16 @@ progress:
 See: .planning/PROJECT.md (updated 2026-06-24)
 
 **Core value:** 降级优先的 GPU 任务调度 — 外部服务不可用时系统仍可运行。
-**Current focus:** Phase 30 — end to end shipping verification
+**Current focus:** Phase 30 — end-to-end-shipping-verification
 
 ## Current Position
 
-Phase: 30
-Plan: Not started
-Status: Ready to plan
+Phase: 30 (end-to-end-shipping-verification) — EXECUTING
+Plan: 2 of 3
+Status: Ready to execute
 Last activity: 2026-06-24
 
-Progress: [██████████░░] 100% of v4.0 hardening trio (26/27/28) + Phase 29 complete; Phase 30 remains.
+Progress: [████████░░] 83%
 
 ## Performance Metrics
 
@@ -64,6 +64,7 @@ Progress: [██████████░░] 100% of v4.0 hardening trio (26
 | Phase 29 P01 | 6min | 1 task | 2 files |
 | Phase 29 P02 | 4min | 1 task | 3 files |
 | Phase 29 P03 | 14min | 2 tasks | 3 files |
+| Phase 30 P01 | 5min | 1 task | 1 file |
 
 ## Accumulated Context
 
@@ -87,6 +88,7 @@ Recent decisions affecting current work:
 - [Phase 29 P01]: PIPE-COMPOSE-01 (handler slice) closed: composition handler writes master.mp4 (not final.mp4) + sibling web-preview.mp4 (854px H.264 -an transcode, best-effort) + 0-byte degraded placeholders when compose throws or returns {output:null}; 4-case regression test (2 ffmpeg-gated success + 2 unconditional degraded); compose() returns null-output-not-throw deviation auto-fixed (Rule 2); full PIPE-COMPOSE-01 closure pending Plan 02 (bin/pipeline.js invocation + delivery filename alignment)
 - [Phase 29 P02]: PIPE-COMPOSE-02 closed: delivery handler now checks master.mp4 (not final.mp4) + degrade-tolerant web-preview.mp4 check (warn-not-fail, non-blocking) + top-level _composition.delivered_mastermp4 + delivered_webpreview operator markers in quality-report.json; 4-case regression test; _hermesAudit + return metrics renamed (master_mp4_status + web_preview_status); pre-existing handlers.test.mjs delivery assertion updated (Rule 1, final_mp4 -> master_mp4); baseline 29/29 preserved
 - [Phase 29 P03]: PIPE-GUARD-01 closed: consistency-guard audit fail now throws Error (propagates to Pipeline.run → episode marked failed, no more silent warn-and-continue) + writes consistency-blocked.json with _consistencyBlocked: true + console.error (not console.warn); hermesAudit + collector.record reordered to run BEFORE throw so telemetry captures failures; dead code deleted (lib/gate-constraints.js 418 lines + lib/invariant-bus.js 329 lines, zero external imports confirmed); 4-case regression test (fetch-mock forces below-threshold LLM scores since auditContinuity treats null-scored dims as pass); baseline 455/455 phase tests pass
+- [Phase 30 P01]: SC#1 verified — degraded E2E test (test/e2e/degraded-shipping.test.mjs) runs all 20 stages in 10.3s, asserts master.mp4 produced + _composition.delivered_mastermp4 marker. Rule 3 deviation: plan's bin/pipeline.js --to subprocess interface did not match codebase (no --to flag; degraded mode is config-driven); test constructs Pipeline directly with v2.0 degraded pattern. npm baseline 508 preserved; e2e suite 7 -> 10.
 
 ### Pending Todos
 
@@ -122,14 +124,14 @@ None. Phase 28 (Cross-System Integrity & Safety Hardening) complete — PIPE-INT
 
 ## Session Continuity
 
-Last session: 2026-06-24T08:48:00.000Z
-Stopped at: Phase 29 Plan 03 complete — consistency-guard blocking activation (throws + _consistencyBlocked marker) + dead-code deletion (gate-constraints.js + invariant-bus.js). Phase 29 all 3 plans complete.
+Last session: 2026-06-24T11:45:50.235Z
+Stopped at: Phase 30 Plan 01 complete — degraded E2E shipping test (test/e2e/degraded-shipping.test.mjs) verifies SC#1 (master.mp4 produced in degraded mode) + SC#3 (npm baseline 508 preserved; e2e suite 7 -> 10). Rule 3 deviation: CLI subprocess interface replaced with direct Pipeline construction.
 Resume file: None
 
 **Next action:**
 
 ```
-/gsd:plan-phase 30   (End-to-End Shipping Verification — degraded E2E master.mp4 + 9-audit-point checklist + test baseline ≥461)
+/gsd:execute-plan 30-02   (9-audit-point checklist re-run — automated regression test for all 9 v4.0 audit findings)
 ```
 
 **Critical context to preserve across sessions:**
