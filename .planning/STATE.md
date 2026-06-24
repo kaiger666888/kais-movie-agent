@@ -2,16 +2,16 @@
 gsd_state_version: 1.0
 milestone: v4.0
 milestone_name: Production Pipeline Remediation
-status: executing
-stopped_at: Phase 27 plan 01 complete — PIPE-RENDER-01 closed (motion-preview camelCase fix). Ready for Phase 27 plan 02 (jimeng-client).
-last_updated: "2026-06-24T05:04:22.339Z"
-last_activity: 2026-06-24 -- Phase 27 plan 01 executed
+status: verifying
+stopped_at: Phase 27 complete — PIPE-RENDER-01 + PIPE-RENDER-02 closed. Phase 27 (Real Render Path Restoration) ready for verification.
+last_updated: "2026-06-24T05:19:00.000Z"
+last_activity: 2026-06-24
 progress:
   total_phases: 5
-  completed_phases: 1
+  completed_phases: 2
   total_plans: 4
-  completed_plans: 3
-  percent: 20
+  completed_plans: 4
+  percent: 40
 ---
 
 # Project State
@@ -27,10 +27,10 @@ See: .planning/PROJECT.md (updated 2026-06-24)
 
 Phase: 27 (real-render-path-restoration) — EXECUTING
 Plan: 2 of 2
-Status: Plan 01 complete; ready to execute plan 02 (jimeng-client fallback-only)
-Last activity: 2026-06-24 -- Phase 27 plan 01 executed
+Status: Phase complete — ready for verification
+Last activity: 2026-06-24
 
-Progress: [████████░░] 75%
+Progress: [██████████] 100%
 
 ## Performance Metrics
 
@@ -45,7 +45,7 @@ Progress: [████████░░] 75%
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
 | 26. Data Spine Repair | 0/TBD | - | - |
-| 27. Real Render Path Restoration | 1/2 | 4min | 2 tasks, 2 files |
+| 27. Real Render Path Restoration | 2/2 | 8min avg | 2 tasks/plan, 2 files/plan |
 | 28. Cross-System Integrity & Safety | 0/TBD | - | - |
 | 29. Composition Tail + Quality Gate | 0/TBD | - | - |
 | 30. End-to-End Shipping Verification | 0/TBD | - | - |
@@ -55,6 +55,7 @@ Progress: [████████░░] 75%
 | Phase 26 P01 | 6min | 2 tasks | 2 files |
 | Phase 26 P02 | 4min | 2 tasks | 4 files |
 | Phase 27 P01 | 4min | 2 tasks | 2 files |
+| Phase 27 P02 | 12min | 2 tasks | 2 files |
 
 ## Accumulated Context
 
@@ -72,6 +73,7 @@ Recent decisions affecting current work:
 - [Phase 26]: PIPE-DATA-01 closed: pain-report.json main reader + observable legacy warns (SC#4) — V6 pain-discovery writes pain-report.json (not requirement.json); reader migrated accordingly
 - [Phase 26]: PIPE-DATA-02 closed: PHASES reordered so spatio-temporal-script (stageOrder 8) precedes scene-generation (9) precedes scene-selection (10) — scene-generation bus.read('spatio-temporal-script') now finds asset already written; VALID_PHASES synced; 6-test regression suite added; 2 pre-existing hardcoded phase-id lists (v41-integration.test.js, handlers.test.mjs) updated to match
 - [Phase 27 P01]: PIPE-RENDER-01 closed: motion-preview submitTask field-case fix (line 1074 task_type→taskType, line 1078 task.task_id→task.taskId) + 4-case regression test; line 1115 (collector schema) intentionally left snake_case per D-PIPE-RENDER-01
+- [Phase 27 P02]: PIPE-RENDER-02 closed: jimeng-client marked fallback-only at 3 production call sites (lines 651/2185/2606) with module-level dedup deprecate warn `_warnJimengDeprecate()` (one warn per process); strict degrade path verified at all 3 sites (soul-visual try/catch + character/scene-generation ping gates); `_resetJimengDeprecateFlagForTest()` test-only export added; 5-case regression test; baseline 483/483 pass
 
 ### Pending Todos
 
@@ -82,7 +84,7 @@ Recent decisions affecting current work:
 
 ### Blockers
 
-None. Phase 27 plan 01 (PIPE-RENDER-01) complete. Ready for Phase 27 plan 02 (PIPE-RENDER-02 jimeng-client).
+None. Phase 27 (Real Render Path Restoration) complete — PIPE-RENDER-01 + PIPE-RENDER-02 both closed. Ready for Phase 28+ planning.
 
 ### Key Risks (v4.0)
 
@@ -107,14 +109,14 @@ None. Phase 27 plan 01 (PIPE-RENDER-01) complete. Ready for Phase 27 plan 02 (PI
 
 ## Session Continuity
 
-Last session: 2026-06-24T05:04:00Z
-Stopped at: Phase 27 plan 01 complete — PIPE-RENDER-01 closed (motion-preview camelCase fix). Ready for Phase 27 plan 02 (jimeng-client).
+Last session: 2026-06-24T05:19:00Z
+Stopped at: Phase 27 complete — PIPE-RENDER-01 + PIPE-RENDER-02 closed (motion-preview camelCase + jimeng-client fallback-only marking). Phase ready for verification.
 Resume file: None
 
 **Next action:**
 
 ```
-/gsd:execute-phase 27   (continues with plan 02 — jimeng-client fallback-only)
+/gsd:plan-phase 28   (Cross-System Integrity & Safety — canvas dual-write + SQL injection)
 ```
 
 **Critical context to preserve across sessions:**
