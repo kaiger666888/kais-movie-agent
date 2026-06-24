@@ -2,15 +2,15 @@
 gsd_state_version: 1.0
 milestone: v4.0
 milestone_name: Production Pipeline Remediation
-status: executing
-stopped_at: Phase 28 complete — PIPE-INTEGRITY-01 (canvas HTTP migration) + PIPE-INTEGRITY-02 (repair-canvas CLI SQL injection guard) both closed. Phase 29 next.
-last_updated: "2026-06-24T05:44:00.000Z"
+status: ready_to_plan
+stopped_at: Phase 28 complete (2/2) — ready to discuss Phase 29
+last_updated: 2026-06-24T05:52:01.488Z
 last_activity: 2026-06-24
 progress:
   total_phases: 5
   completed_phases: 3
   total_plans: 6
-  completed_plans: 6
+  completed_plans: 24
   percent: 60
 ---
 
@@ -21,13 +21,13 @@ progress:
 See: .planning/PROJECT.md (updated 2026-06-24)
 
 **Core value:** 降级优先的 GPU 任务调度 — 外部服务不可用时系统仍可运行。
-**Current focus:** Phase 28 — cross-system-integrity-safety-hardening
+**Current focus:** Phase 29 — composition tail + quality gate activation
 
 ## Current Position
 
-Phase: 28 (cross-system-integrity-safety-hardening) — COMPLETE
-Plan: 2 of 2 (done)
-Status: Phase 28 closed. Ready for /gsd:plan-phase 29.
+Phase: 29
+Plan: Not started
+Status: Ready to plan
 Last activity: 2026-06-24
 
 Progress: [██████████░░] 100% of v4.0 hardening trio (26/27/28); Phases 29-30 remain.
@@ -51,6 +51,7 @@ Progress: [██████████░░] 100% of v4.0 hardening trio (26
 | 30. End-to-End Shipping Verification | 0/TBD | - | - |
 | 26 | 2 | - | - |
 | 27 | 2 | - | - |
+| 28 | 2 | - | - |
 
 *v4.0 metrics will populate as plans complete*
 | Phase 26 P01 | 6min | 2 tasks | 2 files |
