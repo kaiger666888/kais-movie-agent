@@ -639,9 +639,10 @@ describe('Phase 16 delivery handler 实化 (PERF-03 cost-report)', () => {
     assert.strictEqual(qParsed._stub, undefined,
       'quality-report._stub 应为 undefined (Phase 18 实化)');
     assert.ok(qParsed.report, 'quality-report.report 字段缺失 (Phase 18 实化)');
-    assert.ok(qParsed.report.final_mp4, 'report.final_mp4 字段缺失 (Phase 18 实化)');
-    assert.ok(qParsed.report.final_mp4.status === 'absent' || qParsed.report.final_mp4.size_bytes,
-      'final_mp4 应有 status 或 size_bytes 字段');
+    // Phase 29-02 PIPE-COMPOSE-02: 字段从 final_mp4 改名为 master_mp4
+    assert.ok(qParsed.report.master_mp4, 'report.master_mp4 字段缺失 (Phase 29-02 rename)');
+    assert.ok(qParsed.report.master_mp4.status === 'absent' || qParsed.report.master_mp4.size_bytes,
+      'master_mp4 应有 status 或 size_bytes 字段');
 
     // cost-report.json 落盘 (Phase 16 新增)
     const cPath = join(tmpDir, 'cost-report.json');
