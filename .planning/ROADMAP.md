@@ -148,7 +148,13 @@ Plans:
   3. 测试套件 ≥ 461 通过（v3.0 baseline），新增的 v4.0 回归用例覆盖 composition 产出 / 文件名对齐 / consistency-guard 阻塞 / SQL 校验 4 项
   4. E2E-RUNBOOK.md 更新：degraded 模式 + 真实 GPU 模式两条产出 master.mp4 的路径都已文档化
 
-**Plans**: TBD
+**Plans**: 3 plans
+
+Plans:
+
+- [ ] 30-01-PLAN.md — SC1+SC3 degraded E2E shipping test (master.mp4 produced in temp workdir)
+- [ ] 30-02-PLAN.md — SC2 9-finding audit regression suite (test/audit-v4-acceptance.test.mjs)
+- [ ] 30-03-PLAN.md — SC4 E2E-RUNBOOK.md update (degraded + real GPU paths)
 
 ## Progress (v4.0)
 
