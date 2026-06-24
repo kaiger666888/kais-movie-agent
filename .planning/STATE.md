@@ -3,15 +3,15 @@ gsd_state_version: 1.0
 milestone: v4.0
 milestone_name: Production Pipeline Remediation
 status: executing
-stopped_at: Phase 30 Plan 02 complete — 9-finding audit regression suite (test/audit-v4-acceptance.test.mjs) verifies SC#2 (all 9 v4.0 audit findings 100% closed at HEAD via executable contract). Baseline 508 → 517 (+9 tests, 0 regressions). RED spot-check confirmed F3 catches regression.
-last_updated: "2026-06-24T12:00:00.000Z"
+stopped_at: Phase 30 Plan 03 complete — E2E-RUNBOOK.md updated with v4.0 two-path shipping procedure (degraded + real GPU). SC#4 verified. Phase 30 (all 3 plans) complete — v4.0 milestone ready for ship decision.
+last_updated: "2026-06-24T12:05:00.000Z"
 last_activity: 2026-06-24
 progress:
   total_phases: 5
-  completed_phases: 4
+  completed_phases: 5
   total_plans: 12
-  completed_plans: 10
-  percent: 80
+  completed_plans: 12
+  percent: 100
 ---
 
 # Project State
@@ -25,12 +25,12 @@ See: .planning/PROJECT.md (updated 2026-06-24)
 
 ## Current Position
 
-Phase: 30 (end-to-end-shipping-verification) — EXECUTING
-Plan: 3 of 3
-Status: Ready to execute
+Phase: 30 (end-to-end-shipping-verification) — COMPLETE
+Plan: 3 of 3 complete
+Status: v4.0 milestone ready for ship decision
 Last activity: 2026-06-24
 
-Progress: [████████░░] 83%
+Progress: [██████████] 100%
 
 ## Performance Metrics
 
@@ -66,6 +66,7 @@ Progress: [████████░░] 83%
 | Phase 29 P03 | 14min | 2 tasks | 3 files |
 | Phase 30 P01 | 5min | 1 task | 1 file |
 | Phase 30 P02 | 6min | 1 task | 1 file |
+| Phase 30 P03 | 3min | 2 tasks | 1 file |
 
 ## Accumulated Context
 
@@ -91,6 +92,7 @@ Recent decisions affecting current work:
 - [Phase 29 P03]: PIPE-GUARD-01 closed: consistency-guard audit fail now throws Error (propagates to Pipeline.run → episode marked failed, no more silent warn-and-continue) + writes consistency-blocked.json with _consistencyBlocked: true + console.error (not console.warn); hermesAudit + collector.record reordered to run BEFORE throw so telemetry captures failures; dead code deleted (lib/gate-constraints.js 418 lines + lib/invariant-bus.js 329 lines, zero external imports confirmed); 4-case regression test (fetch-mock forces below-threshold LLM scores since auditContinuity treats null-scored dims as pass); baseline 455/455 phase tests pass
 - [Phase 30 P01]: SC#1 verified — degraded E2E test (test/e2e/degraded-shipping.test.mjs) runs all 20 stages in 10.3s, asserts master.mp4 produced + _composition.delivered_mastermp4 marker. Rule 3 deviation: plan's bin/pipeline.js --to subprocess interface did not match codebase (no --to flag; degraded mode is config-driven); test constructs Pipeline directly with v2.0 degraded pattern. npm baseline 508 preserved; e2e suite 7 -> 10.
 - [Phase 30 P02]: SC#2 verified — 9-finding audit regression suite (test/audit-v4-acceptance.test.mjs) automates the 2026-06-23 audit closure checklist as 9 strict test() blocks (F1-F9). Brace-depth slicer isolates phase handler bodies (T-30-04 mitigation). RED spot-check (revert F3 taskType → task_type) confirmed test catches regression. npm baseline 508 → 517 (+9 audit tests, 0 regressions). Rule 1 deviation: F2 assertion refined from "count of final.mp4 === 0" to "no string-literal path reference" — comment mentions documenting the fix are allowed; only path literals flowing to join/existsSync count.
+- [Phase 30 P03]: SC#4 verified — docs/E2E-RUNBOOK.md updated (324 → 478 lines) with §0 "Shipping master.mp4 — Two Paths": Path A (degraded, config-driven per 30-01 finding, CI-verifiable via test/e2e/degraded-shipping.test.mjs) + Path B (real GPU, OPERATOR-DEFERRED per v4.0 roadmap, prerequisites enumerated from lib/ process.env grep) + Ship-Readiness Gate (npm test + audit-v4-acceptance + degraded E2E) + 9-finding audit matrix. Zero stale refs to deleted gate-constraints.js/invariant-bus.js. v4.0 milestone complete (12/12 plans, 100%).
 
 ### Pending Todos
 
@@ -101,7 +103,7 @@ Recent decisions affecting current work:
 
 ### Blockers
 
-None. Phase 28 (Cross-System Integrity & Safety Hardening) complete — PIPE-INTEGRITY-01 + PIPE-INTEGRITY-02 both closed. Ready for Phase 29 planning.
+None. Phase 30 complete — all 4 SCs verified. v4.0 milestone ready for ship decision.
 
 ### Key Risks (v4.0)
 
@@ -126,14 +128,16 @@ None. Phase 28 (Cross-System Integrity & Safety Hardening) complete — PIPE-INT
 
 ## Session Continuity
 
-Last session: 2026-06-24T12:00:00.000Z
-Stopped at: Phase 30 Plan 02 complete — 9-finding audit regression suite (test/audit-v4-acceptance.test.mjs) verifies SC#2 (all 9 v4.0 audit findings 100% closed at HEAD via executable contract). Baseline 508 → 517 (+9 tests, 0 regressions). RED spot-check confirmed F3 catches regression.
+Last session: 2026-06-24T12:05:00.000Z
+Stopped at: Phase 30 Plan 03 complete — E2E-RUNBOOK.md updated with v4.0 two-path shipping procedure (degraded + real GPU). SC#4 verified. Phase 30 (all 3 plans) complete — v4.0 milestone ready for ship decision.
 Resume file: None
 
 **Next action:**
 
 ```
-/gsd:execute-plan 30-03   (E2E-RUNBOOK.md update — degraded + real GPU master.mp4 production paths, SC#4)
+v4.0 milestone complete (12/12 plans, 100%). Ship decision: run Ship-Readiness Gate
+(npm test ≥461 + node --test test/audit-v4-acceptance.test.mjs + node --test test/e2e/degraded-shipping.test.mjs)
+then tag per docs/E2E-RUNBOOK.md §0 Ship-Readiness Gate.
 ```
 
 **Critical context to preserve across sessions:**
