@@ -50,7 +50,6 @@ Full details: [v3.0-ROADMAP.md](./milestones/v3.0-ROADMAP.md)
 <summary>✅ v1.0 AIGC Integration (Phases 1-9) — SHIPPED 2026-05-18</summary>
 
 - [x] Phase 1-9: AIGC integration (see archive)
-
 </details>
 
 ## Phase Details
@@ -128,7 +127,13 @@ Plans:
   3. consistency-guard 在 composition 阶段判定 fail 时，整个 episode run 标记为 fail 并写入 fail 日志（不再被沉默吞掉），可被 operator 看到
   4. gate-constraints.js / invariant-bus.js 二选一：要么被接入到 consistency-guard 判定链路，要么从仓库删除（不再以 dead code 形式存在）
 
-**Plans**: TBD
+**Plans**: 3 plans
+
+Plans:
+
+- [ ] 29-01-PLAN.md — PIPE-COMPOSE-01 composition handler final.mp4→master.mp4 rename + web-preview.mp4 + degraded placeholder touch
+- [ ] 29-02-PLAN.md — PIPE-COMPOSE-02 delivery handler master.mp4 alignment + degrade-tolerant web-preview + _composition.delivered_mastermp4 marker
+- [ ] 29-03-PLAN.md — PIPE-GUARD-01 consistency-guard blocking activation (_consistencyBlocked + throw) + dead code deletion (gate-constraints.js + invariant-bus.js)
 **UI hint**: no
 
 ### Phase 30: End-to-End Shipping Verification
@@ -156,5 +161,5 @@ Phases execute in numeric order: 26 → 27 → 28 → 29 → 30
 | 26. Data Spine Repair | 2/2 | Complete    | 2026-06-24 |
 | 27. Real Render Path Restoration | 2/2 | Complete    | 2026-06-24 |
 | 28. Cross-System Integrity & Safety Hardening | 2/2 | Complete    | 2026-06-24 |
-| 29. Composition Tail + Quality Gate Activation | 0/TBD | Not started | - |
+| 29. Composition Tail + Quality Gate Activation | 0/3 | Not started | - |
 | 30. End-to-End Shipping Verification | 0/TBD | Not started | - |
