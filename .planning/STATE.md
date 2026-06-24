@@ -3,8 +3,8 @@ gsd_state_version: 1.0
 milestone: v4.0
 milestone_name: Production Pipeline Remediation
 status: executing
-stopped_at: Phase 30 Plan 01 complete — degraded E2E shipping test (test/e2e/degraded-shipping.test.mjs) verifies SC#1 (master.mp4 produced in degraded mode) + SC#3 (npm baseline 508 preserved; e2e suite 7 -> 10). Rule 3 deviation: CLI subprocess interface replaced with direct Pipeline construction.
-last_updated: "2026-06-24T11:45:50.243Z"
+stopped_at: Phase 30 Plan 02 complete — 9-finding audit regression suite (test/audit-v4-acceptance.test.mjs) verifies SC#2 (all 9 v4.0 audit findings 100% closed at HEAD via executable contract). Baseline 508 → 517 (+9 tests, 0 regressions). RED spot-check confirmed F3 catches regression.
+last_updated: "2026-06-24T12:00:00.000Z"
 last_activity: 2026-06-24
 progress:
   total_phases: 5
@@ -26,7 +26,7 @@ See: .planning/PROJECT.md (updated 2026-06-24)
 ## Current Position
 
 Phase: 30 (end-to-end-shipping-verification) — EXECUTING
-Plan: 2 of 3
+Plan: 3 of 3
 Status: Ready to execute
 Last activity: 2026-06-24
 
@@ -65,6 +65,7 @@ Progress: [████████░░] 83%
 | Phase 29 P02 | 4min | 1 task | 3 files |
 | Phase 29 P03 | 14min | 2 tasks | 3 files |
 | Phase 30 P01 | 5min | 1 task | 1 file |
+| Phase 30 P02 | 6min | 1 task | 1 file |
 
 ## Accumulated Context
 
@@ -89,6 +90,7 @@ Recent decisions affecting current work:
 - [Phase 29 P02]: PIPE-COMPOSE-02 closed: delivery handler now checks master.mp4 (not final.mp4) + degrade-tolerant web-preview.mp4 check (warn-not-fail, non-blocking) + top-level _composition.delivered_mastermp4 + delivered_webpreview operator markers in quality-report.json; 4-case regression test; _hermesAudit + return metrics renamed (master_mp4_status + web_preview_status); pre-existing handlers.test.mjs delivery assertion updated (Rule 1, final_mp4 -> master_mp4); baseline 29/29 preserved
 - [Phase 29 P03]: PIPE-GUARD-01 closed: consistency-guard audit fail now throws Error (propagates to Pipeline.run → episode marked failed, no more silent warn-and-continue) + writes consistency-blocked.json with _consistencyBlocked: true + console.error (not console.warn); hermesAudit + collector.record reordered to run BEFORE throw so telemetry captures failures; dead code deleted (lib/gate-constraints.js 418 lines + lib/invariant-bus.js 329 lines, zero external imports confirmed); 4-case regression test (fetch-mock forces below-threshold LLM scores since auditContinuity treats null-scored dims as pass); baseline 455/455 phase tests pass
 - [Phase 30 P01]: SC#1 verified — degraded E2E test (test/e2e/degraded-shipping.test.mjs) runs all 20 stages in 10.3s, asserts master.mp4 produced + _composition.delivered_mastermp4 marker. Rule 3 deviation: plan's bin/pipeline.js --to subprocess interface did not match codebase (no --to flag; degraded mode is config-driven); test constructs Pipeline directly with v2.0 degraded pattern. npm baseline 508 preserved; e2e suite 7 -> 10.
+- [Phase 30 P02]: SC#2 verified — 9-finding audit regression suite (test/audit-v4-acceptance.test.mjs) automates the 2026-06-23 audit closure checklist as 9 strict test() blocks (F1-F9). Brace-depth slicer isolates phase handler bodies (T-30-04 mitigation). RED spot-check (revert F3 taskType → task_type) confirmed test catches regression. npm baseline 508 → 517 (+9 audit tests, 0 regressions). Rule 1 deviation: F2 assertion refined from "count of final.mp4 === 0" to "no string-literal path reference" — comment mentions documenting the fix are allowed; only path literals flowing to join/existsSync count.
 
 ### Pending Todos
 
@@ -124,14 +126,14 @@ None. Phase 28 (Cross-System Integrity & Safety Hardening) complete — PIPE-INT
 
 ## Session Continuity
 
-Last session: 2026-06-24T11:45:50.235Z
-Stopped at: Phase 30 Plan 01 complete — degraded E2E shipping test (test/e2e/degraded-shipping.test.mjs) verifies SC#1 (master.mp4 produced in degraded mode) + SC#3 (npm baseline 508 preserved; e2e suite 7 -> 10). Rule 3 deviation: CLI subprocess interface replaced with direct Pipeline construction.
+Last session: 2026-06-24T12:00:00.000Z
+Stopped at: Phase 30 Plan 02 complete — 9-finding audit regression suite (test/audit-v4-acceptance.test.mjs) verifies SC#2 (all 9 v4.0 audit findings 100% closed at HEAD via executable contract). Baseline 508 → 517 (+9 tests, 0 regressions). RED spot-check confirmed F3 catches regression.
 Resume file: None
 
 **Next action:**
 
 ```
-/gsd:execute-plan 30-02   (9-audit-point checklist re-run — automated regression test for all 9 v4.0 audit findings)
+/gsd:execute-plan 30-03   (E2E-RUNBOOK.md update — degraded + real GPU master.mp4 production paths, SC#4)
 ```
 
 **Critical context to preserve across sessions:**

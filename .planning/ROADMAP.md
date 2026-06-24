@@ -153,7 +153,7 @@ Plans:
 Plans:
 
 - [x] 30-01-PLAN.md — SC1+SC3 degraded E2E shipping test (master.mp4 produced in temp workdir)
-- [ ] 30-02-PLAN.md — SC2 9-finding audit regression suite (test/audit-v4-acceptance.test.mjs)
+- [x] 30-02-PLAN.md — SC2 9-finding audit regression suite (test/audit-v4-acceptance.test.mjs)
 - [ ] 30-03-PLAN.md — SC4 E2E-RUNBOOK.md update (degraded + real GPU paths)
 
 ## Progress (v4.0)
@@ -168,4 +168,4 @@ Phases execute in numeric order: 26 → 27 → 28 → 29 → 30
 | 27. Real Render Path Restoration | 2/2 | Complete    | 2026-06-24 |
 | 28. Cross-System Integrity & Safety Hardening | 2/2 | Complete    | 2026-06-24 |
 | 29. Composition Tail + Quality Gate Activation | 3/3 | Complete    | 2026-06-24 |
-| 30. End-to-End Shipping Verification | 1/3 | In Progress|  |
+| 30. End-to-End Shipping Verification | 2/3 | In Progress|  |
