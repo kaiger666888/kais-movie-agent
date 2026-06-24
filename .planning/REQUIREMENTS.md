@@ -18,7 +18,7 @@
 
 ### PIPE-DATA — 数据管道断裂
 
-- [ ] **PIPE-DATA-01**: V6 角色/需求数据流修复（V6 PHASES 用 `pain-discovery` 取代 legacy `requirement-bible`，但 `_loadCharactersForGeneration` 仍读 `requirement.json` → 永远走 fallback；要么恢复 requirement.json 写入，要么迁移到从 pain-report.json / pipeline.config 读）
+- [x] **PIPE-DATA-01**: V6 角色/需求数据流修复（V6 PHASES 用 `pain-discovery` 取代 legacy `requirement-bible`，但 `_loadCharactersForGeneration` 仍读 `requirement.json` → 永远走 fallback；要么恢复 requirement.json 写入，要么迁移到从 pain-report.json / pipeline.config 读）
 - [ ] **PIPE-DATA-02**: scene-generation ↔ spatio-temporal-script 时序修复（scene-generation stageOrder=8 读 sts 产物，但 sts stageOrder=10 才写；默认顺序下 sts 必为 null，scene 退化为单场景默认值）
 
 ### PIPE-GUARD — 质量门控失效
@@ -50,7 +50,7 @@ See [PROJECT.md](./PROJECT.md) § "Validated" for the full list of shipped v1.0 
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| PIPE-DATA-01 | Phase 26 | Pending |
+| PIPE-DATA-01 | Phase 26 | Complete |
 | PIPE-DATA-02 | Phase 26 | Pending |
 | PIPE-RENDER-01 | Phase 27 | Pending |
 | PIPE-RENDER-02 | Phase 27 | Pending |
