@@ -2,15 +2,15 @@
 gsd_state_version: 1.0
 milestone: v4.0
 milestone_name: Production Pipeline Remediation
-status: verifying
-stopped_at: Phase 27 complete — PIPE-RENDER-01 + PIPE-RENDER-02 closed. Phase 27 (Real Render Path Restoration) ready for verification.
-last_updated: "2026-06-24T05:19:00.000Z"
+status: ready_to_plan
+stopped_at: Phase 27 complete (2/2) — ready to discuss Phase 28
+last_updated: 2026-06-24T05:25:25.563Z
 last_activity: 2026-06-24
 progress:
   total_phases: 5
   completed_phases: 2
   total_plans: 4
-  completed_plans: 4
+  completed_plans: 22
   percent: 40
 ---
 
@@ -21,13 +21,13 @@ progress:
 See: .planning/PROJECT.md (updated 2026-06-24)
 
 **Core value:** 降级优先的 GPU 任务调度 — 外部服务不可用时系统仍可运行。
-**Current focus:** Phase 27 — real-render-path-restoration
+**Current focus:** Phase 28 — cross system integrity & safety hardening
 
 ## Current Position
 
-Phase: 27 (real-render-path-restoration) — EXECUTING
-Plan: 2 of 2
-Status: Phase complete — ready for verification
+Phase: 28
+Plan: Not started
+Status: Ready to plan
 Last activity: 2026-06-24
 
 Progress: [██████████] 100%
@@ -50,6 +50,7 @@ Progress: [██████████] 100%
 | 29. Composition Tail + Quality Gate | 0/TBD | - | - |
 | 30. End-to-End Shipping Verification | 0/TBD | - | - |
 | 26 | 2 | - | - |
+| 27 | 2 | - | - |
 
 *v4.0 metrics will populate as plans complete*
 | Phase 26 P01 | 6min | 2 tasks | 2 files |
