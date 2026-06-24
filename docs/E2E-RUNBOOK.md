@@ -10,6 +10,160 @@ to diagnose common failure modes.
 
 ---
 
+## 0. Shipping master.mp4 — Two Paths (v4.0)
+
+> Added 2026-06-24 (Phase 30 P03 / SC#4). Single source of truth for producing
+> the final shippable `master.mp4`. The pipeline writes `master.mp4` (Phase 18
+> composition) plus a sibling `web-preview.mp4` (854px H.264 transcode,
+> best-effort). The delivery phase (Phase 19) checks `master.mp4` — **not**
+> `final.mp4` — and stamps `_composition.delivered_mastermp4` into
+> `quality-report.json`.
+
+Both paths use the **same entrypoint**:
+
+```bash
+node bin/pipeline.js run --workdir ./projects/<project> --episode <EP_ID>
+```
+
+The pipeline drives all 20 stages in order (see §3.1 stage table) and writes
+`master.mp4` + `web-preview.mp4` into the workdir root at the composition
+stage, then `quality-report.json` at delivery.
+
+| Path | Mode | CI-verifiable? | Use when |
+|------|------|----------------|----------|
+| **A. Degraded** | All external services fail-fast → placeholder outputs | Yes (automated test) | Smoke test, regression, no-GPU environments |
+| **B. Real GPU** | External services reachable → real H.264 mp4 | No (operator-deferred) | Actual drama production |
+
+### Path A: Degraded Mode (CI-verifiable)
+
+Degraded mode is **config-driven, not env-driven** — there is no `DEGRADED=1`
+flag on the CLI. Set the degraded config on the `Pipeline` constructor (the
+same pattern as `test/e2e/pipeline-degraded-e2e.test.mjs` and
+`test/e2e/degraded-shipping.test.mjs`):
+
+```js
+new Pipeline({
+  degradedMode: true,
+  qualityGate: { bypass: true },
+  goldTeam:     { baseUrl: 'http://127.0.0.1:0' },
+  hermes:       { baseUrl: 'http://127.0.0.1:0' },
+  jimeng:       { baseUrl: 'http://127.0.0.1:0' },
+  reviewPlatform: { baseUrl: 'http://127.0.0.1:0' },
+  // ...all external endpoints pointed at a closed port → ECONNREFUSED → fallback
+});
+```
+
+What "degraded" means: every external-service-dependent handler (Blender/GT
+`gtClient.submitTask`, jimeng/dreamina, canvas platform HTTP API) catches its
+connection error and returns a placeholder/passthrough result tagged with
+`_stub: true` or a `_reason` field. The composition handler writes a 0-byte
+`master.mp4` placeholder when `ffmpeg` has no real input shots to composite
+(PIPE-COMPOSE-01 degrade path). The pipeline still completes all 20 stages and
+delivery still stamps `_composition.delivered_mastermp4: true`.
+
+Expected output: `master.mp4` exists at the workdir root (0-byte placeholder),
+`web-preview.mp4` may or may not exist (best-effort), `quality-report.json`
+carries `_composition.delivered_mastermp4: true`.
+
+**Automated test:**
+
+```bash
+node --test test/e2e/degraded-shipping.test.mjs
+```
+
+This is the SC#1 acceptance gate — runs all 20 stages in ~10s and asserts
+`master.mp4` is produced plus the delivery marker is set.
+
+### Path B: Real GPU Mode (Operator)
+
+> **OPERATOR-DEFERRED for full v4.0 CI validation.** The degraded path is the
+> only one exercised by automated tests in Phase 30. Real-GPU validation is
+> performed per-episode by the operator. This is consistent with the v4.0
+> roadmap (STATE.md Deferred Items: "真实 GPU E2E 验证" → v4.1+).
+
+Command (no degraded config — external services must be reachable):
+
+```bash
+node bin/pipeline.js run --workdir ./projects/<project> --episode <EP_ID>
+```
+
+**Prerequisites:**
+
+- **GT client reachable** — `gtClient.submitTask` for Blender render succeeds.
+  Phase 27 P01 fixed the field-case bug (`taskType` / `taskId` camelCase, not
+  snake_case). Verify `GOLD_TEAM_URL` points at a live gold-team instance.
+- **dreamina CLI installed OR jimeng-client reachable** — Phase 27 P02 marked
+  `jimeng-client` as **fallback-only** with a one-shot deprecation warning
+  (`_warnJimengDeprecate`) emitted at the 3 production call sites
+  (soul-visual, character-generation, scene-generation). The preferred path is
+  the dreamina CLI; jimeng remains as a degrade-tolerant fallback.
+- **External API keys configured** — grep `lib/` for `process.env.` to
+  enumerate. Required for real run:
+  - `GOLD_TEAM_URL` (GPU render)
+  - `JIMENG_API_KEY` / `JIMENG_BASE_URL` / `JIMENG_SESSION_ID` (if using jimeng fallback)
+  - `OPENAI_API_KEY` / `OPENAI_BASE_URL` / `ZHIPU_API_KEY` / `DEEPSEEK_API_KEY`
+    (LLM judge for quality scoring — composition gate enforces ≥65 by default)
+  - `HERMES_URL` / `HERMES_MCP_URL` / `HERMES_MCP_API_KEY` (optional — parameter decision/audit)
+  - `REVIEW_CALLBACK_SECRET` (optional — remote review gates)
+  - `CANVAS_API_BASE_URL` (optional — infinite-canvas sync; Phase 28 P01
+    migrated `saveGraph` to HTTP API, no direct sqlite3 writes)
+- **`ffmpeg` on PATH** — used by `CompositionEngine.compose()` for the
+  `web-preview.mp4` transcode (Phase 29 P01). Without it, `master.mp4` may
+  still be produced but `web-preview.mp4` degrades silently.
+
+**Expected output:** real H.264 mp4 at `<workdir>/master.mp4` + sibling
+`web-preview.mp4`. When composition fails but the pipeline completes, degraded
+placeholders are still written (PIPE-COMPOSE-01 degrade path) — see §5.6.
+
+**Operator checklist before declaring an episode shipped:**
+
+- [ ] `quality-report.json` shows `_composition.delivered_mastermp4: true`
+- [ ] `master.mp4` file size > 0 (real video, not 0-byte placeholder)
+- [ ] `consistency-guard` did not throw — absence of `consistency-blocked.json`
+      in the workdir (Phase 29 P03: guard now throws on audit fail and writes
+      `consistency-blocked.json` with `_consistencyBlocked: true` before
+      throwing; episode is marked failed in `.pipeline-state.json`)
+- [ ] No `_consistencyBlocked: true` marker in `quality-report.json`
+- [ ] No `_stub: true` / `_reason` fields in critical artifacts
+      (`consistency-pass.json`, `quality-report.json`, `master.mp4`)
+
+### Ship-Readiness Gate (before tagging a release)
+
+Before tagging a v4.0 release, all three gates must pass:
+
+```bash
+# 1. Full unit/integration regression baseline (≥ 461; currently 508)
+npm test
+
+# 2. SC#2 — 9 audit findings closed at HEAD (one test() per finding)
+node --test test/audit-v4-acceptance.test.mjs
+
+# 3. SC#1 — degraded E2E produces master.mp4
+node --test test/e2e/degraded-shipping.test.mjs
+```
+
+**If any of the 9 audit tests (F1-F9) fail: the v4.0 ship is BLOCKED. Do not
+tag.** Each F-test pinpoints the exact regression (see audit matrix below).
+
+### Reference: 2026-06-23 Audit Matrix (9 findings)
+
+Mirror of `.planning/phases/30-end-to-end-shipping-verification/30-CONTEXT.md`.
+Original rationale: see MEMORY entry `project_pipeline-audit_2026-06-23.md`.
+
+| # | Audit finding | Closed by Phase | Verification command |
+|---|---------------|-----------------|----------------------|
+| F1 | composition phase 无 handler | 29 P01 (PIPE-COMPOSE-01) | `node --test test/audit-v4-acceptance.test.mjs` (F1) |
+| F2 | `final.mp4` vs `master.mp4` 文件名错位 | 29 P02 (PIPE-COMPOSE-02) | `node --test test/audit-v4-acceptance.test.mjs` (F2) |
+| F3 | motion-preview Blender 字段大小写错 (`task_type`) | 27 P01 (PIPE-RENDER-01) | `node --test test/audit-v4-acceptance.test.mjs` (F3) |
+| F4 | V6 不再写 `requirement.json` | 26 P01 (PIPE-DATA-01) | `node --test test/audit-v4-acceptance.test.mjs` (F4) |
+| F5 | scene ↔ spatio-temporal-script 时序倒置 | 26 P02 (PIPE-DATA-02) | `node --test test/audit-v4-acceptance.test.mjs` (F5) |
+| F6 | consistency-guard 非阻塞 + 死代码 | 29 P03 (PIPE-GUARD-01) | `node --test test/audit-v4-acceptance.test.mjs` (F6) |
+| F7 | jimeng-client deprecated 仍被调用 | 27 P02 (PIPE-RENDER-02) | `node --test test/audit-v4-acceptance.test.mjs` (F7) |
+| F8 | canvasGraph 双写竞态 | 28 P01 (PIPE-INTEGRITY-01) | `node --test test/audit-v4-acceptance.test.mjs` (F8) |
+| F9 | repair-canvas SQL 注入面 | 28 P02 (PIPE-INTEGRITY-02) | `node --test test/audit-v4-acceptance.test.mjs` (F9) |
+
+---
+
 ## 1. Prerequisites
 
 ### 1.1 External services
