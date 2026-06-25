@@ -1,0 +1,35 @@
+{
+  "_phase": "script-generation",
+  "_generatedAt": "2026-06-25T06:08:05.861Z",
+  "_degraded": true,
+  "_degradeReason": "LLM 调用失败: 401 {\"error\":{\"code\":\"401\",\"message\":\"令牌已过期或验证不正确\"}}",
+  "outline_input": {
+    "title": "候选 1 — 悬念切入切入",
+    "logline": "通用题材短剧,悬念切入切入:"
+  },
+  "candidates": [
+    {
+      "id": "script-1",
+      "title": "候选 1 — 悬念切入切入 — 紧凑悬疑版",
+      "style": "紧凑悬疑",
+      "episodes": [
+        {
+          "id": "ep-1",
+          "title": "第1集 悬念切入",
+          "synopsis": "候选 1 — 悬念切入切入的第1集剧情梗概 (模板降级)",
+          "dialogues": [
+            {
+              "character": "旁白",
+              "line": "紧凑悬疑版本:候选 1 — 悬念切入切入的第1集剧情梗概 (模板降级)"
+            },
+            {
+              "character": "主角",
+              "line": "... (模板对白,LLM 降级)"
+            }
+          ]
+        }
+      ],
+      "_template": true
+    }
+  ]
+}
