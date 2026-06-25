@@ -2,15 +2,15 @@
 gsd_state_version: 1.0
 milestone: v5.0
 milestone_name: Hermes-Native Migration
-status: ready_to_plan
-stopped_at: Phase 35 VERIFIED PASSED — 5/5 SC met, 353 cross-plugin tests pass, 0 gaps. Keystone shipped. Ready to plan Phase 36 (p04-p13 port).
-last_updated: "2026-06-26T00:00:00.000Z"
-last_activity: "2026-06-26 — Phase 35 verified passed (VERIFICATION.md created)."
+status: verifying
+stopped_at: Phase 35 complete — all 5 plans (35-01/02/03/04/05) shipped. Vertical slice verified end-to-end; 53 Phase 35 tests + 353 cross-plugin regression green. Ready for Phase 36.
+last_updated: "2026-06-25T23:07:00.241Z"
+last_activity: "2026-06-26 — Phase 35 verification complete (VERIFICATION.md status: passed)."
 progress:
   total_phases: 9
   completed_phases: 4
-  total_plans: 21
-  completed_plans: 20
+  total_plans: 26
+  completed_plans: 22
   percent: 44
 ---
 
@@ -60,6 +60,7 @@ v5.0: [░░░░░░░░░░░░░░░░░░░░] 0/9 phases 
 
 *v5.0 metrics populate as plans complete*
 | Phase 35 P05 | 5min | 2 tasks | 5 files |
+| Phase 36 P02 | 3m | 9 tasks | 7 files |
 
 ## Accumulated Context
 
@@ -83,6 +84,7 @@ v5.0 roadmap decisions:
 - **Phase 38/39 解耦验证决策点**: OPENCLAW-REMOVE-04 + CANVAS-IN-HERMES-04 E2E 是 v5.0 ship 决策点(类似 v4.0 Phase 30 角色)
 - **Phase 33 无显式 REQ**: PipelineStateStore + AssetBus V3 + CreativeHistoryTracker 是 HERMES-SKILL-02/03 的隐式基础(从 v3.0 SCHEMA/B4 能力 porting 衍生),v5.0 REQ 未显式列出
 - **Phase 35-04 references/ skeleton**: 4 docs source verbatim from `_shared/v86-pipeline-mapping.md` as single source of truth (not re-derived); Phase 36 refines per-phase after port experience per SC#4. Phase 35 clearly marked (p01-p03 scope) vs Phase 36 (p04-p13) in each doc.
+- [Phase ?]: 36-02: p07 atomic §4 verified (4 experts in single delegate_task); p08/p09 GATE_ID=None per D-36-02; 22 unit tests pass (96 full suite)
 
 ### Pending Todos
 
@@ -116,7 +118,7 @@ None. Phase 33 verified. Phase 34 plan created. Ready to execute.
 
 ## Session Continuity
 
-Last session: 2026-06-25T22:53:56.519Z
+Last session: 2026-06-25T23:06:17.413Z
 Stopped at: Phase 35 complete — all 5 plans (35-01/02/03/04/05) shipped. Vertical slice verified end-to-end; 53 Phase 35 tests + 353 cross-plugin regression green. Ready for Phase 36.
 Resume file: None
 

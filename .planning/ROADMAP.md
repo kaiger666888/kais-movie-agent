@@ -255,7 +255,7 @@ Plans:
 | 33. Pipeline State & Asset Bus | 3/5 | In Progress|  |
 | 34. Review Gate Framework | 1/5 | In Progress|  |
 | 35. Orchestration Skill Skeleton | 5/6 | In Progress|  |
-| 36. Remaining 10 Phases Port | 0/TBD | Not started | - |
+| 36. Remaining 10 Phases Port | 2/6 | In Progress|  |
 | 37. Canvas Sync Migration | 0/TBD | Not started | - |
 | 38. OpenClaw Decoupling + Docs | 0/TBD | Not started | - |
 | 39. E2E Validation + v5.0 Audit | 0/TBD | Not started | - |
