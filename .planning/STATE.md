@@ -3,10 +3,10 @@ gsd_state_version: 1.0
 milestone: v5.0
 milestone_name: Hermes-Native Migration
 status: planning
-last_updated: "2026-06-25T13:15:16.415Z"
+last_updated: "2026-06-25T13:30:00.000Z"
 last_activity: 2026-06-25
 progress:
-  total_phases: 0
+  total_phases: 9
   completed_phases: 0
   total_plans: 0
   completed_plans: 0
@@ -17,98 +17,85 @@ progress:
 
 ## Project Reference
 
-See: .planning/PROJECT.md (updated 2026-06-24)
+See: .planning/PROJECT.md (updated 2026-06-25)
 
 **Core value:** 降级优先的 GPU 任务调度 — 外部服务不可用时系统仍可运行。
-**Current focus:** Milestone complete
+**v5.0 focus:** kais-movie-agent 13 步短剧管线整体迁入 hermes-agent 成为原生 skill,彻底清除 openclaw 编排层。
 
 ## Current Position
 
-Phase: Not started (defining requirements)
+Phase: 31 — Plugin Skeleton + Hermes-Agent Wiring
 Plan: —
-Status: Defining requirements
-Last activity: 2026-06-25 — Milestone v5.0 started
+Status: Ready to plan
+Last activity: 2026-06-25 — v5.0 roadmap created (9 phases, 31-39)
+
+**Progress bar:**
+```
+v5.0: [░░░░░░░░░░░░░░░░░░░░] 0/9 phases (0%)
+       31........................39
+```
 
 ## Performance Metrics
 
-**Velocity:**
+**Velocity (cumulative):**
 
-- Total plans completed (cumulative v1.0+v2.0+v3.0): 19+
-- v3.0 plans completed: archived
-- v2.0 average duration: ~2 min/plan (Phase 10 baseline reference)
+- v1.0 + v2.0 + v3.0 + v4.0: 9 + 19 + 35 + 12 = 75 plans archived
+- v4.0 average: ~5-6 min/plan (reference baseline from Phase 26-30)
 
-**By Phase (v4.0):**
+**v5.0 By Phase (populates as plans complete):**
 
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
-| 26. Data Spine Repair | 0/TBD | - | - |
-| 27. Real Render Path Restoration | 2/2 | 8min avg | 2 tasks/plan, 2 files/plan |
-| 28. Cross-System Integrity & Safety | 0/TBD | - | - |
-| 29. Composition Tail + Quality Gate | 0/TBD | - | - |
-| 30. End-to-End Shipping Verification | 0/TBD | - | - |
-| 26 | 2 | - | - |
-| 27 | 2 | - | - |
-| 28 | 2 | - | - |
-| 29 | 3 | - | - |
-| 30 | 3 | - | - |
+| 31. Plugin Skeleton + Wiring | 0/TBD | - | - |
+| 32. Kais-AIGC Backend (Python) | 0/TBD | - | - |
+| 33. Pipeline State & Asset Bus | 0/TBD | - | - |
+| 34. Review Gate Framework | 0/TBD | - | - |
+| 35. Orchestration Skill Skeleton | 0/TBD | - | - |
+| 36. Remaining 10 Phases Port | 0/TBD | - | - |
+| 37. Canvas Sync Migration | 0/TBD | - | - |
+| 38. OpenClaw Decoupling + Docs | 0/TBD | - | - |
+| 39. E2E Validation + v5.0 Audit | 0/TBD | - | - |
 
-*v4.0 metrics will populate as plans complete*
-| Phase 26 P01 | 6min | 2 tasks | 2 files |
-| Phase 26 P02 | 4min | 2 tasks | 4 files |
-| Phase 27 P01 | 4min | 2 tasks | 2 files |
-| Phase 27 P02 | 12min | 2 tasks | 2 files |
-| Phase 28 P01 | 3.4min | 2 tasks | 2 files |
-| Phase 28 P02 | 4.0min | 2 tasks | 2 files |
-| Phase 29 P01 | 6min | 1 task | 2 files |
-| Phase 29 P02 | 4min | 1 task | 3 files |
-| Phase 29 P03 | 14min | 2 tasks | 3 files |
-| Phase 30 P01 | 5min | 1 task | 1 file |
-| Phase 30 P02 | 6min | 1 task | 1 file |
-| Phase 30 P03 | 3min | 2 tasks | 1 file |
+*v5.0 metrics populate as plans complete*
 
 ## Accumulated Context
 
 ### Decisions
 
-Decisions are logged in PROJECT.md.
-Recent decisions affecting current work:
+Decisions logged in PROJECT.md + REQUIREMENTS.md.
+v5.0 key decisions (locked 2026-06-25):
 
-- **v4.0 Roadmap (2026-06-24):** 5 phases (26-30), derived from 2026-06-23 端到端数据流审计的 9 项沉默失败。数据流依赖链驱动 phase 划分（非按 REQ category）。
-- **Phase 26 first (foundation):** PIPE-DATA-01/02 是上游数据 spine 修复，不先修复则下游 composition/渲染测试都没有真实输入。character-generation 拿不到 character 列表 + scene-generation 拿不到 sts 产物 → 必须先修。
-- **Phase 29 (composition + gate)决战点:** PIPE-COMPOSE-01/02 + PIPE-GUARD-01 三个 REQ 耦合在一起 — composition 没 handler 则 consistency-guard 的"在 composition 阶段统一判定"无目标，文件名错位则即使 composition 实现也 delivery 失败。三者必须同 ship 或都不 ship。
-- **Phase 28 独立 hardening:** PIPE-INTEGRITY-01/02 与渲染/数据流无依赖（canvas 双写 + SQL 注入），可并行或前置。保守排在 26/27 之后便于 review。
-- **Phase 30 验收 gate (无新 REQ):** degraded E2E 跑通产出 master.mp4 + 重跑审计 checklist 100% pass + 测试基线 ≥461。是 v4.0 ship 决策点。
-- v3.0 关键决策保留: Phase 19 D1 callLLM multimodal 已 shipped; AssetBus V3 / BlacklistEngine / Seedance 2.0 / CreativeHistoryTracker / CrossEpisodeAssetIndex / FineTuneETL 已 shipped。
-- [Phase 26]: PIPE-DATA-01 closed: pain-report.json main reader + observable legacy warns (SC#4) — V6 pain-discovery writes pain-report.json (not requirement.json); reader migrated accordingly
-- [Phase 26]: PIPE-DATA-02 closed: PHASES reordered so spatio-temporal-script (stageOrder 8) precedes scene-generation (9) precedes scene-selection (10) — scene-generation bus.read('spatio-temporal-script') now finds asset already written; VALID_PHASES synced; 6-test regression suite added; 2 pre-existing hardcoded phase-id lists (v41-integration.test.js, handlers.test.mjs) updated to match
-- [Phase 27 P01]: PIPE-RENDER-01 closed: motion-preview submitTask field-case fix (line 1074 task_type→taskType, line 1078 task.task_id→task.taskId) + 4-case regression test; line 1115 (collector schema) intentionally left snake_case per D-PIPE-RENDER-01
-- [Phase 27 P02]: PIPE-RENDER-02 closed: jimeng-client marked fallback-only at 3 production call sites (lines 651/2185/2606) with module-level dedup deprecate warn `_warnJimengDeprecate()` (one warn per process); strict degrade path verified at all 3 sites (soul-visual try/catch + character/scene-generation ping gates); `_resetJimengDeprecateFlagForTest()` test-only export added; 5-case regression test; baseline 483/483 pass
-- [Phase ?]: Phase 28 P01: canvas saveGraph migrated to HTTP API — PIPE-INTEGRITY-01 closed
-- [Phase 28 P02]: PIPE-INTEGRITY-02 closed: repair-canvas CLI assertPositiveInt (/^\d+$/ + Number.isInteger defense-in-depth) on --projectId/--episodesId; named-value stderr + exit 1; 6-case spawnSync regression (normal/negative/string/injection `1; DROP TABLE x`/float 5.5/episodesId-symmetric); baseline 487→493
-- [Phase 29 P01]: PIPE-COMPOSE-01 (handler slice) closed: composition handler writes master.mp4 (not final.mp4) + sibling web-preview.mp4 (854px H.264 -an transcode, best-effort) + 0-byte degraded placeholders when compose throws or returns {output:null}; 4-case regression test (2 ffmpeg-gated success + 2 unconditional degraded); compose() returns null-output-not-throw deviation auto-fixed (Rule 2); full PIPE-COMPOSE-01 closure pending Plan 02 (bin/pipeline.js invocation + delivery filename alignment)
-- [Phase 29 P02]: PIPE-COMPOSE-02 closed: delivery handler now checks master.mp4 (not final.mp4) + degrade-tolerant web-preview.mp4 check (warn-not-fail, non-blocking) + top-level _composition.delivered_mastermp4 + delivered_webpreview operator markers in quality-report.json; 4-case regression test; _hermesAudit + return metrics renamed (master_mp4_status + web_preview_status); pre-existing handlers.test.mjs delivery assertion updated (Rule 1, final_mp4 -> master_mp4); baseline 29/29 preserved
-- [Phase 29 P03]: PIPE-GUARD-01 closed: consistency-guard audit fail now throws Error (propagates to Pipeline.run → episode marked failed, no more silent warn-and-continue) + writes consistency-blocked.json with _consistencyBlocked: true + console.error (not console.warn); hermesAudit + collector.record reordered to run BEFORE throw so telemetry captures failures; dead code deleted (lib/gate-constraints.js 418 lines + lib/invariant-bus.js 329 lines, zero external imports confirmed); 4-case regression test (fetch-mock forces below-threshold LLM scores since auditContinuity treats null-scored dims as pass); baseline 455/455 phase tests pass
-- [Phase 30 P01]: SC#1 verified — degraded E2E test (test/e2e/degraded-shipping.test.mjs) runs all 20 stages in 10.3s, asserts master.mp4 produced + _composition.delivered_mastermp4 marker. Rule 3 deviation: plan's bin/pipeline.js --to subprocess interface did not match codebase (no --to flag; degraded mode is config-driven); test constructs Pipeline directly with v2.0 degraded pattern. npm baseline 508 preserved; e2e suite 7 -> 10.
-- [Phase 30 P02]: SC#2 verified — 9-finding audit regression suite (test/audit-v4-acceptance.test.mjs) automates the 2026-06-23 audit closure checklist as 9 strict test() blocks (F1-F9). Brace-depth slicer isolates phase handler bodies (T-30-04 mitigation). RED spot-check (revert F3 taskType → task_type) confirmed test catches regression. npm baseline 508 → 517 (+9 audit tests, 0 regressions). Rule 1 deviation: F2 assertion refined from "count of final.mp4 === 0" to "no string-literal path reference" — comment mentions documenting the fix are allowed; only path literals flowing to join/existsSync count.
-- [Phase 30 P03]: SC#4 verified — docs/E2E-RUNBOOK.md updated (324 → 478 lines) with §0 "Shipping master.mp4 — Two Paths": Path A (degraded, config-driven per 30-01 finding, CI-verifiable via test/e2e/degraded-shipping.test.mjs) + Path B (real GPU, OPERATOR-DEFERRED per v4.0 roadmap, prerequisites enumerated from lib/ process.env grep) + Ship-Readiness Gate (npm test + audit-v4-acceptance + degraded E2E) + 9-finding audit matrix. Zero stale refs to deleted gate-constraints.js/invariant-bus.js. v4.0 milestone complete (12/12 plans, 100%).
+- **Skill 位置**: 并入 hermes-agent 仓库 (`hermes-agent/skills/kais-movie-pipeline/`)
+- **代码迁移**: 全部 Python 重写(13 phase + lib/* clients),不做 Node subprocess 桥接(避免双运行时维护成本)
+- **Canvas 去留**: 保留,迁移到 hermes-agent 内部 event hook,不走 openclaw
+
+v5.0 roadmap decisions:
+
+- **Phase 编号**: 继续 v4.0(Phase 30),v5.0 从 Phase 31 起,不重置
+- **Critical path**: 31 → 32 → 35 → 36 → 38 → 39(main spine);33(state)∥ 34(gates)partial parallel after 31;37(canvas)follows 35
+- **Phase 31 first (foundation)**: 3 plugin 骨架是 32/33/34 三个交付 phase 的填充目标,不先建骨架则无外壳可填
+- **Phase 32 before 35 (backend before skill)**: orchestration skill 需要 4 个 client + asset bus + gate 三者就位才能 wired,GPU-DIRECT 必须先于 HERMES-SKILL
+- **Phase 35 vertical slice (p01-p03 only)**: 用前 3 phase 验证 SKILL.md + runner.py + delegate_task + asset bus + gate 全链路打通,再做 Phase 36 剩余 10 phase。降低 risk(全 13 phase 一次 port 失败回退成本高)
+- **Phase 36 reference port,非 re-design**: p04-p13 行为对齐 Node.js lib/* V8.6 handler,不重新设计 phase 逻辑
+- **Phase 38/39 解耦验证决策点**: OPENCLAW-REMOVE-04 + CANVAS-IN-HERMES-04 E2E 是 v5.0 ship 决策点(类似 v4.0 Phase 30 角色)
+- **Phase 33 无显式 REQ**: PipelineStateStore + AssetBus V3 + CreativeHistoryTracker 是 HERMES-SKILL-02/03 的隐式基础(从 v3.0 SCHEMA/B4 能力 porting 衍生),v5.0 REQ 未显式列出
 
 ### Pending Todos
 
-- [ ] `/gsd:plan-phase 26` — Phase 26 plan + execute (Data Spine Repair)
-- [ ] **Operator: 补 45 对真实 golden set pair + 首次 baseline 运行 (v3.0 Phase 19 D1-03 deferred — 仍 carry-forward)**
-- [ ] Operator consultation needed before any Seedance 2.0 audio real-API work (v3.1)
-- [ ] 50+50 pair labeled eval set construction for DINOv2 threshold calibration (v3.1)
+- [ ] `/gsd:plan-phase 31` — Phase 31 plan + execute (Plugin Skeleton + Hermes-Agent Wiring)
 
 ### Blockers
 
-None. Phase 30 complete — all 4 SCs verified. v4.0 milestone ready for ship decision.
+None. v5.0 roadmap created. Ready to plan Phase 31.
 
-### Key Risks (v4.0)
+### Key Risks (v5.0)
 
-1. **PIPE-RENDER-02 jimeng 迁移工作量未知** — 如果 dreamina CLI 迁移成本大，Phase 27 SC#3 允许"显式标注 fallback-only"快速路径。先 plan 时确认 dreamina CLI 现状再选路径。
-2. **PIPE-DATA-01 修复路径未知** — 恢复 requirement.json 写入 vs 从 pain-report.json 读，需在 Phase 26 plan 时确认哪个对 V6 数据流更自然。
-3. **PIPE-COMPOSE-01 真实渲染 vs degraded 模式** — composition handler 在 degraded 模式产出占位 mp4，真实 GPU 模式产出真实 mp4。真实 GPU 验证 operator 侧（out of scope），degraded 路径必须在 Phase 30 SC#1 可验证。
-4. **canvasGraph 写入路径统一方案未定** — Phase 28 需确认是统一走 kais-aigc-platform HTTP API 还是统一走本地 sqlite3（前者更安全但需平台 API 契约）。
+1. **Python 重写工作量** — 13 phase + 4 client + state + gate 全 Python 重写,工作量大于 v4.0(5 phase 修复)。Phase 35 vertical slice(p01-p03 only)是风险隔离设计,先验证全链路再 port 剩余 10 phase。
+2. **hermes-agent plugin loader 契约未知** — Phase 31 必须先确认 hermes-agent plugin.json schema、tool registry 接口、event bus 接口;契约不明则 32/33/34 无从填充。Phase 31 plan 时需读 hermes-agent plugin 文档/源码。
+3. **delegate_task approval callback 行为** — GATE-NATIVE-03 的 blocking gate 暂停 runner + webhook callback 驱动 resume,需确认 hermes-agent delegate_task 是否原生支持 approval 协议,不支持则需 adapter。
+4. **行为对齐验证** — Phase 36 reference port 必须与 Node.js V8.6 行为等价,但 13 phase 输入/输出/gate 触发时机散落在 lib/* 多文件,需 build 对照表(expert-mapping.md 是载体)。
+5. **openclaw grep 关键词覆盖** — OPENCLAW-REMOVE-01 的 grep 关键词(openclaw / OpenClaw / sessions_spawn(runtime="acp") / Toonflow)是否覆盖所有 openclaw 引用形态,需在 Phase 38 plan 时 double check。
+6. **movie-experts skill 接口稳定性** — Phase 35/36 通过 delegate_task 调 15 个 movie-experts,假设其接口稳定。若 movie-experts 接口在 v5.0 期间变更,需同步更新 expert-mapping.md。
 
 ## Deferred Items
 
@@ -117,32 +104,34 @@ None. Phase 30 complete — all 4 SCs verified. v4.0 milestone ready for ship de
 | v3.1 | 上游 creative_history lineage retrofit (script→sts→shot) | Deferred | v3.0 roadmap |
 | v3.1 | creative_history auto-rerender on script edit | Deferred | v3.0 roadmap |
 | v3.1 | 预算告警 + 阻断逻辑 | Deferred | v3.0 roadmap |
-| v4.1+ | 真实 GPU E2E 验证(产出可播放 final.mp4) | Deferred | v4.0 roadmap (operator 侧) |
-| v4.1+ | 多模型 A/B 测试 (Runway/Kling/Sora) | Deferred | v3.0 roadmap |
-| v4.1+ | 多平台导出 (抖音/B站/YouTube/快手) | Deferred | v3.0 roadmap |
-| v4.1+ | 多语言 dubbing (HeyGen 175+) | Deferred | v3.0 roadmap |
-| v4.1+ | 分布式多机部署 | Deferred | v2.0 |
-| v4.1+ | TypeScript 迁移 / CI/CD pipeline | Deferred | v2.0 |
+| v4.1+ | 真实 GPU E2E 验证(产出可播放 master.mp4) | Deferred | v4.0 roadmap (operator 侧) |
+| v6.0+ | 多模型 A/B 测试 (Runway/Kling/Sora) | Deferred | v3.0 roadmap |
+| v6.0+ | 多平台导出 (抖音/B站/YouTube/快手) | Deferred | v3.0 roadmap |
+| v6.0+ | 多语言 dubbing (HeyGen 175+) | Deferred | v3.0 roadmap |
+| v6.0+ | 独立 lip sync phase (sync.so / HeyGen) | Deferred | v3.0 roadmap |
+| v6.0+ | 分布式多机部署 | Deferred | v2.0 |
+| v6.0+ | TypeScript 迁移 / CI/CD pipeline | Deferred | v2.0 |
+| v6.0+ | hermes-agent dashboard 内嵌管线可视化 | Deferred | v5.0 PROJECT.md |
 
 ## Session Continuity
 
-Last session: 2026-06-24T12:05:00.000Z
-Stopped at: Phase 30 Plan 03 complete — E2E-RUNBOOK.md updated with v4.0 two-path shipping procedure (degraded + real GPU). SC#4 verified. Phase 30 (all 3 plans) complete — v4.0 milestone ready for ship decision.
+Last session: 2026-06-25T13:30:00.000Z
+Stopped at: v5.0 roadmap created — 9 phases (31-39) defined, 25 requirements mapped, critical path identified. Phase 31 ready to plan.
 Resume file: None
 
 **Next action:**
 
 ```
-v4.0 milestone complete (12/12 plans, 100%). Ship decision: run Ship-Readiness Gate
-(npm test ≥461 + node --test test/audit-v4-acceptance.test.mjs + node --test test/e2e/degraded-shipping.test.mjs)
-then tag per docs/E2E-RUNBOOK.md §0 Ship-Readiness Gate.
+/gsd:plan-phase 31
 ```
 
 **Critical context to preserve across sessions:**
 
-- Phase 26 (Data Spine) is foundation — PIPE-DATA-01/02 必须先于 27/29，否则下游测试无真实输入
-- Phase 29 (Composition + Gate) 是 v4.0 决战点 — 三个耦合 REQ 必须 ship together
-- Phase 28 独立 hardening — canvas 双写 + SQL 注入，无渲染/数据流依赖
-- Phase 30 验收 gate — degraded E2E 产出 master.mp4 + 审计 checklist 100% pass
-- v4.0 不重置 phase 编号 — 继续 v3.0 的 25，从 26 起
-- 9 项审计点来自 2026-06-23 memory: project_pipeline-audit_2026-06-23.md
+- v5.0 phase numbering continues from v4.0 (Phase 30) — starts at Phase 31, do NOT reset
+- Phase 31 (Plugin Skeleton) is foundation — 3 plugin 骨架是 32/33/34 填充目标
+- Phase 32 before 35 — GPU-DIRECT clients 必须先于 HERMES-SKILL orchestration
+- Phase 35 vertical slice (p01-p03 only) — 风险隔离,先验证全链路再 port 剩余
+- Phase 36 is reference port — 行为对齐 Node.js lib/* V8.6,非 re-design
+- Phase 38/39 是 v5.0 ship 决策点 — 0 openclaw 验证 + openclaw OFF E2E 产出 master.mp4
+- Architectural decisions locked 2026-06-25: skill 并入 hermes-agent + 全 Python 重写 + canvas 保留迁 hook
+- 不重写已存在资产: movie-experts 15 skill + kais-aigc-platform 微服务栈保持现状
