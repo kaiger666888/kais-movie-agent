@@ -167,7 +167,7 @@ Plans:
 - [ ] 35-01-PLAN.md — SKILL.md manifest + skill directory scaffold (Wave 1)
 - [ ] 35-02-PLAN.md — runner.py + AssetBus ASSET_SCHEMA extension with 6 phase-output slots (Wave 1)
 - [ ] 35-03-PLAN.md — p01_hook_topic + p02_outline + p03_script_audit vertical slice phase modules (Wave 2 — needs 35-01/02)
-- [ ] 35-04-PLAN.md — references/ 4 skeleton docs (pipeline-dag, review-gates, asset-bus-schema, expert-mapping) (Wave 1)
+- [x] 35-04-PLAN.md — references/ 4 skeleton docs (pipeline-dag, review-gates, asset-bus-schema, expert-mapping) (Wave 1) — COMPLETE 2026-06-26, commit 8e54bedff
 - [ ] 35-05-PLAN.md — tests (test_runner + test_p01_p02_p03 + test_skill_discovery) + skill discovery verification (Wave 2 — needs 35-01/02/03)
 
 **Success Criteria** (what must be TRUE):
@@ -254,7 +254,7 @@ Plans:
 | 32. Kais-AIGC Platform Backend | 2/6 | In Progress|  |
 | 33. Pipeline State & Asset Bus | 3/5 | In Progress|  |
 | 34. Review Gate Framework | 1/5 | In Progress|  |
-| 35. Orchestration Skill Skeleton | 0/5 | Not started | - |
+| 35. Orchestration Skill Skeleton | 1/5 | In Progress|  |
 | 36. Remaining 10 Phases Port | 0/TBD | Not started | - |
 | 37. Canvas Sync Migration | 0/TBD | Not started | - |
 | 38. OpenClaw Decoupling + Docs | 0/TBD | Not started | - |

@@ -2,16 +2,16 @@
 gsd_state_version: 1.0
 milestone: v5.0
 milestone_name: Hermes-Native Migration
-status: executing
-stopped_at: Phase 34 Plan 04 complete (4/4 plans executed). Wave 1 (34-01/02/03) + Wave 2 (34-04) shipped; 68 review_gates tests pass.
-last_updated: "2026-06-25T15:40:30Z"
-last_activity: "2026-06-25 — Phase 34 Plan 04 (tools.py dispatch wiring) complete; all 4 plans executed, 68/68 review_gates tests pass, 251 cross-plugin tests pass (zero regressions)."
+status: planning
+stopped_at: Phase 35 plan 04 complete (references/ 4 skeleton docs). Wave 1 parallel plans (35-01/02) running alongside.
+last_updated: "2026-06-26T00:10:00.000Z"
+last_activity: 2026-06-26 — Phase 35-04 complete (4 reference docs, HERMES-SKILL-05 skeleton).
 progress:
   total_phases: 9
-  completed_phases: 4
-  total_plans: 16
+  completed_phases: 3
+  total_plans: 21
   completed_plans: 16
-  percent: 44
+  percent: 33
 ---
 
 # Project State
@@ -25,10 +25,10 @@ See: .planning/PROJECT.md (updated 2026-06-25)
 
 ## Current Position
 
-Phase: 35 — Orchestration Skill Skeleton | Status: Ready to plan | Last activity: 2026-06-25 — Phase 34 verified
-Plan: 4/4 (34-01 gate.py lifecycle, 34-02 gates.yaml, 34-03 runner_hooks, 34-04 tools.py dispatch — ALL COMPLETE)
-Status: Phase 34 verified (5/5 SC, 251 cross-plugin tests pass). Ready to plan Phase 35.
-Last activity: 2026-06-25 — Phase 34 verified (GATE-NATIVE-01..05 complete).
+Phase: 35 — Orchestration Skill Skeleton | Status: In progress (Wave 1) | Last activity: 2026-06-26 — Plan 35-04 complete
+Plan: 1/5 (35-04 references/ docs complete; 35-01 SKILL.md, 35-02 runner.py, 35-03 phases, 35-05 tests running/pending)
+Status: Plan 35-04 complete (HERMES-SKILL-05 skeleton — 4 reference docs, 408 LOC). Wave 1 parallel plans 35-01/02 running.
+Last activity: 2026-06-26 — Plan 35-04 verified (4 docs match SC#5 acceptance criteria).
 
 **Progress bar:**
 
@@ -52,7 +52,7 @@ v5.0: [░░░░░░░░░░░░░░░░░░░░] 0/9 phases 
 | 32. Kais-AIGC Backend (Python) | 5/5 | ~50min | 10min |
 | 33. Pipeline State & Asset Bus | 4/4 | ~42min | 10.5min |
 | 34. Review Gate Framework | 3/4 | ~14min (34-01/02/03) | ~5min |
-| 35. Orchestration Skill Skeleton | 0/TBD | - | - |
+| 35. Orchestration Skill Skeleton | 1/5 | ~25min (35-04) | ~25min |
 | 36. Remaining 10 Phases Port | 0/TBD | - | - |
 | 37. Canvas Sync Migration | 0/TBD | - | - |
 | 38. OpenClaw Decoupling + Docs | 0/TBD | - | - |
@@ -81,6 +81,7 @@ v5.0 roadmap decisions:
 - **Phase 36 reference port,非 re-design**: p04-p13 行为对齐 Node.js lib/* V8.6 handler,不重新设计 phase 逻辑
 - **Phase 38/39 解耦验证决策点**: OPENCLAW-REMOVE-04 + CANVAS-IN-HERMES-04 E2E 是 v5.0 ship 决策点(类似 v4.0 Phase 30 角色)
 - **Phase 33 无显式 REQ**: PipelineStateStore + AssetBus V3 + CreativeHistoryTracker 是 HERMES-SKILL-02/03 的隐式基础(从 v3.0 SCHEMA/B4 能力 porting 衍生),v5.0 REQ 未显式列出
+- **Phase 35-04 references/ skeleton**: 4 docs source verbatim from `_shared/v86-pipeline-mapping.md` as single source of truth (not re-derived); Phase 36 refines per-phase after port experience per SC#4. Phase 35 clearly marked (p01-p03 scope) vs Phase 36 (p04-p13) in each doc.
 
 ### Pending Todos
 

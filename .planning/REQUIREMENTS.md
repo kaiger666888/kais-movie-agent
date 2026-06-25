@@ -81,7 +81,7 @@
 | HERMES-SKILL-02 | 35 | Pending |
 | HERMES-SKILL-03 | 35 (p01-p03) + 36 (p04-p13) | Pending |
 | HERMES-SKILL-04 | 35 | Pending |
-| HERMES-SKILL-05 | 35 (dag+gates skeleton) + 36 (refined per phase) | Pending |
+| HERMES-SKILL-05 | 35 (dag+gates skeleton) + 36 (refined per phase) | Phase 35 skeleton half COMPLETE (35-04); Phase 36 refinement Pending |
 | GPU-DIRECT-01 | 32 | Complete |
 | GPU-DIRECT-02 | 32 | Complete |
 | GPU-DIRECT-03 | 32 | Complete |
