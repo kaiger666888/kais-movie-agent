@@ -164,8 +164,8 @@ Plans:
 **Plans**: 5 plans (35-01/02/04 Wave 1 parallel, 35-03/05 Wave 2)
 
 Plans:
-- [ ] 35-01-PLAN.md — SKILL.md manifest + skill directory scaffold (Wave 1)
-- [ ] 35-02-PLAN.md — runner.py + AssetBus ASSET_SCHEMA extension with 6 phase-output slots (Wave 1)
+- [x] 35-01-PLAN.md — SKILL.md manifest + skill directory scaffold (Wave 1) — COMPLETE 2026-06-26, commit f125024d3
+- [x] 35-02-PLAN.md — runner.py + AssetBus ASSET_SCHEMA extension with 6 phase-output slots (Wave 1) — COMPLETE 2026-06-26, commits ba6a05d86 + 278e2df62 + 3cb6ab933
 - [ ] 35-03-PLAN.md — p01_hook_topic + p02_outline + p03_script_audit vertical slice phase modules (Wave 2 — needs 35-01/02)
 - [x] 35-04-PLAN.md — references/ 4 skeleton docs (pipeline-dag, review-gates, asset-bus-schema, expert-mapping) (Wave 1) — COMPLETE 2026-06-26, commit 8e54bedff
 - [ ] 35-05-PLAN.md — tests (test_runner + test_p01_p02_p03 + test_skill_discovery) + skill discovery verification (Wave 2 — needs 35-01/02/03)

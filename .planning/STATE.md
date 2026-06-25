@@ -2,16 +2,16 @@
 gsd_state_version: 1.0
 milestone: v5.0
 milestone_name: Hermes-Native Migration
-status: planning
-stopped_at: Phase 35 plan 04 complete (references/ 4 skeleton docs). Wave 1 parallel plans (35-01/02) running alongside.
+status: completed
+stopped_at: Phase 33 verified (VERIFICATION.md status=passed). Phase 34 PLAN.md + 34-01..04 + CONTEXT.md + PATTERNS.md created.
 last_updated: "2026-06-26T00:10:00.000Z"
-last_activity: 2026-06-26 — Phase 35-04 complete (4 reference docs, HERMES-SKILL-05 skeleton).
+last_activity: "2026-06-26 — Plan 35-02 complete (runner.py + AssetBus 6-slot extension, 161 tests passing)."
 progress:
   total_phases: 9
   completed_phases: 3
   total_plans: 21
-  completed_plans: 16
-  percent: 33
+  completed_plans: 19
+  percent: 90
 ---
 
 # Project State
@@ -25,10 +25,10 @@ See: .planning/PROJECT.md (updated 2026-06-25)
 
 ## Current Position
 
-Phase: 35 — Orchestration Skill Skeleton | Status: In progress (Wave 1) | Last activity: 2026-06-26 — Plan 35-04 complete
-Plan: 1/5 (35-04 references/ docs complete; 35-01 SKILL.md, 35-02 runner.py, 35-03 phases, 35-05 tests running/pending)
-Status: Plan 35-04 complete (HERMES-SKILL-05 skeleton — 4 reference docs, 408 LOC). Wave 1 parallel plans 35-01/02 running.
-Last activity: 2026-06-26 — Plan 35-04 verified (4 docs match SC#5 acceptance criteria).
+Phase: 35 — Orchestration Skill Skeleton | Status: In progress (Wave 1) | Last activity: 2026-06-26 — Plan 35-02 complete
+Plan: 3/5 (35-01 SKILL.md, 35-02 runner.py + AssetBus ext, 35-04 references/ complete; 35-03 phases, 35-05 tests remaining)
+Status: Plan 35-02 complete (HERMES-SKILL-02 runner half — RunnerConfig + run_episode + 6 new AssetBus slots, 161 tests passing). Wave 1 plans 35-01/04 landed concurrently.
+Last activity: 2026-06-26 — Plan 35-02 verified (TDD RED→GREEN, Phase 33 regression preserved).
 
 **Progress bar:**
 
@@ -52,7 +52,7 @@ v5.0: [░░░░░░░░░░░░░░░░░░░░] 0/9 phases 
 | 32. Kais-AIGC Backend (Python) | 5/5 | ~50min | 10min |
 | 33. Pipeline State & Asset Bus | 4/4 | ~42min | 10.5min |
 | 34. Review Gate Framework | 3/4 | ~14min (34-01/02/03) | ~5min |
-| 35. Orchestration Skill Skeleton | 1/5 | ~25min (35-04) | ~25min |
+| 35. Orchestration Skill Skeleton | 3/5 | ~31min (35-02 6min + 35-04 25min + 35-01 concurrent) | ~10min |
 | 36. Remaining 10 Phases Port | 0/TBD | - | - |
 | 37. Canvas Sync Migration | 0/TBD | - | - |
 | 38. OpenClaw Decoupling + Docs | 0/TBD | - | - |
@@ -115,8 +115,8 @@ None. Phase 33 verified. Phase 34 plan created. Ready to execute.
 
 ## Session Continuity
 
-Last session: 2026-06-25T15:32:27.810Z
-Stopped at: Phase 33 verified (VERIFICATION.md status=passed). Phase 34 PLAN.md + 34-01..04 + CONTEXT.md + PATTERNS.md created.
+Last session: 2026-06-26T00:10:00.000Z
+Stopped at: Phase 35 Wave 1 — Plans 35-01/02/04 complete (SKILL.md, runner.py, references/, AssetBus 6-slot extension). Plans 35-03 (phase modules p01-p03) and 35-05 (integration tests) remaining.
 Resume file: None
 
 **Next action:**

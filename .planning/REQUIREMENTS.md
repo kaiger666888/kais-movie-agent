@@ -78,7 +78,7 @@
 | Requirement | Phase | Status |
 |-------------|-------|--------|
 | HERMES-SKILL-01 | 35 | Pending |
-| HERMES-SKILL-02 | 35 | Pending |
+| HERMES-SKILL-02 | 35 | Partial (runner.py + checkpoint + parallel_shots=4 complete in 35-02; awaits 35-05 integration tests for full sign-off) |
 | HERMES-SKILL-03 | 35 (p01-p03) + 36 (p04-p13) | Pending |
 | HERMES-SKILL-04 | 35 | Pending |
 | HERMES-SKILL-05 | 35 (dag+gates skeleton) + 36 (refined per phase) | Phase 35 skeleton half COMPLETE (35-04); Phase 36 refinement Pending |
