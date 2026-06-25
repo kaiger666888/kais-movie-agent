@@ -99,9 +99,9 @@ Plans:
 
 Plans:
 - [ ] 32-01-PLAN.md — gold_team.py (GoldTeamClient + X-API-Key + async polling + degrade, 8-10 tests)
-- [ ] 32-02-PLAN.md — review_platform.py (JWT bearer + HMAC-SHA256 callback with 5min window + degrade, 8-12 tests)
+- [x] 32-02-PLAN.md — review_platform.py (JWT bearer + HMAC-SHA256 callback with 5min window + degrade, 8-12 tests)
 - [ ] 32-03-PLAN.md — canvas.py (HTTP API v2 only — preserves v4.0 PIPE-INTEGRITY-01, no sqlite, 6-8 tests)
-- [ ] 32-04-PLAN.md — jimeng.py (6 subcommands + session rotation + exp backoff, 7-9 tests)
+- [x] 32-04-PLAN.md — jimeng.py (6 subcommands + session rotation + exp backoff, 7-9 tests)
 - [ ] 32-05-PLAN.md — tools.py dispatch wiring + 17-element task_type enum (Wave 2, depends on 32-01..04)
 
 **Success Criteria** (what must be TRUE):
@@ -238,7 +238,7 @@ Plans:
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 31. Plugin Skeleton + Hermes-Agent Wiring | 2/3 | In Progress|  |
-| 32. Kais-AIGC Platform Backend | 0/TBD | Not started | - |
+| 32. Kais-AIGC Platform Backend | 2/6 | In Progress|  |
 | 33. Pipeline State & Asset Bus | 0/TBD | Not started | - |
 | 34. Review Gate Framework | 0/TBD | Not started | - |
 | 35. Orchestration Skill Skeleton | 0/TBD | Not started | - |

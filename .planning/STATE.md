@@ -2,15 +2,15 @@
 gsd_state_version: 1.0
 milestone: v5.0
 milestone_name: Hermes-Native Migration
-status: executing
-stopped_at: 31 verification passed — Phase 31 goal achieved (4/4 SCs verified, 24/24 tests pass, 3 critical findings applied, no anti-patterns); ready to advance to Phase 32
-last_updated: "2026-06-25T15:05:00.000Z"
-last_activity: 2026-06-25 — Phase 31 verified (goal-backward: 4/4 SCs pass, 24/24 pytest pass in 1.61s; all CONTEXT.md critical findings applied; Phase 32/33/34 readiness confirmed)
+status: planning
+stopped_at: 31-01 complete — 3 plugin skeletons scaffolded (kais_aigc / pipeline_state / review_gates), each with 4-tool surface ready for Phase 32/33/34 to fill in.
+last_updated: "2026-06-25T14:28:38.357Z"
+last_activity: 2026-06-25 — Phase 31 verified (4/4 ROADMAP SCs met; 24/24 pytest pass; 3 CONTEXT.md critical findings applied; no anti-patterns; Phase 32/33/34 readiness confirmed)
 progress:
   total_phases: 9
   completed_phases: 1
-  total_plans: 3
-  completed_plans: 3
+  total_plans: 8
+  completed_plans: 5
   percent: 11
 ---
 
@@ -29,7 +29,6 @@ Phase: 32 — Kais-AIGC Platform Backend (Python clients)
 Plan: 0/TBD (Phase 31 closed; Phase 32 not yet planned)
 Status: Ready to plan
 Last activity: 2026-06-25 — Phase 31 verified (4/4 ROADMAP SCs met; 24/24 pytest pass; 3 CONTEXT.md critical findings applied; no anti-patterns; Phase 32/33/34 readiness confirmed)
-
 
 **Progress bar:**
 
@@ -60,6 +59,7 @@ v5.0: [░░░░░░░░░░░░░░░░░░░░] 0/9 phases 
 | 39. E2E Validation + v5.0 Audit | 0/TBD | - | - |
 
 *v5.0 metrics populate as plans complete*
+| Phase 32 P02 | 3m36s | 2 tasks | 2 files |
 
 ## Accumulated Context
 
@@ -98,6 +98,8 @@ Phase 31 plan 31-02 decisions (locked 2026-06-25):
 - **force=True on every discover_and_load()** — manager caches _discovered flag; without force, test 2 sees stale state from test 1
 - **Per-plugin test files** — independent failure isolation; per-plugin home for Phase 32/33/34 to extend with check_fn / requires_env assertions
 - **TDD cycle collapses to single GREEN commit** — task tdd="true" but <files> are all tests; implementation already shipped in Wave 1, so tests pass immediately against existing skeletons (correct outcome, not a TDD gate violation)
+- [Phase ?]: JWT claims: {iat, exp=now+300, sub=kais-movie-agent} (5min lifetime)
+- [Phase ?]: Degrade envelope: operation+reason+state+disposition fields
 
 ### Pending Todos
 
@@ -134,7 +136,7 @@ None. v5.0 roadmap created. Ready to plan Phase 31.
 
 ## Session Continuity
 
-Last session: 2026-06-25T14:00:00.000Z
+Last session: 2026-06-25T14:28:18.876Z
 Stopped at: 31-01 complete — 3 plugin skeletons scaffolded (kais_aigc / pipeline_state / review_gates), each with 4-tool surface ready for Phase 32/33/34 to fill in.
 Resume file: None
 
