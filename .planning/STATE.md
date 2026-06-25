@@ -2,14 +2,15 @@
 gsd_state_version: 1.0
 milestone: v5.0
 milestone_name: Hermes-Native Migration
-status: planning
-last_updated: "2026-06-25T13:30:00.000Z"
-last_activity: 2026-06-25
+status: executing
+stopped_at: 31-01 complete — 3 plugin skeletons scaffolded (kais_aigc / pipeline_state / review_gates). Wave 2 (31-02 loader, 31-03 smoke) ready to spawn.
+last_updated: "2026-06-25T14:00:00.000Z"
+last_activity: 2026-06-25 — 31-01-PLAN.md executed (3 plugin skeletons)
 progress:
   total_phases: 9
   completed_phases: 0
-  total_plans: 0
-  completed_plans: 0
+  total_plans: 3
+  completed_plans: 1
   percent: 0
 ---
 
@@ -25,11 +26,12 @@ See: .planning/PROJECT.md (updated 2026-06-25)
 ## Current Position
 
 Phase: 31 — Plugin Skeleton + Hermes-Agent Wiring
-Plan: —
-Status: Ready to plan
-Last activity: 2026-06-25 — v5.0 roadmap created (9 phases, 31-39)
+Plan: 02 (31-01 complete)
+Status: Wave 1 of Phase 31 complete; ready for Wave 2 (loader registration + smoke tests)
+Last activity: 2026-06-25 — 31-01-PLAN.md executed (3 plugin skeletons: kais_aigc / pipeline_state / review_gates)
 
 **Progress bar:**
+
 ```
 v5.0: [░░░░░░░░░░░░░░░░░░░░] 0/9 phases (0%)
        31........................39
@@ -46,7 +48,7 @@ v5.0: [░░░░░░░░░░░░░░░░░░░░] 0/9 phases 
 
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
-| 31. Plugin Skeleton + Wiring | 0/TBD | - | - |
+| 31. Plugin Skeleton + Wiring | 1/3 | 10min | 10min |
 | 32. Kais-AIGC Backend (Python) | 0/TBD | - | - |
 | 33. Pipeline State & Asset Bus | 0/TBD | - | - |
 | 34. Review Gate Framework | 0/TBD | - | - |
@@ -79,6 +81,14 @@ v5.0 roadmap decisions:
 - **Phase 36 reference port,非 re-design**: p04-p13 行为对齐 Node.js lib/* V8.6 handler,不重新设计 phase 逻辑
 - **Phase 38/39 解耦验证决策点**: OPENCLAW-REMOVE-04 + CANVAS-IN-HERMES-04 E2E 是 v5.0 ship 决策点(类似 v4.0 Phase 30 角色)
 - **Phase 33 无显式 REQ**: PipelineStateStore + AssetBus V3 + CreativeHistoryTracker 是 HERMES-SKILL-02/03 的隐式基础(从 v3.0 SCHEMA/B4 能力 porting 衍生),v5.0 REQ 未显式列出
+
+Phase 31 plan 31-01 decisions (locked 2026-06-25):
+
+- **Manifest format = plugin.yaml** (YAML not JSON) — hermes-agent loader only scans for plugin.yaml/plugin.yml (CONTEXT.md CRITICAL-FINDING-01)
+- **Entry module = __init__.py** — loader imports __init__.py and calls register(ctx); client.py/state.py/gates.py get added as sibling impl modules in Phase 32/33/34 (CRITICAL-FINDING-02)
+- **kind = standalone** (opt-in via plugins.enabled) not backend — these plugins expose new tool surfaces not backends for existing core tools (CRITICAL-FINDING-03)
+- **Stub shape = degrade-style JSON envelope** (`{status: not_implemented, ...}`) so register() succeeds at discovery time and Phase 32/33/34 can grep for stubs to fill in
+- **No premature impl modules** — Phase 31 ships only plugin.yaml + __init__.py + tools.py + README.md per plugin; client.py/state.py/gates.py deferred to Phase 32/33/34 when real logic lands
 
 ### Pending Todos
 
@@ -115,14 +125,14 @@ None. v5.0 roadmap created. Ready to plan Phase 31.
 
 ## Session Continuity
 
-Last session: 2026-06-25T13:30:00.000Z
-Stopped at: v5.0 roadmap created — 9 phases (31-39) defined, 25 requirements mapped, critical path identified. Phase 31 ready to plan.
+Last session: 2026-06-25T14:00:00.000Z
+Stopped at: 31-01 complete — 3 plugin skeletons scaffolded (kais_aigc / pipeline_state / review_gates), each with 4-tool surface ready for Phase 32/33/34 to fill in.
 Resume file: None
 
 **Next action:**
 
 ```
-/gsd:plan-phase 31
+/gsd:execute-phase 31   # continues with Wave 2: 31-02 loader registration + 31-03 smoke tests
 ```
 
 **Critical context to preserve across sessions:**

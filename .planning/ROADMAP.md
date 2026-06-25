@@ -76,7 +76,7 @@ Full details: [v3.0-ROADMAP.md](./milestones/v3.0-ROADMAP.md)
 **Plans**: 3 plans (31-01 scaffolding, 31-02 loader registration verification, 31-03 smoke tests)
 
 Plans:
-- [ ] 31-01-PLAN.md — Scaffold 3 plugins (plugin.yaml + __init__.py + tools.py + README.md each)
+- [x] 31-01-PLAN.md — Scaffold 3 plugins (plugin.yaml + __init__.py + tools.py + README.md each)
 - [ ] 31-02-PLAN.md — Loader discovery + enable tests (PluginManager integration, 9 tests)
 - [ ] 31-03-PLAN.md — Per-plugin smoke tests (import + register + tool surface + stub returns, 15 tests)
 
@@ -230,7 +230,7 @@ Plans:
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 31. Plugin Skeleton + Hermes-Agent Wiring | 0/3 | Ready to execute | - |
+| 31. Plugin Skeleton + Hermes-Agent Wiring | 1/3 | In Progress|  |
 | 32. Kais-AIGC Platform Backend | 0/TBD | Not started | - |
 | 33. Pipeline State & Asset Bus | 0/TBD | Not started | - |
 | 34. Review Gate Framework | 0/TBD | Not started | - |

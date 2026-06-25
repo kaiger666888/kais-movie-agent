@@ -23,7 +23,7 @@
 - [ ] **GPU-DIRECT-03**: `plugins/kais_aigc/canvas.py` 实现 CanvasClient — HTTP API v2(`:10588/api/canvas/v2/save-v2`)+ loadGraph 只读 + degrade-tolerant(保留 v4.0 PIPE-INTEGRITY-01 修复,无 sqlite 直写)
 - [ ] **GPU-DIRECT-04**: `plugins/kais_aigc/jimeng.py` 实现 JimengClient — jimeng-free-api `:5100` + 6 subcommand(text2image/image2image/multimodal2video/multiframe2video/frames2video/image_upscale) + session rotation + exponential backoff(替代已 deprecated 的 dreamina CLI)
 - [ ] **GPU-DIRECT-05**: 4 个 client 都有 degrade-mode(服务不可达 → warn + 跳过/fallback,不阻塞管线),配置走 env vars(KAIS_GOLD_TEAM_URL / KAIS_REVIEW_URL / KAIS_CANVAS_URL / KAIS_JIMENG_URL + 对应 API key/JWT secret),测试覆盖 mocked HTTP
-- [ ] **GPU-DIRECT-06**: `kais_aigc` plugin 在 hermes-agent plugin loader 注册成功,暴露统一工具面(kais_gold_team_submit / kais_review_submit / kais_canvas_sync / kais_jimeng_call),orchestration skill 可通过 hermes-agent tool dispatch 调用
+- [x] **GPU-DIRECT-06**: `kais_aigc` plugin 在 hermes-agent plugin loader 注册成功,暴露统一工具面(kais_gold_team_submit / kais_review_submit / kais_canvas_sync / kais_jimeng_call),orchestration skill 可通过 hermes-agent tool dispatch 调用
 
 ### GATE-NATIVE — HIL 审核门框架
 
@@ -87,7 +87,7 @@
 | GPU-DIRECT-03 | 32 | Pending |
 | GPU-DIRECT-04 | 32 | Pending |
 | GPU-DIRECT-05 | 32 | Pending |
-| GPU-DIRECT-06 | 31 (loader) + 32 (clients wired) | Pending |
+| GPU-DIRECT-06 | 31 (loader) + 32 (clients wired) | Complete |
 | GATE-NATIVE-01 | 34 | Pending |
 | GATE-NATIVE-02 | 34 | Pending |
 | GATE-NATIVE-03 | 34 | Pending |
