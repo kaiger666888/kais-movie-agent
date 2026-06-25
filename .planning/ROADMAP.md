@@ -203,7 +203,7 @@ Plans:
 **Goal**: canvas sync hook 从 Node.js `lib/canvas-sync-hook.js` 迁移到 hermes-agent Python event subscriber,phase 完成 / gate 决议两时机触发,完全脱离 openclaw Toonflow
 **Depends on**: Phase 35（skill 就位,有 phase completion 事件可订阅;gate 决议事件来自 Phase 34）
 **Requirements**: CANVAS-IN-HERMES-01, CANVAS-IN-HERMES-02, CANVAS-IN-HERMES-03 (hook half — canvas.py HTTP-only 在 Phase 32 已就位,本 phase 实现 event subscriber 触发逻辑)
-**Plans**: TBD
+**Plans**: 3 (37-01 runner/runner_hooks event hooks ✅ DONE 2026-06-26, 37-02 canvas_sync subscriber, 37-03 tools.py dispatch)
 
 **Success Criteria** (what must be TRUE):
 1. canvas sync hook 从 Node.js 迁移到 hermes-agent Python event subscriber,发布/订阅通过 hermes-agent 内部 event bus(无 Node.js 运行时依赖)
