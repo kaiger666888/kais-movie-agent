@@ -95,7 +95,14 @@ Plans:
 **Goal**: 4 个 Python 客户端(gold_team / review_platform / canvas / jimeng)实现完整 auth + degrade + mocked HTTP tests,kais_aigc plugin 暴露统一 tool surface 供 orchestration skill 通过 hermes-agent tool dispatch 调用 — 取代 Node.js lib/* + openclaw 中间层
 **Depends on**: Phase 31（plugin 骨架就位,客户端填入 tool body）
 **Requirements**: GPU-DIRECT-01, GPU-DIRECT-02, GPU-DIRECT-03 (client half — CanvasClient HTTP v2 + loadGraph read-only + degrade), GPU-DIRECT-04, GPU-DIRECT-05, GPU-DIRECT-06 (wiring half — tool bodies filled + dispatch verified)
-**Plans**: TBD
+**Plans**: 5 plans (32-01..04 Wave 1 parallel clients, 32-05 Wave 2 tools.py wiring)
+
+Plans:
+- [ ] 32-01-PLAN.md — gold_team.py (GoldTeamClient + X-API-Key + async polling + degrade, 8-10 tests)
+- [ ] 32-02-PLAN.md — review_platform.py (JWT bearer + HMAC-SHA256 callback with 5min window + degrade, 8-12 tests)
+- [ ] 32-03-PLAN.md — canvas.py (HTTP API v2 only — preserves v4.0 PIPE-INTEGRITY-01, no sqlite, 6-8 tests)
+- [ ] 32-04-PLAN.md — jimeng.py (6 subcommands + session rotation + exp backoff, 7-9 tests)
+- [ ] 32-05-PLAN.md — tools.py dispatch wiring + 17-element task_type enum (Wave 2, depends on 32-01..04)
 
 **Success Criteria** (what must be TRUE):
 1. `gold_team.py` 能对 mocked `:8002/api/v1/tasks` 提交 17 类 task(image_draw / video_final / wan_i2v / tts_zh 等)、async polling 拿到结果、batch 多任务聚合、SSE events 接收,X-API-Key 认证头正确
