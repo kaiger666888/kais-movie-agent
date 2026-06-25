@@ -79,9 +79,9 @@
 |-------------|-------|--------|
 | HERMES-SKILL-01 | 35 | Complete (verified 2026-06-26) |
 | HERMES-SKILL-02 | 35 | Complete (verified 2026-06-26 — 353 tests pass) |
-| HERMES-SKILL-03 | 35 (p01-p03) + 36 (p04-p13) | Partial (p01-p03) — Phase 35 verified; p04-p13 = Phase 36 |
+| HERMES-SKILL-03 | 35 (p01-p03) + 36 (p04-p13) | Complete (verified 2026-06-26 — full 13-phase DAG, 445 tests) |
 | HERMES-SKILL-04 | 35 | Complete (verified 2026-06-26) |
-| HERMES-SKILL-05 | 35 (skeleton) + 36 (refined) | Phase 35 skeleton Complete (verified 2026-06-26); Phase 36 refinement pending |
+| HERMES-SKILL-05 | 35 (skeleton) + 36 (refined) | Complete (verified 2026-06-26 — 4 refs refined to full form) |
 | GPU-DIRECT-01 | 32 | Complete |
 | GPU-DIRECT-02 | 32 | Complete |
 | GPU-DIRECT-03 | 32 | Complete |
@@ -111,4 +111,4 @@
 
 ---
 *Requirements defined: 2026-06-25*
-*Last updated: 2026-06-26 after Phase 35 verification*
+*Last updated: 2026-06-26 after Phase 36 verification*
