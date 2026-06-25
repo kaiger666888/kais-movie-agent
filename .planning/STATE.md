@@ -51,7 +51,7 @@ v5.0: [░░░░░░░░░░░░░░░░░░░░] 0/9 phases 
 | 31. Plugin Skeleton + Wiring | 3/3 | 21min | 7min |
 | 32. Kais-AIGC Backend (Python) | 5/5 | ~50min | 10min |
 | 33. Pipeline State & Asset Bus | 4/4 | ~42min | 10.5min |
-| 34. Review Gate Framework | 1/4 | 3min (34-02) | 3min |
+| 34. Review Gate Framework | 3/4 | ~14min (34-01/02/03) | ~5min |
 | 35. Orchestration Skill Skeleton | 0/TBD | - | - |
 | 36. Remaining 10 Phases Port | 0/TBD | - | - |
 | 37. Canvas Sync Migration | 0/TBD | - | - |
@@ -84,7 +84,7 @@ v5.0 roadmap decisions:
 
 ### Pending Todos
 
-- [ ] `/gsd:execute-phase 34` — Execute Phase 34 (Review Gate Framework) — 4 plans ready
+- [ ] `/gsd:execute-phase 34` — Execute Phase 34 (Review Gate Framework) — Wave 1 (34-01/02/03) complete; 34-04 (tools.py wiring) remaining
 
 ### Blockers
 
