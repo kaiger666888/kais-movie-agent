@@ -2,10 +2,10 @@
 gsd_state_version: 1.0
 milestone: v5.0
 milestone_name: Hermes-Native Migration
-status: completed
-stopped_at: Phase 35 complete — all 5 plans (35-01/02/03/04/05) shipped. Vertical slice verified end-to-end; 53 Phase 35 tests + 353 cross-plugin regression green. Ready for Phase 36.
-last_updated: "2026-06-25T22:54:11.390Z"
-last_activity: "2026-06-26 — Plan 35-05 verified (22 new tests, reload-safe fixtures, all SC#1-4 MET)."
+status: ready_to_plan
+stopped_at: Phase 35 VERIFIED PASSED — 5/5 SC met, 353 cross-plugin tests pass, 0 gaps. Keystone shipped. Ready to plan Phase 36 (p04-p13 port).
+last_updated: "2026-06-26T00:00:00.000Z"
+last_activity: "2026-06-26 — Phase 35 verified passed (VERIFICATION.md created)."
 progress:
   total_phases: 9
   completed_phases: 4
@@ -25,10 +25,10 @@ See: .planning/PROJECT.md (updated 2026-06-25)
 
 ## Current Position
 
-Phase: 35 — Orchestration Skill Skeleton | Status: COMPLETE (all 5 plans shipped) | Last activity: 2026-06-26 — Plan 35-05 complete
-Plan: 5/5 (35-01 SKILL.md, 35-02 runner.py + AssetBus ext, 35-03 p01-p03 phase modules, 35-04 references/, 35-05 tests + discovery all complete)
-Status: Phase 35 vertical slice complete. 53 Phase 35 tests passing + 353 cross-plugin regression green (kais_aigc + pipeline_state + review_gates + kais-movie-pipeline). Ready for Phase 36 (p04-p13 port).
-Last activity: 2026-06-26 — Plan 35-05 verified (22 new tests, reload-safe fixtures, all SC#1-4 MET).
+Phase: 36 — Remaining 10 Phases Port | Status: Ready to plan | Last activity: 2026-06-26 — Phase 35 verified
+Plan: 0/5 (36-01..36-05 to be planned — p04-p13 port using 35-03 template)
+Status: Phase 35 verified PASSED (5/5 SC, 353 cross-plugin tests, 0 gaps). Keystone shipped. Ready for Phase 36 (p04-p13 port, 10 phase modules).
+Last activity: 2026-06-26 — Phase 35 verification complete (VERIFICATION.md status: passed).
 
 **Progress bar:**
 
@@ -123,7 +123,7 @@ Resume file: None
 **Next action:**
 
 ```
-/gsd:plan-phase 36      # Remaining 10 Phases Port (p04-p13) — Phase 35 vertical slice proven, ready to port remaining phases following the 35-03 template
+Phase 36 plan created (PLAN.md + 5 child plans + CONTEXT.md + PATTERNS.md) — awaiting /gsd:execute-phase 36
 ```
 
 **Critical context to preserve across sessions:**
