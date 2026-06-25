@@ -256,7 +256,7 @@ Plans:
 | 34. Review Gate Framework | 1/5 | In Progress|  |
 | 35. Orchestration Skill Skeleton | 5/6 | In Progress|  |
 | 36. Remaining 10 Phases Port | 2/6 | In Progress|  |
-| 37. Canvas Sync Migration | 0/TBD | Not started | - |
+| 37. Canvas Sync Migration | 2/TBD | In Progress (37-01 + 37-02 done; 37-03 next) | canvas_graph + canvas_sync ported, 30 tests pass |
 | 38. OpenClaw Decoupling + Docs | 0/TBD | Not started | - |
 | 39. E2E Validation + v5.0 Audit | 0/TBD | Not started | - |
 
