@@ -1,0 +1,33 @@
+{
+  "_phase": "pain-discovery",
+  "_generatedAt": "2026-06-25T05:56:32.880Z",
+  "_degraded": false,
+  "requirement": {},
+  "pain_points": [
+    {
+      "id": "pain-1",
+      "dimension": "audience",
+      "pain_point": "目标受众对\"通用\"类型内容的情感共鸣需求未被现有作品满足",
+      "evidence": "基于 requirement: 未命名项目",
+      "severity": "medium"
+    },
+    {
+      "id": "pain-2",
+      "dimension": "market",
+      "pain_point": "平台现有通用内容同质化,缺乏差异化切入点",
+      "evidence": "requirement synopsis: ",
+      "severity": "medium"
+    }
+  ],
+  "audience_match": {
+    "mode": "audience-match",
+    "platform": "douyin",
+    "content": {
+      "title": "",
+      "genre": "",
+      "synopsis": ""
+    },
+    "skillPrompt": "",
+    "instruction": "请按照 kais-audience 的\"受众匹配模式\"分析以下内容，输出核心受众画像、匹配度、平台适配建议。"
+  }
+}
