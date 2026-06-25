@@ -2,16 +2,16 @@
 gsd_state_version: 1.0
 milestone: v5.0
 milestone_name: Hermes-Native Migration
-status: completed
-stopped_at: Phase 37 complete — all 3 plans (37-01/02/03) shipped. Canvas sync wired end-to-end; SC#1/SC#2/SC#3 all met. 495 tests pass.
-last_updated: "2026-06-25T23:41:41Z"
-last_activity: "2026-06-26 — Phase 37-03 complete (canvas sync subscriber wired to runner events + tools.py dispatch)."
+status: verifying
+stopped_at: "Phase 38-01 complete — OpenClaw decoupling regression test (3 tests) + DEPRECATED.md v5.0 final notice + SKILL.md/INTEGRATION.md HISTORICAL banners. 498 tests pass, all 3 SC met."
+last_updated: "2026-06-26T00:00:00.000Z"
+last_activity: 2026-06-26 — Phase 38-01 executed (4/4 tasks, 2 commits).
 progress:
   total_phases: 9
-  completed_phases: 7
-  total_plans: 29
-  completed_plans: 29
-  percent: 76
+  completed_phases: 8
+  total_plans: 30
+  completed_plans: 30
+  percent: 81
 ---
 
 # Project State
@@ -25,10 +25,10 @@ See: .planning/PROJECT.md (updated 2026-06-25)
 
 ## Current Position
 
-Phase: 38 — OpenClaw Decoupling + Docs Cleanup | Status: Ready to plan | Last activity: 2026-06-26 — Phase 37 verified
-Plan: 0/1 (Phase 38 plan created — 38-01-PLAN.md ready to execute)
-Status: Phase 37 verified PASSED (495 tests, 7/7 truths, all 3 SC met — canvas sync native, both trigger paths observable, degrade-tolerant, 0 openclaw/sqlite refs). Phase 38 PLAN.md + 38-01-PLAN.md + CONTEXT.md created. Ready for /gsd:execute-phase 38.
-Last activity: 2026-06-26 — Phase 37 verified, Phase 38 planned.
+Phase: 38 — OpenClaw Decoupling + Docs Cleanup | Status: Plan 38-01 complete | Last activity: 2026-06-26 — Phase 38-01 executed
+Plan: 1/1 (Phase 38-01 executed — all 4 tasks complete, all 3 SC met)
+Status: Phase 38-01 PASSED (498 tests, 3 new regression tests in test_openclaw_decoupled.py, DEPRECATED.md v5.0 final notice, SKILL.md/INTEGRATION.md HISTORICAL banners, all migration paths ls-verified live). Phase 38 closed.
+Last activity: 2026-06-26 — Phase 38-01 executed (4/4 tasks, commits 3973e9664 + f958164).
 
 **Progress bar:**
 

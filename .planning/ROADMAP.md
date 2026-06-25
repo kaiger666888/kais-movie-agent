@@ -257,7 +257,7 @@ Plans:
 | 35. Orchestration Skill Skeleton | 5/6 | In Progress|  |
 | 36. Remaining 10 Phases Port | 2/6 | In Progress|  |
 | 37. Canvas Sync Migration | 3/3 | Complete (SC#1/SC#2/SC#3 all met) | 2026-06-26 — canvas sync wired end-to-end, 495 tests pass |
-| 38. OpenClaw Decoupling + Docs | 0/TBD | Not started | - |
+| 38. OpenClaw Decoupling + Docs | 1/2 | In Progress|  |
 | 39. E2E Validation + v5.0 Audit | 0/TBD | Not started | - |
 
 ## Cross-cutting Constraints
