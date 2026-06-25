@@ -3,6 +3,19 @@ name: kais-movie-agent
 description: "AI短片全流程自动制作管线 (V8.6)。dreamina CLI 唯一生成工具。hermes-agent v2 专家驱动。L1-L4 完整角色资产库。13步管线，8个审核门。OpenClaw 唯一编排引擎。"
 ---
 
+> **HISTORICAL (v1.x–v4.x V8.6) — superseded by [`hermes-agent/skills/kais-movie-pipeline/SKILL.md`](../../../hermes-agent/skills/kais-movie-pipeline/SKILL.md).**
+>
+> This document describes the pre-v5.0 architecture when OpenClaw + Toonflow
+> were the orchestration layer. As of v5.0 (2026-06-26), the pipeline is a
+> native hermes-agent skill with **zero openclaw / Toonflow / Node.js runtime
+> dependency**. All 13 phases are Python (Phase 36 reference port), canvas
+> sync is `plugins/kais_aigc/canvas_sync.py` (Phase 37), and state/gates live
+> in `plugins/pipeline_state/` and `plugins/review_gates/`.
+>
+> The content below is preserved as a reference for the V8.6 behavioral
+> contract that Phase 36 ported to Python. It is **not** the live operational
+> doc — for current operations see `hermes-agent/skills/kais-movie-pipeline/`.
+
 # kais-movie-agent V8.6 — dreamina CLI + hermes-agent v2 + 13步精简管线
 
 ## 🆕 V8.6 更新（2026-06-18）

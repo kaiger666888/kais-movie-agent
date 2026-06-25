@@ -1,3 +1,10 @@
+> **HISTORICAL (v1.0–v4.x) — superseded by [`hermes-agent/skills/kais-movie-pipeline/`](../hermes-agent/skills/kais-movie-pipeline/).**
+>
+> This document describes the pre-v5.0 Node.js integration architecture. As of
+> v5.0 (2026-06-26), the pipeline is a native hermes-agent Python skill with
+> zero openclaw / Toonflow / Node.js runtime dependency. Content below is
+> preserved as a reference for the V8.6 integration contract.
+
 # kais-movie-agent 集成状态
 
 > 更新: 2026-05-18
@@ -59,7 +66,10 @@ pipeline.config.goldTeam = {
 
 ## LLM 调用点 (6 处，全部智谱 GLM)
 
-计划迁移至 openclaw/hermes-agent:
+> **v5.0 (2026-06-26) — 已迁移至 hermes-agent，openclaw 完全退出。**
+> 以下 6 处 LLM 调用点已全部迁移到 `hermes-agent/skills/kais-movie-pipeline/`
+> (Python 原生 skill)。openclaw / Toonflow 编排层已彻底移除，不再作为
+> runtime 依赖。本表保留为历史参考。
 
 | 文件 | 模型 | 用途 | 迁移优先级 |
 |------|------|------|-----------|
