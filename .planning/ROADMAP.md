@@ -123,9 +123,9 @@ Plans:
 **Plans**: 4 plans (33-01..03 Wave 1 parallel ports, 33-04 Wave 2 tools.py dispatch wiring)
 
 Plans:
-- [ ] 33-01-PLAN.md — PipelineStateStore port (checkpoint save/load + resume detection, 10-12 tests)
-- [ ] 33-02-PLAN.md — AssetBus V3 port (4 slots + envelope + atomic write + JSONL append, 15-18 tests)
-- [ ] 33-03-PLAN.md — CreativeHistoryTracker port (DAG + reverse BFS + blast radius cap + perf, 12-15 tests)
+- [x] 33-01-PLAN.md — PipelineStateStore port (checkpoint save/load + resume detection, 10-12 tests)
+- [x] 33-02-PLAN.md — AssetBus V3 port (4 slots + envelope + atomic write + JSONL append, 15-18 tests)
+- [x] 33-03-PLAN.md — CreativeHistoryTracker port (DAG + reverse BFS + blast radius cap + perf, 12-15 tests)
 - [ ] 33-04-PLAN.md — tools.py dispatch wiring (4 stubs → real handlers, Wave 2, 8-10 tests)
 
 **Success Criteria** (what must be TRUE):
@@ -245,7 +245,7 @@ Plans:
 |-------|----------------|--------|-----------|
 | 31. Plugin Skeleton + Hermes-Agent Wiring | 2/3 | In Progress|  |
 | 32. Kais-AIGC Platform Backend | 2/6 | In Progress|  |
-| 33. Pipeline State & Asset Bus | 0/4 | Plan complete | - |
+| 33. Pipeline State & Asset Bus | 3/5 | In Progress|  |
 | 34. Review Gate Framework | 0/TBD | Not started | - |
 | 35. Orchestration Skill Skeleton | 0/TBD | Not started | - |
 | 36. Remaining 10 Phases Port | 0/TBD | Not started | - |
