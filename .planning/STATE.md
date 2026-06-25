@@ -2,10 +2,10 @@
 gsd_state_version: 1.0
 milestone: v5.0
 milestone_name: Hermes-Native Migration
-status: verifying
-stopped_at: "Phase 38-01 complete — OpenClaw decoupling regression test (3 tests) + DEPRECATED.md v5.0 final notice + SKILL.md/INTEGRATION.md HISTORICAL banners. 498 tests pass, all 3 SC met."
-last_updated: "2026-06-26T00:00:00.000Z"
-last_activity: 2026-06-26 — Phase 38-01 executed (4/4 tasks, 2 commits).
+status: ready_to_plan
+stopped_at: "Phase 38 VERIFICATION PASSED — 5/5 truths verified, 498 tests pass, all 3 SC met, OPENCLAW-REMOVE-01/02/03 satisfied. Phase 38 closed. Ready to plan Phase 39."
+last_updated: "2026-06-26T08:00:00.000Z"
+last_activity: 2026-06-26 — Phase 38 verified (5/5 truths passed).
 progress:
   total_phases: 9
   completed_phases: 8
@@ -25,15 +25,15 @@ See: .planning/PROJECT.md (updated 2026-06-25)
 
 ## Current Position
 
-Phase: 38 — OpenClaw Decoupling + Docs Cleanup | Status: Plan 38-01 complete | Last activity: 2026-06-26 — Phase 38-01 executed
-Plan: 1/1 (Phase 38-01 executed — all 4 tasks complete, all 3 SC met)
-Status: Phase 38-01 PASSED (498 tests, 3 new regression tests in test_openclaw_decoupled.py, DEPRECATED.md v5.0 final notice, SKILL.md/INTEGRATION.md HISTORICAL banners, all migration paths ls-verified live). Phase 38 closed.
-Last activity: 2026-06-26 — Phase 38-01 executed (4/4 tasks, commits 3973e9664 + f958164).
+Phase: 39 — E2E Validation + v5.0 Audit | Status: Ready to plan | Last activity: 2026-06-26 — Phase 38 verified
+Plan: 0/TBD (Phase 38 verification passed — 5/5 truths, 498 tests, all 3 SC met)
+Status: Phase 38 VERIFICATION PASSED. Phase 38 closed. Awaiting /gsd:plan-phase 39.
+Last activity: 2026-06-26 — Phase 38 verification passed (5/5 truths, 498 tests, OPENCLAW-REMOVE-01/02/03 satisfied).
 
 **Progress bar:**
 
 ```
-v5.0: [░░░░░░░░░░░░░░░░░░░░] 0/9 phases (0%)
+v5.0: [████████████████░░░░] 8/9 phases (89%)
        31........................39
 ```
 
@@ -128,7 +128,7 @@ Resume file: None
 **Next action:**
 
 ```
-Phase 38 (OpenClaw Decoupling + Docs) plan creation — awaiting /gsd:plan-phase 38
+Phase 39 (E2E Validation + v5.0 Audit) plan creation — awaiting /gsd:plan-phase 39
 ```
 
 **Critical context to preserve across sessions:**

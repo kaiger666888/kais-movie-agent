@@ -42,9 +42,9 @@
 
 ### OPENCLAW-REMOVE — 彻底解耦 + 清理
 
-- [x] **OPENCLAW-REMOVE-01**: `grep -ri "openclaw\|OpenClaw\|sessions_spawn(runtime=\"acp\")\|Toonflow"` 在 `hermes-agent/skills/kais-movie-pipeline/`、`hermes-agent/plugins/kais_aigc/`、`hermes-agent/plugins/pipeline_state/`、`hermes-agent/plugins/review_gates/` 下 0 命中
-- [x] **OPENCLAW-REMOVE-02**: `kais-movie-agent/DEPRECATED.md` 更新为 v5.0 final deprecation notice,指向 hermes-agent 新位置 + 迁移指南
-- [x] **OPENCLAW-REMOVE-03**: v5.0 所有交付物无 Node.js runtime 依赖(纯 Python + hermes-agent runtime),`package.json` 不再被新代码引用
+- [x] **OPENCLAW-REMOVE-01** (verified 2026-06-26 — Phase 38 PASSED): `grep -ri "openclaw\|OpenClaw\|sessions_spawn(runtime=\"acp\")\|Toonflow"` 在 `hermes-agent/skills/kais-movie-pipeline/`、`hermes-agent/plugins/kais_aigc/`、`hermes-agent/plugins/pipeline_state/`、`hermes-agent/plugins/review_gates/` 下 0 命中
+- [x] **OPENCLAW-REMOVE-02** (verified 2026-06-26 — Phase 38 PASSED): `kais-movie-agent/DEPRECATED.md` 更新为 v5.0 final deprecation notice,指向 hermes-agent 新位置 + 迁移指南
+- [x] **OPENCLAW-REMOVE-03** (verified 2026-06-26 — Phase 38 PASSED): v5.0 所有交付物无 Node.js runtime 依赖(纯 Python + hermes-agent runtime),`package.json` 不再被新代码引用
 - [ ] **OPENCLAW-REMOVE-04**: E2E 测试 — openclaw 进程 OFF + gold-team/review/jimeng 服务 mock,跑通 13 phase 产出 `master.mp4`(degraded mode,继承 v4.0 PIPE-COMPOSE-01)
 - [ ] **OPENCLAW-REMOVE-05**: `.planning/milestones/v5.0-MILESTONE-AUDIT.md` 文档化 0 openclaw 引用 + 解耦验证清单 + 9 phase 验收 trace
 
@@ -97,9 +97,9 @@
 | CANVAS-IN-HERMES-02 | 37 | Complete |
 | CANVAS-IN-HERMES-03 | 32 (client) + 37 (hook) | Complete |
 | CANVAS-IN-HERMES-04 | 39 (E2E verify) | Pending |
-| OPENCLAW-REMOVE-01 | 38 | Complete |
-| OPENCLAW-REMOVE-02 | 38 | Complete |
-| OPENCLAW-REMOVE-03 | 38 | Complete |
+| OPENCLAW-REMOVE-01 | 38 | Complete (verified 2026-06-26) |
+| OPENCLAW-REMOVE-02 | 38 | Complete (verified 2026-06-26) |
+| OPENCLAW-REMOVE-03 | 38 | Complete (verified 2026-06-26) |
 | OPENCLAW-REMOVE-04 | 39 | Pending |
 | OPENCLAW-REMOVE-05 | 39 | Pending |
 
@@ -111,4 +111,4 @@
 
 ---
 *Requirements defined: 2026-06-25*
-*Last updated: 2026-06-26 after Phase 36 verification*
+*Last updated: 2026-06-26 after Phase 38 verification*
