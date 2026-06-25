@@ -1,0 +1,73 @@
+{
+  "_phase": "scene-selection",
+  "_generatedAt": "2026-06-25T06:08:11.375Z",
+  "_degraded": true,
+  "_degradeReason": "LLM 调用失败: 401 {\"error\":{\"code\":\"401\",\"message\":\"令牌已过期或验证不正确\"}}",
+  "_selectionMethod": "first_degraded",
+  "candidates_count": 1,
+  "selected": {
+    "id": "scene-default",
+    "description": "默认场景",
+    "characters": [],
+    "views": [
+      {
+        "view": "front",
+        "image_path": "assets/scenes/scene-default-front-placeholder.png"
+      },
+      {
+        "view": "side-left",
+        "image_path": "assets/scenes/scene-default-side-left-placeholder.png"
+      },
+      {
+        "view": "side-right",
+        "image_path": "assets/scenes/scene-default-side-right-placeholder.png"
+      },
+      {
+        "view": "back",
+        "image_path": "assets/scenes/scene-default-back-placeholder.png"
+      },
+      {
+        "view": "top",
+        "image_path": "assets/scenes/scene-default-top-placeholder.png"
+      },
+      {
+        "view": "wide",
+        "image_path": "assets/scenes/scene-default-wide-placeholder.png"
+      }
+    ]
+  },
+  "geometry_bed": {
+    "scene_id": "scene-default",
+    "description": "默认场景",
+    "characters": [],
+    "views": [
+      {
+        "view": "front",
+        "image_path": "assets/scenes/scene-default-front-placeholder.png"
+      },
+      {
+        "view": "side-left",
+        "image_path": "assets/scenes/scene-default-side-left-placeholder.png"
+      },
+      {
+        "view": "side-right",
+        "image_path": "assets/scenes/scene-default-side-right-placeholder.png"
+      },
+      {
+        "view": "back",
+        "image_path": "assets/scenes/scene-default-back-placeholder.png"
+      },
+      {
+        "view": "top",
+        "image_path": "assets/scenes/scene-default-top-placeholder.png"
+      },
+      {
+        "view": "wide",
+        "image_path": "assets/scenes/scene-default-wide-placeholder.png"
+      }
+    ],
+    "glb_path": null,
+    "texture_resolution": 1024,
+    "pbr_enabled": true
+  }
+}
