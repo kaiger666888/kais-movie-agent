@@ -1,0 +1,27 @@
+{
+  "_phase": "outline-generation",
+  "_generatedAt": "2026-06-25T06:08:05.572Z",
+  "_degraded": true,
+  "_degradeReason": "LLM 调用失败: 401 {\"error\":{\"code\":\"401\",\"message\":\"令牌已过期或验证不正确\"}}",
+  "topic_input": {
+    "title": "候选 1",
+    "description": ""
+  },
+  "candidates": [
+    {
+      "id": "outline-1",
+      "title": "候选 1 — 悬念切入切入",
+      "logline": "通用题材短剧,悬念切入切入:",
+      "variant": "悬念切入",
+      "episodes": [
+        {
+          "id": "ep-1",
+          "title": "第1集 悬念切入",
+          "synopsis": "候选 1 — 悬念切入切入的第1集剧情梗概 (模板降级)",
+          "estimated_duration_sec": 60
+        }
+      ],
+      "_template": true
+    }
+  ]
+}
