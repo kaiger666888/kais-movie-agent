@@ -1,0 +1,20 @@
+{
+  "_phase": "character-generation",
+  "_generatedAt": "2026-06-25T06:08:05.989Z",
+  "parameters": {
+    "strategy": "L1-L2-layered",
+    "l1_min_anchors": 1,
+    "l1_max_anchors": 3,
+    "l1_candidates": 20,
+    "l1_quality_threshold": 0.7,
+    "l1_retries": 3,
+    "l2_sample_strength": 0.3,
+    "l2_quality_threshold": 0.6,
+    "l2_retries": 2,
+    "model": "jimeng-5.0",
+    "ratio": "3:4",
+    "resolution": "2k"
+  },
+  "characters": [],
+  "degraded": false
+}
