@@ -1,10 +1,10 @@
 ---
 gsd_state_version: 1.0
-milestone: v4.0-shipped
-milestone_name: Production Pipeline Remediation (shipped)
+milestone: v5.0
+milestone_name: Hermes-Native Migration
 status: planning
-last_updated: "2026-06-24T12:19:24.187Z"
-last_activity: 2026-06-24
+last_updated: "2026-06-25T13:15:16.415Z"
+last_activity: 2026-06-25
 progress:
   total_phases: 0
   completed_phases: 0
@@ -27,7 +27,7 @@ See: .planning/PROJECT.md (updated 2026-06-24)
 Phase: Not started (defining requirements)
 Plan: —
 Status: Defining requirements
-Last activity: 2026-06-24 — Milestone v4.0-shipped started
+Last activity: 2026-06-25 — Milestone v5.0 started
 
 ## Performance Metrics
 
