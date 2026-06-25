@@ -1,0 +1,30 @@
+{
+  "_phase": "character-selection",
+  "_generatedAt": "2026-06-25T06:08:06.023Z",
+  "_degraded": true,
+  "_degradeReason": "character-assets 缺失或 characters 为空 — 模板兜底",
+  "_selectionMethod": "template",
+  "candidates_count": 0,
+  "selected": {
+    "id": "char-fallback-1",
+    "name": "主角",
+    "face": "",
+    "_template": true,
+    "assets": {
+      "L1_identity": [],
+      "L2_costumes": []
+    }
+  },
+  "soul_pack": {
+    "character_id": "char-fallback-1",
+    "name": "主角",
+    "face_description": "",
+    "body_description": "",
+    "L1_anchors": [],
+    "L2_costumes": [],
+    "face_embedding_hash": null
+  },
+  "cross_episode_registration": {
+    "status": "no_fingerprint"
+  }
+}
