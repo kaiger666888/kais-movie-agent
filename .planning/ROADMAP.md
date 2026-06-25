@@ -120,7 +120,13 @@ Plans:
 **Goal**: 将 Node.js lib/* 中的 PipelineStateStore + AssetBus V3 + CreativeHistoryTracker 端口到 Python(pipeline_state plugin),为 HERMES-SKILL-02/03 提供 state 层基础 — 不在 v5.0 REQ 中显式列出(基础设施,隐式支撑 HERMES-SKILL-02/03)
 **Depends on**: Phase 31（pipeline_state plugin 骨架就位）
 **Requirements**: NONE explicit (foundation for HERMES-SKILL-02 checkpoint resume + HERMES-SKILL-03 phase read/write; design note: derived from v3.0 SCHEMA/B4 capability porting)
-**Plans**: TBD
+**Plans**: 4 plans (33-01..03 Wave 1 parallel ports, 33-04 Wave 2 tools.py dispatch wiring)
+
+Plans:
+- [ ] 33-01-PLAN.md — PipelineStateStore port (checkpoint save/load + resume detection, 10-12 tests)
+- [ ] 33-02-PLAN.md — AssetBus V3 port (4 slots + envelope + atomic write + JSONL append, 15-18 tests)
+- [ ] 33-03-PLAN.md — CreativeHistoryTracker port (DAG + reverse BFS + blast radius cap + perf, 12-15 tests)
+- [ ] 33-04-PLAN.md — tools.py dispatch wiring (4 stubs → real handlers, Wave 2, 8-10 tests)
 
 **Success Criteria** (what must be TRUE):
 1. `pipeline_state/store.py` 实现 PipelineStateStore — checkpoint save/load,episode 状态可在 phase 间持久化,resume 能从最近 checkpoint 续跑
@@ -239,7 +245,7 @@ Plans:
 |-------|----------------|--------|-----------|
 | 31. Plugin Skeleton + Hermes-Agent Wiring | 2/3 | In Progress|  |
 | 32. Kais-AIGC Platform Backend | 2/6 | In Progress|  |
-| 33. Pipeline State & Asset Bus | 0/TBD | Not started | - |
+| 33. Pipeline State & Asset Bus | 0/4 | Plan complete | - |
 | 34. Review Gate Framework | 0/TBD | Not started | - |
 | 35. Orchestration Skill Skeleton | 0/TBD | Not started | - |
 | 36. Remaining 10 Phases Port | 0/TBD | Not started | - |
