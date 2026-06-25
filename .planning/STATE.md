@@ -3,9 +3,9 @@ gsd_state_version: 1.0
 milestone: v5.0
 milestone_name: Hermes-Native Migration
 status: executing
-stopped_at: 33-04 complete — Phase 33 (Pipeline State & Asset Bus) finished: PipelineStateStore + AssetBus V3 + CreativeHistoryTracker + tools.py dispatch wired. 98/98 pytest pass.
-last_updated: "2026-06-25T15:16:00.000Z"
-last_activity: 2026-06-25 — Phase 33 complete (4/4 plans shipped: 33-01 store, 33-02 asset_bus, 33-03 creative_history, 33-04 tools.py dispatch; 90 new tests; ROADMAP SC#1-4 met)
+stopped_at: Phase 33 verified — Phase 34 (Review Gate Framework) planned, ready to execute.
+last_updated: "2026-06-25T15:45:00.000Z"
+last_activity: 2026-06-25 — Phase 33 verified (VERIFICATION.md status=passed, 98 tests). Phase 34 PLAN.md + 4 plans + CONTEXT.md + PATTERNS.md created.
 progress:
   total_phases: 9
   completed_phases: 4
@@ -25,10 +25,10 @@ See: .planning/PROJECT.md (updated 2026-06-25)
 
 ## Current Position
 
-Phase: 33 — Pipeline State & Asset Bus (COMPLETE)
-Plan: 4/4 (Phase 33 shipped — all 4 plans executed)
-Status: Phase 33 closed. Ready to plan Phase 34 (Review Gate Framework) or Phase 35 (Orchestration Skill).
-Last activity: 2026-06-25 — Phase 33 complete (4/4 plans: 33-01 store, 33-02 asset_bus, 33-03 creative_history, 33-04 tools.py dispatch; 90 new tests; SC#1-4 met)
+Phase: 34 — Review Gate Framework | Status: Ready to plan | Last activity: 2026-06-25 — Phase 33 verified
+Plan: 0/4 (Phase 34 PLAN.md + 34-01..04 + CONTEXT.md + PATTERNS.md ready for execution)
+Status: Phase 33 closed (VERIFICATION.md status=passed, 4/4 SC, 98 tests). Phase 34 plan created — ready to execute `/gsd:execute-phase 34`.
+Last activity: 2026-06-25 — Phase 33 verified (4/4 SC met, 98/98 pytest pass); Phase 34 plan created (4 plans: gate.py lifecycle, gates.yaml 8 gates, runner_hooks.py delegate_task, tools.py wiring).
 
 **Progress bar:**
 
@@ -51,7 +51,7 @@ v5.0: [░░░░░░░░░░░░░░░░░░░░] 0/9 phases 
 | 31. Plugin Skeleton + Wiring | 3/3 | 21min | 7min |
 | 32. Kais-AIGC Backend (Python) | 5/5 | ~50min | 10min |
 | 33. Pipeline State & Asset Bus | 4/4 | ~42min | 10.5min |
-| 34. Review Gate Framework | 0/TBD | - | - |
+| 34. Review Gate Framework | 0/4 | - | - |
 | 35. Orchestration Skill Skeleton | 0/TBD | - | - |
 | 36. Remaining 10 Phases Port | 0/TBD | - | - |
 | 37. Canvas Sync Migration | 0/TBD | - | - |
@@ -59,8 +59,6 @@ v5.0: [░░░░░░░░░░░░░░░░░░░░] 0/9 phases 
 | 39. E2E Validation + v5.0 Audit | 0/TBD | - | - |
 
 *v5.0 metrics populate as plans complete*
-| Phase 32 P02 | 3m36s | 2 tasks | 2 files |
-| Phase 33 P04 | ~6min | 2 tasks | 3 files (1 new, 2 modified) |
 
 ## Accumulated Context
 
@@ -84,40 +82,20 @@ v5.0 roadmap decisions:
 - **Phase 38/39 解耦验证决策点**: OPENCLAW-REMOVE-04 + CANVAS-IN-HERMES-04 E2E 是 v5.0 ship 决策点(类似 v4.0 Phase 30 角色)
 - **Phase 33 无显式 REQ**: PipelineStateStore + AssetBus V3 + CreativeHistoryTracker 是 HERMES-SKILL-02/03 的隐式基础(从 v3.0 SCHEMA/B4 能力 porting 衍生),v5.0 REQ 未显式列出
 
-Phase 31 plan 31-01 decisions (locked 2026-06-25):
-
-- **Manifest format = plugin.yaml** (YAML not JSON) — hermes-agent loader only scans for plugin.yaml/plugin.yml (CONTEXT.md CRITICAL-FINDING-01)
-- **Entry module = __init__.py** — loader imports __init__.py and calls register(ctx); client.py/state.py/gates.py get added as sibling impl modules in Phase 32/33/34 (CRITICAL-FINDING-02)
-- **kind = standalone** (opt-in via plugins.enabled) not backend — these plugins expose new tool surfaces not backends for existing core tools (CRITICAL-FINDING-03)
-- **Stub shape = degrade-style JSON envelope** (`{status: not_implemented, ...}`) so register() succeeds at discovery time and Phase 32/33/34 can grep for stubs to fill in
-- **No premature impl modules** — Phase 31 ships only plugin.yaml + __init__.py + tools.py + README.md per plugin; client.py/state.py/gates.py deferred to Phase 32/33/34 when real logic lands
-
-Phase 31 plan 31-02 decisions (locked 2026-06-25):
-
-- **Real PluginManager.discover_and_load() in tests** (not mocks) — exercises actual loader code path end-to-end; mocks would only re-assert loader source docs
-- **monkeypatch over real config writes** — patch hermes_cli.plugins._get_enabled_plugins / _get_disabled_plugins at module level; tests never touch ~/.hermes/config.yaml (verified 0-line diff)
-- **force=True on every discover_and_load()** — manager caches _discovered flag; without force, test 2 sees stale state from test 1
-- **Per-plugin test files** — independent failure isolation; per-plugin home for Phase 32/33/34 to extend with check_fn / requires_env assertions
-- **TDD cycle collapses to single GREEN commit** — task tdd="true" but <files> are all tests; implementation already shipped in Wave 1, so tests pass immediately against existing skeletons (correct outcome, not a TDD gate violation)
-- [Phase ?]: JWT claims: {iat, exp=now+300, sub=kais-movie-agent} (5min lifetime)
-- [Phase ?]: Degrade envelope: operation+reason+state+disposition fields
-
 ### Pending Todos
 
-- [ ] `/gsd:plan-phase 31` — Phase 31 plan + execute (Plugin Skeleton + Hermes-Agent Wiring)
+- [ ] `/gsd:execute-phase 34` — Execute Phase 34 (Review Gate Framework) — 4 plans ready
 
 ### Blockers
 
-None. v5.0 roadmap created. Ready to plan Phase 31.
+None. Phase 33 verified. Phase 34 plan created. Ready to execute.
 
 ### Key Risks (v5.0)
 
 1. **Python 重写工作量** — 13 phase + 4 client + state + gate 全 Python 重写,工作量大于 v4.0(5 phase 修复)。Phase 35 vertical slice(p01-p03 only)是风险隔离设计,先验证全链路再 port 剩余 10 phase。
-2. **hermes-agent plugin loader 契约未知** — Phase 31 必须先确认 hermes-agent plugin.json schema、tool registry 接口、event bus 接口;契约不明则 32/33/34 无从填充。Phase 31 plan 时需读 hermes-agent plugin 文档/源码。
-3. **delegate_task approval callback 行为** — GATE-NATIVE-03 的 blocking gate 暂停 runner + webhook callback 驱动 resume,需确认 hermes-agent delegate_task 是否原生支持 approval 协议,不支持则需 adapter。
-4. **行为对齐验证** — Phase 36 reference port 必须与 Node.js V8.6 行为等价,但 13 phase 输入/输出/gate 触发时机散落在 lib/* 多文件,需 build 对照表(expert-mapping.md 是载体)。
-5. **openclaw grep 关键词覆盖** — OPENCLAW-REMOVE-01 的 grep 关键词(openclaw / OpenClaw / sessions_spawn(runtime="acp") / Toonflow)是否覆盖所有 openclaw 引用形态,需在 Phase 38 plan 时 double check。
-6. **movie-experts skill 接口稳定性** — Phase 35/36 通过 delegate_task 调 15 个 movie-experts,假设其接口稳定。若 movie-experts 接口在 v5.0 期间变更,需同步更新 expert-mapping.md。
+2. **delegate_task approval callback 行为** — GATE-NATIVE-03 的 blocking gate 暂停 runner + webhook callback 驱动 resume,需确认 hermes-agent delegate_task 是否原生支持 approval 协议,不支持则需 adapter。Phase 34 plan 34-03 researches this.
+3. **行为对齐验证** — Phase 36 reference port 必须与 Node.js V8.6 行为等价。
+4. **openclaw grep 关键词覆盖** — OPENCLAW-REMOVE-01 grep 关键词覆盖需在 Phase 38 plan 时 double check。
 
 ## Deferred Items
 
@@ -125,7 +103,6 @@ None. v5.0 roadmap created. Ready to plan Phase 31.
 |----------|------|--------|-------------|
 | v3.1 | 上游 creative_history lineage retrofit (script→sts→shot) | Deferred | v3.0 roadmap |
 | v3.1 | creative_history auto-rerender on script edit | Deferred | v3.0 roadmap |
-| v3.1 | 预算告警 + 阻断逻辑 | Deferred | v3.0 roadmap |
 | v4.1+ | 真实 GPU E2E 验证(产出可播放 master.mp4) | Deferred | v4.0 roadmap (operator 侧) |
 | v6.0+ | 多模型 A/B 测试 (Runway/Kling/Sora) | Deferred | v3.0 roadmap |
 | v6.0+ | 多平台导出 (抖音/B站/YouTube/快手) | Deferred | v3.0 roadmap |
@@ -137,16 +114,14 @@ None. v5.0 roadmap created. Ready to plan Phase 31.
 
 ## Session Continuity
 
-Last session: 2026-06-25T15:16:00.000Z
-Stopped at: 33-04 complete — Phase 33 (Pipeline State & Asset Bus) finished. 4 plans shipped (33-01 store, 33-02 asset_bus, 33-03 creative_history, 33-04 tools.py dispatch). 90 new pytest tests; full pipeline_state suite 98/98 pass.
+Last session: 2026-06-25T15:45:00.000Z
+Stopped at: Phase 33 verified (VERIFICATION.md status=passed). Phase 34 PLAN.md + 34-01..04 + CONTEXT.md + PATTERNS.md created.
 Resume file: None
 
 **Next action:**
 
 ```
-/gsd:plan-phase 34   # Review Gate Framework (HERMES-SKILL-03) — consumes asset_bus review-outcomes slot
-# OR
-/gsd:plan-phase 35   # Orchestration Skill Skeleton (HERMES-SKILL-02) — consumes pipeline_checkpoint_save/load + asset_bus_read/write dispatch
+/gsd:execute-phase 34   # Review Gate Framework — 4 plans ready (gate.py + gates.yaml + runner_hooks.py + tools.py wiring)
 ```
 
 **Critical context to preserve across sessions:**
