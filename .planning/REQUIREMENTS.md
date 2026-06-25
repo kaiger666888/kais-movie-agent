@@ -28,7 +28,7 @@
 ### GATE-NATIVE — HIL 审核门框架
 
 - [ ] **GATE-NATIVE-01**: `plugins/review_gates/gate.py` 定义 Gate 生命周期(submit → wait → resolve),支持 blocking(pipeline 暂停等待)/ webhook(HMAC callback)/ polling(主动拉)三种模式
-- [ ] **GATE-NATIVE-02**: V8.6 管线的 8 个审核门定义为 YAML/JSON 配置(gate_id / phase / asset-bus slots to lock / reviewer role / timeout_sec / callback_url / retry_policy)
+- [x] **GATE-NATIVE-02**: V8.6 管线的 8 个审核门定义为 YAML/JSON 配置(gate_id / phase / asset-bus slots to lock / reviewer role / timeout_sec / callback_url / retry_policy)
 - [ ] **GATE-NATIVE-03**: Gate 框架与 hermes-agent delegate_task approval callback 集成 — blocking gate 暂停 pipeline runner,webhook gate 通过 review-platform HMAC 回调驱动 resume
 - [ ] **GATE-NATIVE-04**: Gate 决议(approve / reject / contest)写回 asset bus(`review-outcomes` slot),触发下一 phase 或回滚到指定 phase(reject with suggested_action)
 - [ ] **GATE-NATIVE-05**: Gate 失败达 max_retries 触发 episode-level fail(继承 v4.0 PIPE-GUARD-01 的 CONSISTENCY_BLOCKED 阻塞语义,不再沉默吞错)
@@ -89,7 +89,7 @@
 | GPU-DIRECT-05 | 32 | Complete |
 | GPU-DIRECT-06 | 31 (loader) + 32 (clients wired) | Complete |
 | GATE-NATIVE-01 | 34 | Pending |
-| GATE-NATIVE-02 | 34 | Pending |
+| GATE-NATIVE-02 | 34 | Complete |
 | GATE-NATIVE-03 | 34 | Pending |
 | GATE-NATIVE-04 | 34 | Pending |
 | GATE-NATIVE-05 | 34 | Pending |

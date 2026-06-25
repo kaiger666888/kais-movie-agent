@@ -246,7 +246,7 @@ Plans:
 | 31. Plugin Skeleton + Hermes-Agent Wiring | 2/3 | In Progress|  |
 | 32. Kais-AIGC Platform Backend | 2/6 | In Progress|  |
 | 33. Pipeline State & Asset Bus | 3/5 | In Progress|  |
-| 34. Review Gate Framework | 0/TBD | Not started | - |
+| 34. Review Gate Framework | 1/5 | In Progress|  |
 | 35. Orchestration Skill Skeleton | 0/TBD | Not started | - |
 | 36. Remaining 10 Phases Port | 0/TBD | Not started | - |
 | 37. Canvas Sync Migration | 0/TBD | Not started | - |
