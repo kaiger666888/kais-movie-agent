@@ -57,7 +57,7 @@ Full details: [v3.0-ROADMAP.md](./milestones/v3.0-ROADMAP.md)
 - [x] **Phase 31: Plugin Skeleton + Hermes-Agent Wiring** — 3 plugins (kais_aigc / pipeline_state / review_gates) scaffolding + manifests + loader 注册 + smoke imports
 - [ ] **Phase 32: Kais-AIGC Platform Backend (Python clients)** — 4 Python clients (gold_team/review_platform/canvas/jimeng) with auth + degrade + mocked HTTP tests + plugin tool surface
 - [x] **Phase 33: Pipeline State & Asset Bus** — Python port of PipelineStateStore + AssetBus V3 (typed slots + envelope + atomic write) + CreativeHistoryTracker DAG + BFS
-- [ ] **Phase 34: Review Gate Framework** — HIL gate lifecycle (submit/wait/resolve) + 3 modes + 8 gate YAML config + delegate_task approval + max_retries fail
+- [x] **Phase 34: Review Gate Framework** — HIL gate lifecycle (submit/wait/resolve) + 3 modes + 8 gate YAML config + delegate_task approval + max_retries fail (4/4 plans complete)
 - [ ] **Phase 35: Orchestration Skill Skeleton (vertical slice)** — SKILL.md + runner.py + p01/p02/p03 end-to-end + delegate_task to movie-experts + asset bus I/O + gate trigger
 - [ ] **Phase 36: Remaining 10 Phases Port** — p04_character_design through p13_delivery ported, each load/gather/execute/write/gate
 - [ ] **Phase 37: Canvas Sync Migration** — canvas sync hook Node → Python event subscriber, fires on phase completion + gate resolution
@@ -143,7 +143,7 @@ Plans:
 **Goal**: HIL 审核门框架就位 — 8 个 V8.6 gate 定义为 YAML 配置,Gate 生命周期(submit → wait → resolve)支持 blocking / webhook / polling 三模式,与 hermes-agent delegate_task approval callback 集成,max_retries 触发 episode fail
 **Depends on**: Phase 31（review_gates plugin 骨架）+ Phase 32（review_platform.py 提供 webhook callback 客户端,blocking gate 的 HMAC 驱动 resume）
 **Requirements**: GATE-NATIVE-01, GATE-NATIVE-02, GATE-NATIVE-03, GATE-NATIVE-04, GATE-NATIVE-05
-**Plans**: TBD
+**Plans**: 4/4 complete (34-01 gate.py lifecycle + 34-02 gates.yaml 8 gates + 34-03 runner_hooks adapter + 34-04 tools.py dispatch wiring). 68 review_gates tests pass; 251 cross-plugin tests pass.
 
 **Success Criteria** (what must be TRUE):
 1. `review_gates/gate.py` 实现 Gate 生命周期(submit → wait → resolve),三种模式可切换:blocking(pipeline runner 暂停等待)/ webhook(HMAC callback 驱动 resume)/ polling(主动拉 `/api/v1/reviews/{id}`)

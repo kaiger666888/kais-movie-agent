@@ -2,16 +2,16 @@
 gsd_state_version: 1.0
 milestone: v5.0
 milestone_name: Hermes-Native Migration
-status: verifying
-stopped_at: Phase 33 verified (VERIFICATION.md status=passed). Phase 34 PLAN.md + 34-01..04 + CONTEXT.md + PATTERNS.md created.
-last_updated: "2026-06-25T15:32:27.818Z"
-last_activity: "2026-06-25 — Phase 33 verified (4/4 SC met, 98/98 pytest pass); Phase 34 plan created (4 plans: gate.py lifecycle, gates.yaml 8 gates, runner_hooks.py delegate_task, tools.py wiring)."
+status: executing
+stopped_at: Phase 34 Plan 04 complete (4/4 plans executed). Wave 1 (34-01/02/03) + Wave 2 (34-04) shipped; 68 review_gates tests pass.
+last_updated: "2026-06-25T15:40:30Z"
+last_activity: "2026-06-25 — Phase 34 Plan 04 (tools.py dispatch wiring) complete; all 4 plans executed, 68/68 review_gates tests pass, 251 cross-plugin tests pass (zero regressions)."
 progress:
   total_phases: 9
-  completed_phases: 3
+  completed_phases: 4
   total_plans: 16
-  completed_plans: 13
-  percent: 33
+  completed_plans: 16
+  percent: 44
 ---
 
 # Project State
@@ -25,10 +25,10 @@ See: .planning/PROJECT.md (updated 2026-06-25)
 
 ## Current Position
 
-Phase: 34 — Review Gate Framework | Status: Ready to plan | Last activity: 2026-06-25 — Phase 33 verified
-Plan: 0/4 (Phase 34 PLAN.md + 34-01..04 + CONTEXT.md + PATTERNS.md ready for execution)
-Status: Phase 33 closed (VERIFICATION.md status=passed, 4/4 SC, 98 tests). Phase 34 plan created — ready to execute `/gsd:execute-phase 34`.
-Last activity: 2026-06-25 — Phase 33 verified (4/4 SC met, 98/98 pytest pass); Phase 34 plan created (4 plans: gate.py lifecycle, gates.yaml 8 gates, runner_hooks.py delegate_task, tools.py wiring).
+Phase: 34 — Review Gate Framework | Status: Executing | Last activity: 2026-06-25 — Phase 34 Plan 04 complete
+Plan: 4/4 (34-01 gate.py lifecycle, 34-02 gates.yaml, 34-03 runner_hooks, 34-04 tools.py dispatch — ALL COMPLETE)
+Status: Phase 34 Plans 01-04 all executed. 68 review_gates tests pass, 251 cross-plugin tests pass. Ready for Phase 34 verification.
+Last activity: 2026-06-25 — Phase 34 Plan 04 (tools.py dispatch wiring) complete. Wave 2 dispatches gate_submit/gate_wait/gate_resolve/gates_list to real Wave 1 modules.
 
 **Progress bar:**
 
