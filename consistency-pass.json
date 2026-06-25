@@ -1,0 +1,16 @@
+{
+  "_stub": true,
+  "_reason": "no_visuals_yet",
+  "_phase": "consistency-guard",
+  "_generatedAt": "2026-06-25T06:08:11.528Z",
+  "overall": 1,
+  "passed": true,
+  "findings": [
+    {
+      "dimension": "all",
+      "severity": "low",
+      "issue": "无生成图,跳过审计 (Phase 14 后生效)"
+    }
+  ],
+  "retry_shots": []
+}
