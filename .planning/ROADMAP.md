@@ -73,10 +73,15 @@ Full details: [v3.0-ROADMAP.md](./milestones/v3.0-ROADMAP.md)
 **Goal**: v5.0 三大新插件 (`kais_aigc` / `pipeline_state` / `review_gates`) 骨架就位,hermes-agent plugin loader 能发现并注册,smoke imports 跑通,为 Phase 32/33/34 提供可填充的外壳
 **Depends on**: Nothing (first v5.0 phase — foundation for all of 32/33/34)
 **Requirements**: GPU-DIRECT-06 (loader registration half — manifests valid + loader discovers plugins; client tool bodies filled in Phase 32)
-**Plans**: TBD
+**Plans**: 3 plans (31-01 scaffolding, 31-02 loader registration verification, 31-03 smoke tests)
+
+Plans:
+- [ ] 31-01-PLAN.md — Scaffold 3 plugins (plugin.yaml + __init__.py + tools.py + README.md each)
+- [ ] 31-02-PLAN.md — Loader discovery + enable tests (PluginManager integration, 9 tests)
+- [ ] 31-03-PLAN.md — Per-plugin smoke tests (import + register + tool surface + stub returns, 15 tests)
 
 **Success Criteria** (what must be TRUE):
-1. `hermes-agent/plugins/kais_aigc/`、`pipeline_state/`、`review_gates/` 三目录均含合法 `plugin.json` manifest(name/version/entry/tools 字段齐全)
+1. `hermes-agent/plugins/kais_aigc/`、`pipeline_state/`、`review_gates/` 三目录均含合法 `plugin.yaml` manifest(name/version/description/provides_tools 字段齐全) — **research correction**: hermes-agent loader only scans for `plugin.yaml`/`plugin.yml`, NOT `plugin.json`; see CONTEXT.md CRITICAL-FINDING-01
 2. hermes-agent plugin loader 启动时三个插件注册成功(无 import error,日志可见"plugin loaded"),可在 hermes-agent session 中通过 tool registry 列出 plugin 暴露的 tool name
 3. 三个 plugin 的 entry module 可被 `python -c "import ..."` smoke-import(无 syntax error、无 missing dependency)
 4. Phase 32/33/34 三个交付 phase 各自的 plan 可在此基础上独立填充(骨架目录结构与 v5.0 仓库 layout target 一致)
@@ -225,7 +230,7 @@ Full details: [v3.0-ROADMAP.md](./milestones/v3.0-ROADMAP.md)
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 31. Plugin Skeleton + Hermes-Agent Wiring | 0/TBD | Not started | - |
+| 31. Plugin Skeleton + Hermes-Agent Wiring | 0/3 | Ready to execute | - |
 | 32. Kais-AIGC Platform Backend | 0/TBD | Not started | - |
 | 33. Pipeline State & Asset Bus | 0/TBD | Not started | - |
 | 34. Review Gate Framework | 0/TBD | Not started | - |
