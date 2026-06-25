@@ -1,0 +1,25 @@
+{
+  "_phase": "topic-selection",
+  "_generatedAt": "2026-06-25T06:08:05.426Z",
+  "_degraded": false,
+  "_degradeReason": null,
+  "_selectionMethod": "first_degraded",
+  "candidates": [
+    {
+      "id": "topic-1",
+      "title": "候选 1",
+      "name": "候选 1",
+      "description": "",
+      "hook_type": "suspense",
+      "estimated_duration": 60
+    }
+  ],
+  "selected": {
+    "id": "topic-1",
+    "title": "候选 1",
+    "name": "候选 1",
+    "description": "",
+    "hook_type": "suspense",
+    "estimated_duration": 60
+  }
+}
