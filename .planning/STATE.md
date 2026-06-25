@@ -3,15 +3,15 @@ gsd_state_version: 1.0
 milestone: v5.0
 milestone_name: Hermes-Native Migration
 status: planning
-stopped_at: 31-01 complete — 3 plugin skeletons scaffolded (kais_aigc / pipeline_state / review_gates), each with 4-tool surface ready for Phase 32/33/34 to fill in.
+stopped_at: 32 complete — 4 Python clients (gold_team/review_platform/canvas/jimeng) shipped with auth + degrade + mocked HTTP tests; tools.py dispatches to real clients.
 last_updated: "2026-06-25T14:31:00.678Z"
-last_activity: 2026-06-25 — Phase 31 verified (4/4 ROADMAP SCs met; 24/24 pytest pass; 3 CONTEXT.md critical findings applied; no anti-patterns; Phase 32/33/34 readiness confirmed)
+last_activity: 2026-06-25 — Phase 32 verified (5/5 ROADMAP SCs met; 85/85 pytest pass; 7 critical findings compliant; no anti-patterns; Phase 33/34/35 readiness confirmed)
 progress:
   total_phases: 9
-  completed_phases: 1
+  completed_phases: 2
   total_plans: 8
-  completed_plans: 7
-  percent: 11
+  completed_plans: 12
+  percent: 22
 ---
 
 # Project State
@@ -25,10 +25,10 @@ See: .planning/PROJECT.md (updated 2026-06-25)
 
 ## Current Position
 
-Phase: 32 — Kais-AIGC Platform Backend (Python clients)
-Plan: 0/TBD (Phase 31 closed; Phase 32 not yet planned)
+Phase: 33 — Pipeline State & Asset Bus
+Plan: 0/TBD (Phase 32 closed; Phase 33 not yet planned)
 Status: Ready to plan
-Last activity: 2026-06-25 — Phase 31 verified (4/4 ROADMAP SCs met; 24/24 pytest pass; 3 CONTEXT.md critical findings applied; no anti-patterns; Phase 32/33/34 readiness confirmed)
+Last activity: 2026-06-25 — Phase 32 verified (5/5 ROADMAP SCs met; 85/85 pytest pass; 7 CONTEXT.md critical findings compliant; no anti-patterns; Phase 33/34/35 readiness confirmed)
 
 **Progress bar:**
 

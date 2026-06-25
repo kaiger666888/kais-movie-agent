@@ -18,10 +18,10 @@
 
 ### GPU-DIRECT — kais-aigc-platform Python 客户端
 
-- [ ] **GPU-DIRECT-01**: `plugins/kais_aigc/gold_team.py` 实现 GoldTeamClient — POST `:8002/api/v1/tasks` + X-API-Key 认证 + 17 task type(image_draw/image_refine/video_final/wan_i2v/tts_zh/tts_en/tts_bilingual/upscale/face_restore/image_pulid/controlnet_depth/image_to_3d/image_to_3d_mv 等) + async polling + batch + SSE events + 降级
+- [x] **GPU-DIRECT-01**: `plugins/kais_aigc/gold_team.py` 实现 GoldTeamClient — POST `:8002/api/v1/tasks` + X-API-Key 认证 + 17 task type(image_draw/image_refine/video_final/wan_i2v/tts_zh/tts_en/tts_bilingual/upscale/face_restore/image_pulid/controlnet_depth/image_to_3d/image_to_3d_mv 等) + async polling + batch + SSE events + 降级
 - [x] **GPU-DIRECT-02**: `plugins/kais_aigc/review_platform.py` 实现 ReviewPlatformClient — JWT bearer 认证 + POST `/api/v1/reviews` + GET `/api/v1/reviews/{id}` 状态轮询 + HMAC-SHA256 callback 验签 + 5min timestamp window
 - [x] **GPU-DIRECT-03**: `plugins/kais_aigc/canvas.py` 实现 CanvasClient — HTTP API v2(`:10588/api/canvas/v2/save-v2`)+ loadGraph 只读 + degrade-tolerant(保留 v4.0 PIPE-INTEGRITY-01 修复,无 sqlite 直写)
-- [ ] **GPU-DIRECT-04**: `plugins/kais_aigc/jimeng.py` 实现 JimengClient — jimeng-free-api `:5100` + 6 subcommand(text2image/image2image/multimodal2video/multiframe2video/frames2video/image_upscale) + session rotation + exponential backoff(替代已 deprecated 的 dreamina CLI)
+- [x] **GPU-DIRECT-04**: `plugins/kais_aigc/jimeng.py` 实现 JimengClient — jimeng-free-api `:5100` + 6 subcommand(text2image/image2image/multimodal2video/multiframe2video/frames2video/image_upscale) + session rotation + exponential backoff(替代已 deprecated 的 dreamina CLI)
 - [x] **GPU-DIRECT-05**: 4 个 client 都有 degrade-mode(服务不可达 → warn + 跳过/fallback,不阻塞管线),配置走 env vars(KAIS_GOLD_TEAM_URL / KAIS_REVIEW_URL / KAIS_CANVAS_URL / KAIS_JIMENG_URL + 对应 API key/JWT secret),测试覆盖 mocked HTTP
 - [x] **GPU-DIRECT-06**: `kais_aigc` plugin 在 hermes-agent plugin loader 注册成功,暴露统一工具面(kais_gold_team_submit / kais_review_submit / kais_canvas_sync / kais_jimeng_call),orchestration skill 可通过 hermes-agent tool dispatch 调用
 
@@ -82,10 +82,10 @@
 | HERMES-SKILL-03 | 35 (p01-p03) + 36 (p04-p13) | Pending |
 | HERMES-SKILL-04 | 35 | Pending |
 | HERMES-SKILL-05 | 35 (dag+gates skeleton) + 36 (refined per phase) | Pending |
-| GPU-DIRECT-01 | 32 | Pending |
+| GPU-DIRECT-01 | 32 | Complete |
 | GPU-DIRECT-02 | 32 | Complete |
 | GPU-DIRECT-03 | 32 | Complete |
-| GPU-DIRECT-04 | 32 | Pending |
+| GPU-DIRECT-04 | 32 | Complete |
 | GPU-DIRECT-05 | 32 | Complete |
 | GPU-DIRECT-06 | 31 (loader) + 32 (clients wired) | Complete |
 | GATE-NATIVE-01 | 34 | Pending |
