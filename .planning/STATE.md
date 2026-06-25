@@ -25,10 +25,10 @@ See: .planning/PROJECT.md (updated 2026-06-25)
 
 ## Current Position
 
-Phase: 37 — Canvas Sync Migration | Status: complete | Last activity: 2026-06-26 — 37-03 complete
-Plan: 3/3 (37-01 + 37-02 + 37-03 all done)
-Status: 37-03 complete — canvas sync subscriber wired to runner events (register_canvas_sync + tools.py kais_canvas_sync_register dispatch). 10 integration tests pass; SC#2 keystone (13-phase episode → 13 save-v2 calls) green. Phase 37 SC#1/SC#2/SC#3 all met. 495 total tests pass across the v5.0 regression suite.
-Last activity: 2026-06-26 — Phase 37-03 complete (canvas sync wired end-to-end).
+Phase: 38 — OpenClaw Decoupling + Docs Cleanup | Status: Ready to plan | Last activity: 2026-06-26 — Phase 37 verified
+Plan: 0/1 (Phase 38 plan created — 38-01-PLAN.md ready to execute)
+Status: Phase 37 verified PASSED (495 tests, 7/7 truths, all 3 SC met — canvas sync native, both trigger paths observable, degrade-tolerant, 0 openclaw/sqlite refs). Phase 38 PLAN.md + 38-01-PLAN.md + CONTEXT.md created. Ready for /gsd:execute-phase 38.
+Last activity: 2026-06-26 — Phase 37 verified, Phase 38 planned.
 
 **Progress bar:**
 
