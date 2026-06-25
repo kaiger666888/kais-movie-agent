@@ -2,16 +2,16 @@
 gsd_state_version: 1.0
 milestone: v5.0
 milestone_name: Hermes-Native Migration
-status: planning
-stopped_at: 31-01 complete — 3 plugin skeletons scaffolded (kais_aigc / pipeline_state / review_gates), each with 4-tool surface ready for Phase 32/33/34 to fill in.
-last_updated: "2026-06-25T15:07:47.427Z"
-last_activity: 2026-06-25 — Phase 32 verified (5/5 ROADMAP SCs met; 85/85 pytest pass; 7 CONTEXT.md critical findings compliant; no anti-patterns; Phase 33/34/35 readiness confirmed)
+status: executing
+stopped_at: 33-04 complete — Phase 33 (Pipeline State & Asset Bus) finished: PipelineStateStore + AssetBus V3 + CreativeHistoryTracker + tools.py dispatch wired. 98/98 pytest pass.
+last_updated: "2026-06-25T15:16:00.000Z"
+last_activity: 2026-06-25 — Phase 33 complete (4/4 plans shipped: 33-01 store, 33-02 asset_bus, 33-03 creative_history, 33-04 tools.py dispatch; 90 new tests; ROADMAP SC#1-4 met)
 progress:
   total_phases: 9
-  completed_phases: 2
-  total_plans: 12
-  completed_plans: 11
-  percent: 22
+  completed_phases: 4
+  total_plans: 16
+  completed_plans: 16
+  percent: 44
 ---
 
 # Project State
@@ -25,10 +25,10 @@ See: .planning/PROJECT.md (updated 2026-06-25)
 
 ## Current Position
 
-Phase: 33 — Pipeline State & Asset Bus
-Plan: 0/TBD (Phase 32 closed; Phase 33 not yet planned)
-Status: Ready to plan
-Last activity: 2026-06-25 — Phase 32 verified (5/5 ROADMAP SCs met; 85/85 pytest pass; 7 CONTEXT.md critical findings compliant; no anti-patterns; Phase 33/34/35 readiness confirmed)
+Phase: 33 — Pipeline State & Asset Bus (COMPLETE)
+Plan: 4/4 (Phase 33 shipped — all 4 plans executed)
+Status: Phase 33 closed. Ready to plan Phase 34 (Review Gate Framework) or Phase 35 (Orchestration Skill).
+Last activity: 2026-06-25 — Phase 33 complete (4/4 plans: 33-01 store, 33-02 asset_bus, 33-03 creative_history, 33-04 tools.py dispatch; 90 new tests; SC#1-4 met)
 
 **Progress bar:**
 
@@ -49,8 +49,8 @@ v5.0: [░░░░░░░░░░░░░░░░░░░░] 0/9 phases 
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
 | 31. Plugin Skeleton + Wiring | 3/3 | 21min | 7min |
-| 32. Kais-AIGC Backend (Python) | 0/TBD | - | - |
-| 33. Pipeline State & Asset Bus | 0/TBD | - | - |
+| 32. Kais-AIGC Backend (Python) | 5/5 | ~50min | 10min |
+| 33. Pipeline State & Asset Bus | 4/4 | ~42min | 10.5min |
 | 34. Review Gate Framework | 0/TBD | - | - |
 | 35. Orchestration Skill Skeleton | 0/TBD | - | - |
 | 36. Remaining 10 Phases Port | 0/TBD | - | - |
@@ -60,6 +60,7 @@ v5.0: [░░░░░░░░░░░░░░░░░░░░] 0/9 phases 
 
 *v5.0 metrics populate as plans complete*
 | Phase 32 P02 | 3m36s | 2 tasks | 2 files |
+| Phase 33 P04 | ~6min | 2 tasks | 3 files (1 new, 2 modified) |
 
 ## Accumulated Context
 
@@ -136,14 +137,16 @@ None. v5.0 roadmap created. Ready to plan Phase 31.
 
 ## Session Continuity
 
-Last session: 2026-06-25T15:07:47.417Z
-Stopped at: 31-01 complete — 3 plugin skeletons scaffolded (kais_aigc / pipeline_state / review_gates), each with 4-tool surface ready for Phase 32/33/34 to fill in.
+Last session: 2026-06-25T15:16:00.000Z
+Stopped at: 33-04 complete — Phase 33 (Pipeline State & Asset Bus) finished. 4 plans shipped (33-01 store, 33-02 asset_bus, 33-03 creative_history, 33-04 tools.py dispatch). 90 new pytest tests; full pipeline_state suite 98/98 pass.
 Resume file: None
 
 **Next action:**
 
 ```
-/gsd:execute-phase 31   # continues with Wave 2: 31-02 loader registration + 31-03 smoke tests
+/gsd:plan-phase 34   # Review Gate Framework (HERMES-SKILL-03) — consumes asset_bus review-outcomes slot
+# OR
+/gsd:plan-phase 35   # Orchestration Skill Skeleton (HERMES-SKILL-02) — consumes pipeline_checkpoint_save/load + asset_bus_read/write dispatch
 ```
 
 **Critical context to preserve across sessions:**

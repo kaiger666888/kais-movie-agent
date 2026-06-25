@@ -56,7 +56,7 @@ Full details: [v3.0-ROADMAP.md](./milestones/v3.0-ROADMAP.md)
 
 - [x] **Phase 31: Plugin Skeleton + Hermes-Agent Wiring** — 3 plugins (kais_aigc / pipeline_state / review_gates) scaffolding + manifests + loader 注册 + smoke imports
 - [ ] **Phase 32: Kais-AIGC Platform Backend (Python clients)** — 4 Python clients (gold_team/review_platform/canvas/jimeng) with auth + degrade + mocked HTTP tests + plugin tool surface
-- [ ] **Phase 33: Pipeline State & Asset Bus** — Python port of PipelineStateStore + AssetBus V3 (typed slots + envelope + atomic write) + CreativeHistoryTracker DAG + BFS
+- [x] **Phase 33: Pipeline State & Asset Bus** — Python port of PipelineStateStore + AssetBus V3 (typed slots + envelope + atomic write) + CreativeHistoryTracker DAG + BFS
 - [ ] **Phase 34: Review Gate Framework** — HIL gate lifecycle (submit/wait/resolve) + 3 modes + 8 gate YAML config + delegate_task approval + max_retries fail
 - [ ] **Phase 35: Orchestration Skill Skeleton (vertical slice)** — SKILL.md + runner.py + p01/p02/p03 end-to-end + delegate_task to movie-experts + asset bus I/O + gate trigger
 - [ ] **Phase 36: Remaining 10 Phases Port** — p04_character_design through p13_delivery ported, each load/gather/execute/write/gate
@@ -126,7 +126,7 @@ Plans:
 - [x] 33-01-PLAN.md — PipelineStateStore port (checkpoint save/load + resume detection, 10-12 tests)
 - [x] 33-02-PLAN.md — AssetBus V3 port (4 slots + envelope + atomic write + JSONL append, 15-18 tests)
 - [x] 33-03-PLAN.md — CreativeHistoryTracker port (DAG + reverse BFS + blast radius cap + perf, 12-15 tests)
-- [ ] 33-04-PLAN.md — tools.py dispatch wiring (4 stubs → real handlers, Wave 2, 8-10 tests)
+- [x] 33-04-PLAN.md — tools.py dispatch wiring (4 stubs → real handlers, Wave 2, 8-10 tests)
 
 **Success Criteria** (what must be TRUE):
 1. `pipeline_state/store.py` 实现 PipelineStateStore — checkpoint save/load,episode 状态可在 phase 间持久化,resume 能从最近 checkpoint 续跑
