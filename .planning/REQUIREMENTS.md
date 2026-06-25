@@ -13,7 +13,7 @@
 - [ ] **HERMES-SKILL-01**: `hermes-agent/skills/kais-movie-pipeline/SKILL.md` 存在,带合法 YAML frontmatter(name/description/version/prerequisites/metadata.hermes.related_skills),正文定义 13 步 DAG + 触发词 + 与 15 个 movie-experts 的协作图
 - [ ] **HERMES-SKILL-02**: Python runner(`pipeline/runner.py`)实现 13 phase 顺序执行 + checkpoint resume + episode 级并行(parallel_shots: 4 保持 v2.0 行为)
 - [ ] **HERMES-SKILL-03**: 13 个 phase 模块(`pipeline/phases/p01_hook_topic.py` 到 `p13_delivery.py`)各自:从 asset bus 读输入 → 调 movie-expert(通过 `delegate_task`)→ 写输出到 asset bus → 触发审核门(如配置)
-- [ ] **HERMES-SKILL-04**: skill 被 hermes-agent loader 发现,可通过 `/kais-movie-pipeline` slash command 或 `skill_view(name="kais-movie-pipeline")` 工具调用
+- [x] **HERMES-SKILL-04**: skill 被 hermes-agent loader 发现,可通过 `/kais-movie-pipeline` slash command 或 `skill_view(name="kais-movie-pipeline")` 工具调用
 - [ ] **HERMES-SKILL-05**: `references/` 下产出 4 篇参考文档:pipeline-dag.md(13 步依赖图)、review-gates.md(8 gate 规范)、asset-bus-schema.md(slot 类型+生命周期)、expert-mapping.md(phase ↔ movie-expert 映射表)
 
 ### GPU-DIRECT — kais-aigc-platform Python 客户端
@@ -80,7 +80,7 @@
 | HERMES-SKILL-01 | 35 | Pending |
 | HERMES-SKILL-02 | 35 | Partial (runner.py + checkpoint + parallel_shots=4 complete in 35-02; awaits 35-05 integration tests for full sign-off) |
 | HERMES-SKILL-03 | 35 (p01-p03) + 36 (p04-p13) | Pending |
-| HERMES-SKILL-04 | 35 | Pending |
+| HERMES-SKILL-04 | 35 | Complete |
 | HERMES-SKILL-05 | 35 (dag+gates skeleton) + 36 (refined per phase) | Phase 35 skeleton half COMPLETE (35-04); Phase 36 refinement Pending |
 | GPU-DIRECT-01 | 32 | Complete |
 | GPU-DIRECT-02 | 32 | Complete |
