@@ -1,0 +1,40 @@
+{
+  "_phase": "scene-generation",
+  "_generatedAt": "2026-06-25T06:08:11.127Z",
+  "_degraded": false,
+  "_degradeReason": null,
+  "views_per_scene": 6,
+  "candidates": [
+    {
+      "id": "scene-default",
+      "description": "默认场景",
+      "characters": [],
+      "views": [
+        {
+          "view": "front",
+          "image_path": "assets/scenes/scene-default-front-placeholder.png"
+        },
+        {
+          "view": "side-left",
+          "image_path": "assets/scenes/scene-default-side-left-placeholder.png"
+        },
+        {
+          "view": "side-right",
+          "image_path": "assets/scenes/scene-default-side-right-placeholder.png"
+        },
+        {
+          "view": "back",
+          "image_path": "assets/scenes/scene-default-back-placeholder.png"
+        },
+        {
+          "view": "top",
+          "image_path": "assets/scenes/scene-default-top-placeholder.png"
+        },
+        {
+          "view": "wide",
+          "image_path": "assets/scenes/scene-default-wide-placeholder.png"
+        }
+      ]
+    }
+  ]
+}
