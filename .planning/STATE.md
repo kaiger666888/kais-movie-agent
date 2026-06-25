@@ -2,16 +2,16 @@
 gsd_state_version: 1.0
 milestone: v5.0
 milestone_name: Hermes-Native Migration
-status: verifying
-stopped_at: Phase 35 complete — all 5 plans (35-01/02/03/04/05) shipped. Vertical slice verified end-to-end; 53 Phase 35 tests + 353 cross-plugin regression green. Ready for Phase 36.
-last_updated: "2026-06-25T23:35:09.918Z"
-last_activity: "2026-06-26 — Phase 35 verification complete (VERIFICATION.md status: passed)."
+status: completed
+stopped_at: Phase 37 complete — all 3 plans (37-01/02/03) shipped. Canvas sync wired end-to-end; SC#1/SC#2/SC#3 all met. 495 tests pass.
+last_updated: "2026-06-25T23:41:41Z"
+last_activity: "2026-06-26 — Phase 37-03 complete (canvas sync subscriber wired to runner events + tools.py dispatch)."
 progress:
   total_phases: 9
-  completed_phases: 5
+  completed_phases: 7
   total_plans: 29
-  completed_plans: 27
-  percent: 56
+  completed_plans: 29
+  percent: 76
 ---
 
 # Project State
@@ -25,10 +25,10 @@ See: .planning/PROJECT.md (updated 2026-06-25)
 
 ## Current Position
 
-Phase: 37 — Canvas Sync Migration | Status: in progress | Last activity: 2026-06-26 — 37-02 complete
-Plan: 2/TBD (37-01 + 37-02 done; 37-03 remaining to wire subscriber to runner events)
-Status: 37-02 complete — canvas_graph.py + canvas_sync.py ported, 30 new tests pass. 37-01 (runner hooks) ran as wave 1 sibling. 37-03 (tools.py dispatch) next.
-Last activity: 2026-06-26 — Phase 35 verification complete (VERIFICATION.md status: passed).
+Phase: 37 — Canvas Sync Migration | Status: complete | Last activity: 2026-06-26 — 37-03 complete
+Plan: 3/3 (37-01 + 37-02 + 37-03 all done)
+Status: 37-03 complete — canvas sync subscriber wired to runner events (register_canvas_sync + tools.py kais_canvas_sync_register dispatch). 10 integration tests pass; SC#2 keystone (13-phase episode → 13 save-v2 calls) green. Phase 37 SC#1/SC#2/SC#3 all met. 495 total tests pass across the v5.0 regression suite.
+Last activity: 2026-06-26 — Phase 37-03 complete (canvas sync wired end-to-end).
 
 **Progress bar:**
 
@@ -54,7 +54,7 @@ v5.0: [░░░░░░░░░░░░░░░░░░░░] 0/9 phases 
 | 34. Review Gate Framework | 3/4 | ~14min (34-01/02/03) | ~5min |
 | 35. Orchestration Skill Skeleton | 5/5 | ~42min (35-01/02 12min + 35-03 5min + 35-04 25min + 35-05 5min, partially concurrent) | ~8min |
 | 36. Remaining 10 Phases Port | 0/TBD | - | - |
-| 37. Canvas Sync Migration | 2/TBD (37-01/02 done) | 16min (37-01 12min + 37-02 4min) | ~8min |
+| 37. Canvas Sync Migration | 3/3 | 21min (37-01 12min + 37-02 4min + 37-03 5min) | ~7min |
 | 38. OpenClaw Decoupling + Docs | 0/TBD | - | - |
 | 39. E2E Validation + v5.0 Audit | 0/TBD | - | - |
 
@@ -63,6 +63,7 @@ v5.0: [░░░░░░░░░░░░░░░░░░░░] 0/9 phases 
 | Phase 36 P02 | 3m | 9 tasks | 7 files |
 | Phase 37 P01 | 12m | 6 tasks | 3 files (10 new tests) |
 | Phase 37 P02 | 4m | 5 tasks | 4 files (30 new tests) |
+| Phase 37 P03 | 5m | 3 tasks | 7 files (10 new integration tests; 495 total regression green) |
 
 ## Accumulated Context
 
@@ -120,14 +121,14 @@ None. Phase 33 verified. Phase 34 plan created. Ready to execute.
 
 ## Session Continuity
 
-Last session: 2026-06-25T23:33:58.917Z
-Stopped at: Phase 35 complete — all 5 plans (35-01/02/03/04/05) shipped. Vertical slice verified end-to-end; 53 Phase 35 tests + 353 cross-plugin regression green. Ready for Phase 36.
+Last session: 2026-06-25T23:41:41Z
+Stopped at: Phase 37 complete — all 3 plans (37-01/02/03) shipped. Canvas sync wired end-to-end; SC#1/SC#2/SC#3 met; 495 tests pass.
 Resume file: None
 
 **Next action:**
 
 ```
-Phase 36 plan created (PLAN.md + 5 child plans + CONTEXT.md + PATTERNS.md) — awaiting /gsd:execute-phase 36
+Phase 38 (OpenClaw Decoupling + Docs) plan creation — awaiting /gsd:plan-phase 38
 ```
 
 **Critical context to preserve across sessions:**

@@ -60,7 +60,7 @@ Full details: [v3.0-ROADMAP.md](./milestones/v3.0-ROADMAP.md)
 - [x] **Phase 34: Review Gate Framework** — HIL gate lifecycle (submit/wait/resolve) + 3 modes + 8 gate YAML config + delegate_task approval + max_retries fail (4/4 plans complete)
 - [ ] **Phase 35: Orchestration Skill Skeleton (vertical slice)** — SKILL.md + runner.py + p01/p02/p03 end-to-end + delegate_task to movie-experts + asset bus I/O + gate trigger
 - [ ] **Phase 36: Remaining 10 Phases Port** — p04_character_design through p13_delivery ported, each load/gather/execute/write/gate
-- [ ] **Phase 37: Canvas Sync Migration** — canvas sync hook Node → Python event subscriber, fires on phase completion + gate resolution
+- [x] **Phase 37: Canvas Sync Migration** — canvas sync hook Node → Python event subscriber, fires on phase completion + gate resolution (SC#1/SC#2/SC#3 met; 495 tests pass)
 - [ ] **Phase 38: OpenClaw Decoupling + Docs Cleanup** — 0 openclaw refs in v5.0 deliverables + DEPRECATED.md + no Node runtime dependency
 - [ ] **Phase 39: E2E Validation + v5.0 Audit** — openclaw OFF degraded E2E produces master.mp4 + v5.0-MILESTONE-AUDIT.md
 
@@ -256,7 +256,7 @@ Plans:
 | 34. Review Gate Framework | 1/5 | In Progress|  |
 | 35. Orchestration Skill Skeleton | 5/6 | In Progress|  |
 | 36. Remaining 10 Phases Port | 2/6 | In Progress|  |
-| 37. Canvas Sync Migration | 2/TBD | In Progress (37-01 + 37-02 done; 37-03 next) | canvas_graph + canvas_sync ported, 30 tests pass |
+| 37. Canvas Sync Migration | 3/3 | Complete (SC#1/SC#2/SC#3 all met) | 2026-06-26 — canvas sync wired end-to-end, 495 tests pass |
 | 38. OpenClaw Decoupling + Docs | 0/TBD | Not started | - |
 | 39. E2E Validation + v5.0 Audit | 0/TBD | Not started | - |
 
