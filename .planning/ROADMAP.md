@@ -161,7 +161,14 @@ Plans:
 **Goal**: 顶层编排 skill 骨架就位 — SKILL.md 合法 + runner.py + 前 3 phase(p01_hook_topic / p02_outline / p03_script_audit)端到端跑通,wired 到 movie-experts via delegate_task,读写 asset bus,触发 gate;hermes-agent loader 发现 skill,可通过 slash command / skill_view 调用
 **Depends on**: Phase 32（4 个 client 就位）+ Phase 33（state/asset bus 就位）+ Phase 34（gate 框架就位）
 **Requirements**: HERMES-SKILL-01, HERMES-SKILL-02 (runner.py 顺序执行 + checkpoint resume + parallel_shots 4), HERMES-SKILL-03 (p01-p03 only — load expert / gather inputs / execute / write outputs / trigger gate), HERMES-SKILL-04, HERMES-SKILL-05 (skeleton — pipeline-dag.md + review-gates.md + asset-bus-schema.md + expert-mapping.md 初版)
-**Plans**: TBD
+**Plans**: 5 plans (35-01/02/04 Wave 1 parallel, 35-03/05 Wave 2)
+
+Plans:
+- [ ] 35-01-PLAN.md — SKILL.md manifest + skill directory scaffold (Wave 1)
+- [ ] 35-02-PLAN.md — runner.py + AssetBus ASSET_SCHEMA extension with 6 phase-output slots (Wave 1)
+- [ ] 35-03-PLAN.md — p01_hook_topic + p02_outline + p03_script_audit vertical slice phase modules (Wave 2 — needs 35-01/02)
+- [ ] 35-04-PLAN.md — references/ 4 skeleton docs (pipeline-dag, review-gates, asset-bus-schema, expert-mapping) (Wave 1)
+- [ ] 35-05-PLAN.md — tests (test_runner + test_p01_p02_p03 + test_skill_discovery) + skill discovery verification (Wave 2 — needs 35-01/02/03)
 
 **Success Criteria** (what must be TRUE):
 1. `hermes-agent/skills/kais-movie-pipeline/SKILL.md` 存在,YAML frontmatter 合法(name / description / version / prerequisites / metadata.hermes.related_skills),正文定义 13 步 DAG + 触发词 + 与 15 个 movie-experts 的协作图
@@ -247,7 +254,7 @@ Plans:
 | 32. Kais-AIGC Platform Backend | 2/6 | In Progress|  |
 | 33. Pipeline State & Asset Bus | 3/5 | In Progress|  |
 | 34. Review Gate Framework | 1/5 | In Progress|  |
-| 35. Orchestration Skill Skeleton | 0/TBD | Not started | - |
+| 35. Orchestration Skill Skeleton | 0/5 | Not started | - |
 | 36. Remaining 10 Phases Port | 0/TBD | Not started | - |
 | 37. Canvas Sync Migration | 0/TBD | Not started | - |
 | 38. OpenClaw Decoupling + Docs | 0/TBD | Not started | - |
