@@ -54,7 +54,7 @@ Full details: [v3.0-ROADMAP.md](./milestones/v3.0-ROADMAP.md)
 
 ### v5.0 Hermes-Native Migration (Phases 31-39) — ACTIVE
 
-- [ ] **Phase 31: Plugin Skeleton + Hermes-Agent Wiring** — 3 plugins (kais_aigc / pipeline_state / review_gates) scaffolding + manifests + loader 注册 + smoke imports
+- [x] **Phase 31: Plugin Skeleton + Hermes-Agent Wiring** — 3 plugins (kais_aigc / pipeline_state / review_gates) scaffolding + manifests + loader 注册 + smoke imports
 - [ ] **Phase 32: Kais-AIGC Platform Backend (Python clients)** — 4 Python clients (gold_team/review_platform/canvas/jimeng) with auth + degrade + mocked HTTP tests + plugin tool surface
 - [ ] **Phase 33: Pipeline State & Asset Bus** — Python port of PipelineStateStore + AssetBus V3 (typed slots + envelope + atomic write) + CreativeHistoryTracker DAG + BFS
 - [ ] **Phase 34: Review Gate Framework** — HIL gate lifecycle (submit/wait/resolve) + 3 modes + 8 gate YAML config + delegate_task approval + max_retries fail
@@ -78,12 +78,12 @@ Full details: [v3.0-ROADMAP.md](./milestones/v3.0-ROADMAP.md)
 Plans:
 - [x] 31-01-PLAN.md — Scaffold 3 plugins (plugin.yaml + __init__.py + tools.py + README.md each)
 - [x] 31-02-PLAN.md — Loader discovery + enable tests (PluginManager integration, 9 tests)
-- [ ] 31-03-PLAN.md — Per-plugin smoke tests (import + register + tool surface + stub returns, 15 tests)
+- [x] 31-03-PLAN.md — Per-plugin smoke tests (import + register + tool surface + stub returns, 15 tests)
 
 **Success Criteria** (what must be TRUE):
 1. `hermes-agent/plugins/kais_aigc/`、`pipeline_state/`、`review_gates/` 三目录均含合法 `plugin.yaml` manifest(name/version/description/provides_tools 字段齐全) — **research correction**: hermes-agent loader only scans for `plugin.yaml`/`plugin.yml`, NOT `plugin.json`; see CONTEXT.md CRITICAL-FINDING-01 — **MET (31-01)**
 2. hermes-agent plugin loader 启动时三个插件注册成功(无 import error,日志可见"plugin loaded"),可在 hermes-agent session 中通过 tool registry 列出 plugin 暴露的 tool name — **MET (31-02)**: 9 loader-discovery integration tests pass against real `PluginManager.discover_and_load()`; `HERMES_PLUGINS_DEBUG=1` shows 3 "Parsed manifest" log lines; tools==4 per plugin when added to `plugins.enabled`
-3. 三个 plugin 的 entry module 可被 `python -c "import ..."` smoke-import(无 syntax error、无 missing dependency) — **pending 31-03**
+3. 三个 plugin 的 entry module 可被 `python -c "import ..."` smoke-import(无 syntax error、无 missing dependency) — **MET (31-03)**: 15 per-plugin smoke tests pass (5 per plugin × 3 plugins) in 0.22s; the literal SC#3 check (`subprocess.run([sys.executable, "-c", "from plugins.<name> import register; print(callable(register))"])` exits 0 with stdout `True`) is encoded as `test_python_dash_c_import_succeeds` in each smoke file
 4. Phase 32/33/34 三个交付 phase 各自的 plan 可在此基础上独立填充(骨架目录结构与 v5.0 仓库 layout target 一致) — **MET (31-01 interface-first schemas)**
 
 **UI hint**: no

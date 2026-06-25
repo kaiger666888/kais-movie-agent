@@ -3,9 +3,9 @@ gsd_state_version: 1.0
 milestone: v5.0
 milestone_name: Hermes-Native Migration
 status: executing
-stopped_at: 31-01 complete — 3 plugin skeletons scaffolded (kais_aigc / pipeline_state / review_gates), each with 4-tool surface ready for Phase 32/33/34 to fill in.
-last_updated: "2026-06-25T13:54:15.950Z"
-last_activity: "2026-06-25 — 31-02-PLAN.md executed (9 loader-discovery integration tests across kais_aigc / pipeline_state / review_gates; all pass against real PluginManager.discover_and_load(); SC#2 satisfied)"
+stopped_at: 31-03 complete — 15 per-plugin smoke tests (5 per plugin × 3 plugins) added; all pass in 0.22s; ROADMAP SC#3 satisfied via literal python -c subprocess check. Phase 31 fully complete (3/3 plans).
+last_updated: "2026-06-25T14:30:00.000Z"
+last_activity: "2026-06-25 — 31-03-PLAN.md executed (15 smoke tests across kais_aigc / pipeline_state / review_gates; all pass via fake-ctx pattern; SC#3 satisfied)"
 progress:
   total_phases: 9
   completed_phases: 1
@@ -26,9 +26,9 @@ See: .planning/PROJECT.md (updated 2026-06-25)
 ## Current Position
 
 Phase: 31 — Plugin Skeleton + Hermes-Agent Wiring
-Plan: 02 complete (31-01 + 31-02 done; 31-03 smoke tests runs in parallel)
-Status: Wave 2 of Phase 31 in progress — 31-02 (loader discovery tests) complete; 31-03 (smoke tests) running in parallel
-Last activity: 2026-06-25 — 31-02-PLAN.md executed (9 loader-discovery integration tests across kais_aigc / pipeline_state / review_gates; all pass against real PluginManager.discover_and_load(); SC#2 satisfied)
+Plan: 03 complete (31-01 + 31-02 + 31-03 all done; Phase 31 fully complete)
+Status: Phase 31 complete — 3 plans shipped (skeleton + loader tests + smoke tests); ready to advance to Phase 32
+Last activity: 2026-06-25 — 31-03-PLAN.md executed (15 per-plugin smoke tests across kais_aigc / pipeline_state / review_gates; all pass in 0.22s via fake-ctx pattern; ROADMAP SC#3 satisfied by literal python -c subprocess check)
 
 **Progress bar:**
 
@@ -48,7 +48,7 @@ v5.0: [░░░░░░░░░░░░░░░░░░░░] 0/9 phases 
 
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
-| 31. Plugin Skeleton + Wiring | 2/3 | 16min | 8min |
+| 31. Plugin Skeleton + Wiring | 3/3 | 21min | 7min |
 | 32. Kais-AIGC Backend (Python) | 0/TBD | - | - |
 | 33. Pipeline State & Asset Bus | 0/TBD | - | - |
 | 34. Review Gate Framework | 0/TBD | - | - |
