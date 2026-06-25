@@ -106,4 +106,4 @@ No other deviations. Plan executed as written.
 - FOUND: `/data/workspace/hermes-agent/plugins/kais_aigc/tools.py`
 - FOUND: `/data/workspace/hermes-agent/plugins/kais_aigc/tests/test_tools_dispatch.py`
 - FOUND: `/data/workspace/hermes-agent/plugins/kais_aigc/tests/test_smoke.py` (modified)
-- FOUND: commit 65e589629 in `git log --oneline --all`
+- FOUND: commit `65e589629` in `/data/workspace/hermes-agent` git log (code lives in sibling repo per D-01)
