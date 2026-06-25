@@ -3,15 +3,15 @@ gsd_state_version: 1.0
 milestone: v5.0
 milestone_name: Hermes-Native Migration
 status: executing
-stopped_at: 31-01 complete — 3 plugin skeletons scaffolded (kais_aigc / pipeline_state / review_gates). Wave 2 (31-02 loader, 31-03 smoke) ready to spawn.
-last_updated: "2026-06-25T14:00:00.000Z"
-last_activity: 2026-06-25 — 31-01-PLAN.md executed (3 plugin skeletons)
+stopped_at: 31-01 complete — 3 plugin skeletons scaffolded (kais_aigc / pipeline_state / review_gates), each with 4-tool surface ready for Phase 32/33/34 to fill in.
+last_updated: "2026-06-25T13:54:15.950Z"
+last_activity: "2026-06-25 — 31-02-PLAN.md executed (9 loader-discovery integration tests across kais_aigc / pipeline_state / review_gates; all pass against real PluginManager.discover_and_load(); SC#2 satisfied)"
 progress:
   total_phases: 9
-  completed_phases: 0
+  completed_phases: 1
   total_plans: 3
-  completed_plans: 1
-  percent: 0
+  completed_plans: 3
+  percent: 11
 ---
 
 # Project State
@@ -26,9 +26,9 @@ See: .planning/PROJECT.md (updated 2026-06-25)
 ## Current Position
 
 Phase: 31 — Plugin Skeleton + Hermes-Agent Wiring
-Plan: 02 (31-01 complete)
-Status: Wave 1 of Phase 31 complete; ready for Wave 2 (loader registration + smoke tests)
-Last activity: 2026-06-25 — 31-01-PLAN.md executed (3 plugin skeletons: kais_aigc / pipeline_state / review_gates)
+Plan: 02 complete (31-01 + 31-02 done; 31-03 smoke tests runs in parallel)
+Status: Wave 2 of Phase 31 in progress — 31-02 (loader discovery tests) complete; 31-03 (smoke tests) running in parallel
+Last activity: 2026-06-25 — 31-02-PLAN.md executed (9 loader-discovery integration tests across kais_aigc / pipeline_state / review_gates; all pass against real PluginManager.discover_and_load(); SC#2 satisfied)
 
 **Progress bar:**
 
@@ -48,7 +48,7 @@ v5.0: [░░░░░░░░░░░░░░░░░░░░] 0/9 phases 
 
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
-| 31. Plugin Skeleton + Wiring | 1/3 | 10min | 10min |
+| 31. Plugin Skeleton + Wiring | 2/3 | 16min | 8min |
 | 32. Kais-AIGC Backend (Python) | 0/TBD | - | - |
 | 33. Pipeline State & Asset Bus | 0/TBD | - | - |
 | 34. Review Gate Framework | 0/TBD | - | - |
@@ -89,6 +89,14 @@ Phase 31 plan 31-01 decisions (locked 2026-06-25):
 - **kind = standalone** (opt-in via plugins.enabled) not backend — these plugins expose new tool surfaces not backends for existing core tools (CRITICAL-FINDING-03)
 - **Stub shape = degrade-style JSON envelope** (`{status: not_implemented, ...}`) so register() succeeds at discovery time and Phase 32/33/34 can grep for stubs to fill in
 - **No premature impl modules** — Phase 31 ships only plugin.yaml + __init__.py + tools.py + README.md per plugin; client.py/state.py/gates.py deferred to Phase 32/33/34 when real logic lands
+
+Phase 31 plan 31-02 decisions (locked 2026-06-25):
+
+- **Real PluginManager.discover_and_load() in tests** (not mocks) — exercises actual loader code path end-to-end; mocks would only re-assert loader source docs
+- **monkeypatch over real config writes** — patch hermes_cli.plugins._get_enabled_plugins / _get_disabled_plugins at module level; tests never touch ~/.hermes/config.yaml (verified 0-line diff)
+- **force=True on every discover_and_load()** — manager caches _discovered flag; without force, test 2 sees stale state from test 1
+- **Per-plugin test files** — independent failure isolation; per-plugin home for Phase 32/33/34 to extend with check_fn / requires_env assertions
+- **TDD cycle collapses to single GREEN commit** — task tdd="true" but <files> are all tests; implementation already shipped in Wave 1, so tests pass immediately against existing skeletons (correct outcome, not a TDD gate violation)
 
 ### Pending Todos
 
