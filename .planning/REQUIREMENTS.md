@@ -20,7 +20,7 @@
 
 - [ ] **GPU-DIRECT-01**: `plugins/kais_aigc/gold_team.py` 实现 GoldTeamClient — POST `:8002/api/v1/tasks` + X-API-Key 认证 + 17 task type(image_draw/image_refine/video_final/wan_i2v/tts_zh/tts_en/tts_bilingual/upscale/face_restore/image_pulid/controlnet_depth/image_to_3d/image_to_3d_mv 等) + async polling + batch + SSE events + 降级
 - [x] **GPU-DIRECT-02**: `plugins/kais_aigc/review_platform.py` 实现 ReviewPlatformClient — JWT bearer 认证 + POST `/api/v1/reviews` + GET `/api/v1/reviews/{id}` 状态轮询 + HMAC-SHA256 callback 验签 + 5min timestamp window
-- [ ] **GPU-DIRECT-03**: `plugins/kais_aigc/canvas.py` 实现 CanvasClient — HTTP API v2(`:10588/api/canvas/v2/save-v2`)+ loadGraph 只读 + degrade-tolerant(保留 v4.0 PIPE-INTEGRITY-01 修复,无 sqlite 直写)
+- [x] **GPU-DIRECT-03**: `plugins/kais_aigc/canvas.py` 实现 CanvasClient — HTTP API v2(`:10588/api/canvas/v2/save-v2`)+ loadGraph 只读 + degrade-tolerant(保留 v4.0 PIPE-INTEGRITY-01 修复,无 sqlite 直写)
 - [ ] **GPU-DIRECT-04**: `plugins/kais_aigc/jimeng.py` 实现 JimengClient — jimeng-free-api `:5100` + 6 subcommand(text2image/image2image/multimodal2video/multiframe2video/frames2video/image_upscale) + session rotation + exponential backoff(替代已 deprecated 的 dreamina CLI)
 - [x] **GPU-DIRECT-05**: 4 个 client 都有 degrade-mode(服务不可达 → warn + 跳过/fallback,不阻塞管线),配置走 env vars(KAIS_GOLD_TEAM_URL / KAIS_REVIEW_URL / KAIS_CANVAS_URL / KAIS_JIMENG_URL + 对应 API key/JWT secret),测试覆盖 mocked HTTP
 - [x] **GPU-DIRECT-06**: `kais_aigc` plugin 在 hermes-agent plugin loader 注册成功,暴露统一工具面(kais_gold_team_submit / kais_review_submit / kais_canvas_sync / kais_jimeng_call),orchestration skill 可通过 hermes-agent tool dispatch 调用
@@ -37,7 +37,7 @@
 
 - [ ] **CANVAS-IN-HERMES-01**: canvas sync hook 从 Node.js `lib/canvas-sync-hook.js` 迁移到 hermes-agent event subscriber(Python),发布/订阅通过 hermes-agent 内部 event bus
 - [ ] **CANVAS-IN-HERMES-02**: canvas sync 在两个时机触发:(a) phase 完成(asset bus 写入新 slot),(b) gate 决议(approve 后写入正式节点)— 不再走 openclaw Toonflow
-- [ ] **CANVAS-IN-HERMES-03**: canvas client 仅走 HTTP API v2(`:10588/api/canvas/v2/save-v2`),不直读 sqlite(保留 v4.0 PIPE-INTEGRITY-01 修复),不可达时 degrade warn
+- [x] **CANVAS-IN-HERMES-03**: canvas client 仅走 HTTP API v2(`:10588/api/canvas/v2/save-v2`),不直读 sqlite(保留 v4.0 PIPE-INTEGRITY-01 修复),不可达时 degrade warn
 - [ ] **CANVAS-IN-HERMES-04**: E2E 验证 — openclaw 进程未运行时,phase 完成 / gate 通过后 :10588 仍能收到 canvas 更新(证明完全脱离 openclaw)
 
 ### OPENCLAW-REMOVE — 彻底解耦 + 清理
@@ -84,7 +84,7 @@
 | HERMES-SKILL-05 | 35 (dag+gates skeleton) + 36 (refined per phase) | Pending |
 | GPU-DIRECT-01 | 32 | Pending |
 | GPU-DIRECT-02 | 32 | Complete |
-| GPU-DIRECT-03 | 32 | Pending |
+| GPU-DIRECT-03 | 32 | Complete |
 | GPU-DIRECT-04 | 32 | Pending |
 | GPU-DIRECT-05 | 32 | Complete |
 | GPU-DIRECT-06 | 31 (loader) + 32 (clients wired) | Complete |
@@ -95,7 +95,7 @@
 | GATE-NATIVE-05 | 34 | Pending |
 | CANVAS-IN-HERMES-01 | 37 | Pending |
 | CANVAS-IN-HERMES-02 | 37 | Pending |
-| CANVAS-IN-HERMES-03 | 32 (client) + 37 (hook) | Pending |
+| CANVAS-IN-HERMES-03 | 32 (client) + 37 (hook) | Complete |
 | CANVAS-IN-HERMES-04 | 39 (E2E verify) | Pending |
 | OPENCLAW-REMOVE-01 | 38 | Pending |
 | OPENCLAW-REMOVE-02 | 38 | Pending |
