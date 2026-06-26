@@ -1,5 +1,21 @@
 # Milestones
 
+## v5.0 Hermes-Native Migration (Shipped: 2026-06-26)
+
+**Phases completed:** 9 phases (Phase 31-39), 36 plans, 25 REQs (HERMES-SKILL ×5, GPU-DIRECT ×6, GATE-NATIVE ×5, CANVAS-IN-HERMES ×4, OPENCLAW-REMOVE ×5), 502 tests passing
+
+**Key accomplishments:**
+- kais-movie-agent 13 步短剧管线整体迁入 hermes-agent 成为原生 skill
+- 3 个新 plugin (kais_aigc / pipeline_state / review_gates) + 1 个新 skill (kais-movie-pipeline)
+- 完整 Python 重写 (~5500 LOC),无 Node.js runtime 依赖
+- openclaw 彻底退出短剧创作流程（0 引用残留）
+- canvas sync 迁入 hermes-agent event subscriber
+- 直连 kais-aigc-platform (gold-team :8002 + review-platform :8090 + canvas :10588 + jimeng :5100)
+
+**Audit status:** passed (25/25 REQs satisfied, 0 openclaw refs, 502 tests passing)
+
+---
+
 ## v4.0 Production Pipeline Remediation (Shipped: 2026-06-24)
 
 **Phases completed:** 5 phases (Phase 26-30), 12 plans, 9 REQs (PIPE-DATA/RENDER/INTEGRITY/COMPOSE/GUARD), 517 tests passing

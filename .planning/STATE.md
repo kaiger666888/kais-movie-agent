@@ -1,17 +1,17 @@
 ---
 gsd_state_version: 1.0
-milestone: v5.0
-milestone_name: Hermes-Native Migration
-status: ready_to_plan
-stopped_at: "Phase 38 VERIFICATION PASSED — 5/5 truths verified, 498 tests pass, all 3 SC met, OPENCLAW-REMOVE-01/02/03 satisfied. Phase 38 closed. Ready to plan Phase 39."
-last_updated: "2026-06-26T08:00:00.000Z"
-last_activity: 2026-06-26 — Phase 38 verified (5/5 truths passed).
+milestone: v5.0-shipped
+milestone_name: Hermes-Native Migration (shipped)
+status: shipped
+stopped_at: "v5.0 SHIPPED — Phase 39 verified (4/4 truths passed), 502 tests pass, 25/25 REQs complete, 0 openclaw refs, v5.0-MILESTONE-AUDIT.md complete. Milestone closed."
+last_updated: "2026-06-26T09:30:00.000Z"
+last_activity: 2026-06-26 — v5.0 ship-ready
 progress:
   total_phases: 9
-  completed_phases: 8
-  total_plans: 30
-  completed_plans: 30
-  percent: 81
+  completed_phases: 9
+  total_plans: 36
+  completed_plans: 36
+  percent: 100
 ---
 
 # Project State
@@ -25,15 +25,15 @@ See: .planning/PROJECT.md (updated 2026-06-25)
 
 ## Current Position
 
-Phase: 39 — E2E Validation + v5.0 Audit | Status: Ready to plan | Last activity: 2026-06-26 — Phase 38 verified
-Plan: 0/TBD (Phase 38 verification passed — 5/5 truths, 498 tests, all 3 SC met)
-Status: Phase 38 VERIFICATION PASSED. Phase 38 closed. Awaiting /gsd:plan-phase 39.
-Last activity: 2026-06-26 — Phase 38 verification passed (5/5 truths, 498 tests, OPENCLAW-REMOVE-01/02/03 satisfied).
+Phase: v5.0 SHIPPED | Status: Milestone complete | Last activity: 2026-06-26 — v5.0 ship-ready
+Plan: 36/36 complete across 9 phases (Phase 31-39)
+Status: v5.0 Hermes-Native Migration SHIPPED. 502 tests passing, 25/25 REQs satisfied, 0 openclaw references, ~5500 LOC Python shipped. hermes-agent now hosts full kais-movie-pipeline skill + 3 plugins (kais_aigc / pipeline_state / review_gates); openclaw decoupled.
+Last activity: 2026-06-26 — Phase 39 verified (4/4 truths passed), v5.0-MILESTONE-AUDIT.md complete, milestone closed.
 
 **Progress bar:**
 
 ```
-v5.0: [████████████████░░░░] 8/9 phases (89%)
+v5.0: [████████████████████] 9/9 phases (100%) — SHIPPED
        31........................39
 ```
 
@@ -41,29 +41,25 @@ v5.0: [████████████████░░░░] 8/9 phases 
 
 **Velocity (cumulative):**
 
-- v1.0 + v2.0 + v3.0 + v4.0: 9 + 19 + 35 + 12 = 75 plans archived
+- v1.0 + v2.0 + v3.0 + v4.0 + v5.0: 9 + 19 + 35 + 12 + 36 = 111 plans archived
 - v4.0 average: ~5-6 min/plan (reference baseline from Phase 26-30)
+- v5.0 average: ~7-8 min/plan (Python rewrite + cross-repo deliverables)
 
-**v5.0 By Phase (populates as plans complete):**
+**v5.0 By Phase (final):**
 
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
 | 31. Plugin Skeleton + Wiring | 3/3 | 21min | 7min |
 | 32. Kais-AIGC Backend (Python) | 5/5 | ~50min | 10min |
 | 33. Pipeline State & Asset Bus | 4/4 | ~42min | 10.5min |
-| 34. Review Gate Framework | 3/4 | ~14min (34-01/02/03) | ~5min |
-| 35. Orchestration Skill Skeleton | 5/5 | ~42min (35-01/02 12min + 35-03 5min + 35-04 25min + 35-05 5min, partially concurrent) | ~8min |
-| 36. Remaining 10 Phases Port | 0/TBD | - | - |
-| 37. Canvas Sync Migration | 3/3 | 21min (37-01 12min + 37-02 4min + 37-03 5min) | ~7min |
-| 38. OpenClaw Decoupling + Docs | 0/TBD | - | - |
-| 39. E2E Validation + v5.0 Audit | 0/TBD | - | - |
+| 34. Review Gate Framework | 4/4 | ~19min | ~5min |
+| 35. Orchestration Skill Skeleton | 5/5 | ~42min | ~8min |
+| 36. Remaining 10 Phases Port | 6/6 | ~36min | 6min |
+| 37. Canvas Sync Migration | 3/3 | 21min | ~7min |
+| 38. OpenClaw Decoupling + Docs | 5/5 | ~25min | 5min |
+| 39. E2E Validation + v5.0 Audit | 1/1 | 18min | 18min |
 
-*v5.0 metrics populate as plans complete*
-| Phase 35 P05 | 5min | 2 tasks | 5 files |
-| Phase 36 P02 | 3m | 9 tasks | 7 files |
-| Phase 37 P01 | 12m | 6 tasks | 3 files (10 new tests) |
-| Phase 37 P02 | 4m | 5 tasks | 4 files (30 new tests) |
-| Phase 37 P03 | 5m | 3 tasks | 7 files (10 new integration tests; 495 total regression green) |
+**v5.0 totals:** 36 plans | ~274 min | 502 tests | 25/25 REQs | ~5500 LOC Python | 0 openclaw refs
 
 ## Accumulated Context
 
@@ -80,29 +76,26 @@ v5.0 roadmap decisions:
 
 - **Phase 编号**: 继续 v4.0(Phase 30),v5.0 从 Phase 31 起,不重置
 - **Critical path**: 31 → 32 → 35 → 36 → 38 → 39(main spine);33(state)∥ 34(gates)partial parallel after 31;37(canvas)follows 35
-- **Phase 31 first (foundation)**: 3 plugin 骨架是 32/33/34 三个交付 phase 的填充目标,不先建骨架则无外壳可填
-- **Phase 32 before 35 (backend before skill)**: orchestration skill 需要 4 个 client + asset bus + gate 三者就位才能 wired,GPU-DIRECT 必须先于 HERMES-SKILL
-- **Phase 35 vertical slice (p01-p03 only)**: 用前 3 phase 验证 SKILL.md + runner.py + delegate_task + asset bus + gate 全链路打通,再做 Phase 36 剩余 10 phase。降低 risk(全 13 phase 一次 port 失败回退成本高)
-- **Phase 36 reference port,非 re-design**: p04-p13 行为对齐 Node.js lib/* V8.6 handler,不重新设计 phase 逻辑
-- **Phase 38/39 解耦验证决策点**: OPENCLAW-REMOVE-04 + CANVAS-IN-HERMES-04 E2E 是 v5.0 ship 决策点(类似 v4.0 Phase 30 角色)
-- **Phase 33 无显式 REQ**: PipelineStateStore + AssetBus V3 + CreativeHistoryTracker 是 HERMES-SKILL-02/03 的隐式基础(从 v3.0 SCHEMA/B4 能力 porting 衍生),v5.0 REQ 未显式列出
-- **Phase 35-04 references/ skeleton**: 4 docs source verbatim from `_shared/v86-pipeline-mapping.md` as single source of truth (not re-derived); Phase 36 refines per-phase after port experience per SC#4. Phase 35 clearly marked (p01-p03 scope) vs Phase 36 (p04-p13) in each doc.
-- [Phase ?]: 36-02: p07 atomic §4 verified (4 experts in single delegate_task); p08/p09 GATE_ID=None per D-36-02; 22 unit tests pass (96 full suite)
+- **Phase 31 first (foundation)**: 3 plugin 骨架是 32/33/34 三个交付 phase 的填充目标
+- **Phase 32 before 35 (backend before skill)**: GPU-DIRECT 必须先于 HERMES-SKILL
+- **Phase 35 vertical slice (p01-p03 only)**: 风险隔离,先验证全链路再 port 剩余
+- **Phase 36 reference port,非 re-design**: 行为对齐 Node.js lib/* V8.6 handler
 
 ### Pending Todos
 
-- [ ] `/gsd:execute-phase 34` — Execute Phase 34 (Review Gate Framework) — Wave 1 (34-01/02/03) complete; 34-04 (tools.py wiring) remaining
+None. v5.0 milestone complete.
 
 ### Blockers
 
-None. Phase 33 verified. Phase 34 plan created. Ready to execute.
+None. v5.0 shipped.
 
-### Key Risks (v5.0)
+### Key Risks (v5.0 — closed)
 
-1. **Python 重写工作量** — 13 phase + 4 client + state + gate 全 Python 重写,工作量大于 v4.0(5 phase 修复)。Phase 35 vertical slice(p01-p03 only)是风险隔离设计,先验证全链路再 port 剩余 10 phase。
-2. **delegate_task approval callback 行为** — GATE-NATIVE-03 的 blocking gate 暂停 runner + webhook callback 驱动 resume,需确认 hermes-agent delegate_task 是否原生支持 approval 协议,不支持则需 adapter。Phase 34 plan 34-03 researches this.
-3. **行为对齐验证** — Phase 36 reference port 必须与 Node.js V8.6 行为等价。
-4. **openclaw grep 关键词覆盖** — OPENCLAW-REMOVE-01 grep 关键词覆盖需在 Phase 38 plan 时 double check。
+All v5.0 risks closed at ship time:
+1. ~~Python 重写工作量~~ — closed: 9 phases, 36 plans, ~5500 LOC shipped
+2. ~~delegate_task approval callback 行为~~ — closed: Phase 34 runner_hooks adapter integrates blocking/webhook gate modes
+3. ~~行为对齐验证~~ — closed: Phase 36 reference port + Phase 39 E2E witness
+4. ~~openclaw grep 关键词覆盖~~ — closed: Phase 38 SC#1 + Phase 39 audit §3 re-affirm 0 hits
 
 ## Deferred Items
 
@@ -110,7 +103,9 @@ None. Phase 33 verified. Phase 34 plan created. Ready to execute.
 |----------|------|--------|-------------|
 | v3.1 | 上游 creative_history lineage retrofit (script→sts→shot) | Deferred | v3.0 roadmap |
 | v3.1 | creative_history auto-rerender on script edit | Deferred | v3.0 roadmap |
-| v4.1+ | 真实 GPU E2E 验证(产出可播放 master.mp4) | Deferred | v4.0 roadmap (operator 侧) |
+| W-v5-1 | Real-GPU E2E (real ZHIPU_API_KEY + real Seedance audio/video) | Operator-side | v5.0 PROJECT.md Out of Scope |
+| W-v5-2 | Real gold-team task execution (17 task types) | Operator-side | v5.0 PROJECT.md Out of Scope |
+| W-v5-3 | Real canvas platform round-trip | Operator-side | v5.0 PROJECT.md Out of Scope |
 | v6.0+ | 多模型 A/B 测试 (Runway/Kling/Sora) | Deferred | v3.0 roadmap |
 | v6.0+ | 多平台导出 (抖音/B站/YouTube/快手) | Deferred | v3.0 roadmap |
 | v6.0+ | 多语言 dubbing (HeyGen 175+) | Deferred | v3.0 roadmap |
@@ -121,23 +116,24 @@ None. Phase 33 verified. Phase 34 plan created. Ready to execute.
 
 ## Session Continuity
 
-Last session: 2026-06-25T23:41:41Z
-Stopped at: Phase 37 complete — all 3 plans (37-01/02/03) shipped. Canvas sync wired end-to-end; SC#1/SC#2/SC#3 met; 495 tests pass.
+Last session: 2026-06-26T09:30:00Z
+Stopped at: v5.0 SHIPPED — Phase 39 verified (4/4 truths), 502 tests pass, 25/25 REQs complete, 0 openclaw refs, v5.0-MILESTONE-AUDIT.md complete.
 Resume file: None
 
 **Next action:**
 
 ```
-Phase 39 (E2E Validation + v5.0 Audit) plan creation — awaiting /gsd:plan-phase 39
+v5.0 milestone complete. Operator next steps:
+  (a) Real-GPU E2E validation (W-v5-1 through W-v5-3) — out of v5.0 scope
+  (b) Begin v6.0+ roadmap planning (TypeScript migration, multi-platform export, etc.)
+  (c) Archive kais-movie-agent repo (operator decision)
 ```
 
 **Critical context to preserve across sessions:**
 
-- v5.0 phase numbering continues from v4.0 (Phase 30) — starts at Phase 31, do NOT reset
-- Phase 31 (Plugin Skeleton) is foundation — 3 plugin 骨架是 32/33/34 填充目标
-- Phase 32 before 35 — GPU-DIRECT clients 必须先于 HERMES-SKILL orchestration
-- Phase 35 vertical slice (p01-p03 only) — 风险隔离,先验证全链路再 port 剩余
-- Phase 36 is reference port — 行为对齐 Node.js lib/* V8.6,非 re-design
-- Phase 38/39 是 v5.0 ship 决策点 — 0 openclaw 验证 + openclaw OFF E2E 产出 master.mp4
-- Architectural decisions locked 2026-06-25: skill 并入 hermes-agent + 全 Python 重写 + canvas 保留迁 hook
-- 不重写已存在资产: movie-experts 15 skill + kais-aigc-platform 微服务栈保持现状
+- v5.0 SHIPPED 2026-06-26 — 9 phases (31-39), 36 plans, 502 tests, 25/25 REQs, ~5500 LOC Python
+- hermes-agent now hosts full kais-movie-pipeline skill + 3 plugins (kais_aigc / pipeline_state / review_gates)
+- openclaw completely decoupled from short-drama creation flow (0 executable-code refs in 4 v5.0 deliverable dirs)
+- canvas sync migrated to hermes-agent Python event subscriber (CanvasSyncSubscriber)
+- kais-movie-agent repo is now a read-only archive (DEPRECATED.md → points to hermes-agent)
+- Real-GPU validation deferred to operator (W-v5-1 through W-v5-3, per PROJECT.md Out of Scope)
