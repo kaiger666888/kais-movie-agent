@@ -38,15 +38,15 @@
 - [x] **CANVAS-IN-HERMES-01**: canvas sync hook 从 Node.js `lib/canvas-sync-hook.js` 迁移到 hermes-agent event subscriber(Python),发布/订阅通过 hermes-agent 内部 event bus
 - [x] **CANVAS-IN-HERMES-02**: canvas sync 在两个时机触发:(a) phase 完成(asset bus 写入新 slot),(b) gate 决议(approve 后写入正式节点)— 不再走 openclaw Toonflow
 - [x] **CANVAS-IN-HERMES-03**: canvas client 仅走 HTTP API v2(`:10588/api/canvas/v2/save-v2`),不直读 sqlite(保留 v4.0 PIPE-INTEGRITY-01 修复),不可达时 degrade warn
-- [ ] **CANVAS-IN-HERMES-04**: E2E 验证 — openclaw 进程未运行时,phase 完成 / gate 通过后 :10588 仍能收到 canvas 更新(证明完全脱离 openclaw)
+- [x] **CANVAS-IN-HERMES-04** (verified 2026-06-26 — Phase 39 PASSED): E2E 验证 — openclaw 进程未运行时,phase 完成 / gate 通过后 :10588 仍能收到 canvas 更新(证明完全脱离 openclaw) — `test_e2e_degraded.py::test_e2e_canvas_subscriber_fires_without_openclaw` asserts `save_canvas.call_count >= 13`
 
 ### OPENCLAW-REMOVE — 彻底解耦 + 清理
 
 - [x] **OPENCLAW-REMOVE-01** (verified 2026-06-26 — Phase 38 PASSED): `grep -ri "openclaw\|OpenClaw\|sessions_spawn(runtime=\"acp\")\|Toonflow"` 在 `hermes-agent/skills/kais-movie-pipeline/`、`hermes-agent/plugins/kais_aigc/`、`hermes-agent/plugins/pipeline_state/`、`hermes-agent/plugins/review_gates/` 下 0 命中
 - [x] **OPENCLAW-REMOVE-02** (verified 2026-06-26 — Phase 38 PASSED): `kais-movie-agent/DEPRECATED.md` 更新为 v5.0 final deprecation notice,指向 hermes-agent 新位置 + 迁移指南
 - [x] **OPENCLAW-REMOVE-03** (verified 2026-06-26 — Phase 38 PASSED): v5.0 所有交付物无 Node.js runtime 依赖(纯 Python + hermes-agent runtime),`package.json` 不再被新代码引用
-- [ ] **OPENCLAW-REMOVE-04**: E2E 测试 — openclaw 进程 OFF + gold-team/review/jimeng 服务 mock,跑通 13 phase 产出 `master.mp4`(degraded mode,继承 v4.0 PIPE-COMPOSE-01)
-- [ ] **OPENCLAW-REMOVE-05**: `.planning/milestones/v5.0-MILESTONE-AUDIT.md` 文档化 0 openclaw 引用 + 解耦验证清单 + 9 phase 验收 trace
+- [x] **OPENCLAW-REMOVE-04** (verified 2026-06-26 — Phase 39 PASSED): E2E 测试 — openclaw 进程 OFF + gold-team/review/jimeng 服务 mock,跑通 13 phase 产出 `master.mp4`(degraded mode,继承 v4.0 PIPE-COMPOSE-01) — `test_e2e_degraded.py::test_e2e_degraded_full_dag_produces_master_mp4`
+- [x] **OPENCLAW-REMOVE-05** (verified 2026-06-26 — Phase 39 PASSED): `.planning/milestones/v5.0-MILESTONE-AUDIT.md` 文档化 0 openclaw 引用 + 解耦验证清单 + 9 phase 验收 trace
 
 ## v6.0+ Requirements (Out of Current Scope)
 
@@ -96,12 +96,12 @@
 | CANVAS-IN-HERMES-01 | 37 | Complete |
 | CANVAS-IN-HERMES-02 | 37 | Complete |
 | CANVAS-IN-HERMES-03 | 32 (client) + 37 (hook) | Complete |
-| CANVAS-IN-HERMES-04 | 39 (E2E verify) | Pending |
+| CANVAS-IN-HERMES-04 | 39 (E2E verify) | Complete (verified 2026-06-26) |
 | OPENCLAW-REMOVE-01 | 38 | Complete (verified 2026-06-26) |
 | OPENCLAW-REMOVE-02 | 38 | Complete (verified 2026-06-26) |
 | OPENCLAW-REMOVE-03 | 38 | Complete (verified 2026-06-26) |
-| OPENCLAW-REMOVE-04 | 39 | Pending |
-| OPENCLAW-REMOVE-05 | 39 | Pending |
+| OPENCLAW-REMOVE-04 | 39 | Complete (verified 2026-06-26) |
+| OPENCLAW-REMOVE-05 | 39 | Complete (verified 2026-06-26) |
 
 **Coverage:**
 - v5.0 requirements: 25 total
@@ -111,4 +111,4 @@
 
 ---
 *Requirements defined: 2026-06-25*
-*Last updated: 2026-06-26 after Phase 38 verification*
+*Last updated: 2026-06-26 after Phase 39 verification — v5.0 SHIPPED (25/25 REQs complete)*

@@ -6,7 +6,7 @@
 - ✅ **v2.0 Pipeline Remediation** — Phases 10-18 (shipped 2026-06-22) — [Archive](./milestones/v2.0-ROADMAP.md)
 - ✅ **v3.0 Industrial Pipeline Alignment** — Phases 19-25 (shipped 2026-06-23) — [Archive](./milestones/v3.0-ROADMAP.md)
 - ✅ **v4.0 Production Pipeline Remediation** — Phases 26-30 (shipped 2026-06-24) — [Archive](./milestones/v4.0-ROADMAP.md)
-- 🚧 **v5.0 Hermes-Native Migration** — Phases 31-39 (started 2026-06-25) — **ACTIVE**
+- ✅ **v5.0 Hermes-Native Migration** — Phases 31-39 (shipped 2026-06-26) — **ACTIVE→SHIPPED**
 
 ## Phases
 
@@ -62,7 +62,7 @@ Full details: [v3.0-ROADMAP.md](./milestones/v3.0-ROADMAP.md)
 - [ ] **Phase 36: Remaining 10 Phases Port** — p04_character_design through p13_delivery ported, each load/gather/execute/write/gate
 - [x] **Phase 37: Canvas Sync Migration** — canvas sync hook Node → Python event subscriber, fires on phase completion + gate resolution (SC#1/SC#2/SC#3 met; 495 tests pass)
 - [ ] **Phase 38: OpenClaw Decoupling + Docs Cleanup** — 0 openclaw refs in v5.0 deliverables + DEPRECATED.md + no Node runtime dependency
-- [ ] **Phase 39: E2E Validation + v5.0 Audit** — openclaw OFF degraded E2E produces master.mp4 + v5.0-MILESTONE-AUDIT.md
+- [x] **Phase 39: E2E Validation + v5.0 Audit** — openclaw OFF degraded E2E produces master.mp4 + v5.0-MILESTONE-AUDIT.md — **SHIPPED 2026-06-26 (502 tests, v5.0 complete)**
 
 **Critical path:** 31 → 32 → 35 → 36 → 38 → 39 (main spine); 33 (state) ∥ 34 (gates) partial parallel after 31; 37 (canvas) follows 35.
 
@@ -258,7 +258,7 @@ Plans:
 | 36. Remaining 10 Phases Port | 2/6 | In Progress|  |
 | 37. Canvas Sync Migration | 3/3 | Complete (SC#1/SC#2/SC#3 all met) | 2026-06-26 — canvas sync wired end-to-end, 495 tests pass |
 | 38. OpenClaw Decoupling + Docs | 1/2 | In Progress|  |
-| 39. E2E Validation + v5.0 Audit | 0/TBD | Not started | - |
+| 39. E2E Validation + v5.0 Audit | 1/1 | Complete (SC#1/SC#2/SC#3 all met) | 2026-06-26 — 502 tests pass, v5.0 SHIPPED |
 
 ## Cross-cutting Constraints
 
