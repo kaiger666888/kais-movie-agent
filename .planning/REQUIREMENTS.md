@@ -48,17 +48,28 @@
 - [x] **OPENCLAW-REMOVE-04** (verified 2026-06-26 — Phase 39 PASSED): E2E 测试 — openclaw 进程 OFF + gold-team/review/jimeng 服务 mock,跑通 13 phase 产出 `master.mp4`(degraded mode,继承 v4.0 PIPE-COMPOSE-01) — `test_e2e_degraded.py::test_e2e_degraded_full_dag_produces_master_mp4`
 - [x] **OPENCLAW-REMOVE-05** (verified 2026-06-26 — Phase 39 PASSED): `.planning/milestones/v5.0-MILESTONE-AUDIT.md` 文档化 0 openclaw 引用 + 解耦验证清单 + 9 phase 验收 trace
 
-## v6.0+ Requirements (Out of Current Scope)
+## v6.0+ Backlog（2026-06-26 v5.0 ship 后重新分档）
 
-继承自 PROJECT.md `Next Milestone Goals (v6.0+)`,v5.0 不实现:
-- 上游 creative_history lineage retrofit(TD-v3-1)
-- 多模型 A/B 测试(Runway/Kling/Sora)
-- 多平台导出(抖音/B站/YouTube)
-- 多语言 dubbing(HeyGen)
-- 字幕生成 + 烧录 + 多语言 SRT
-- 独立 lip sync phase(sync.so / HeyGen)
-- 分布式多机部署
-- hermes-agent dashboard 内嵌管线可视化
+v5.0 让架构变干净了（Python 原生 + plugin 化 + hermes-agent skill），原 backlog 需要按新架构重新判断价值。三档分类：
+
+### A. v6.0 保留 — v5.0 让它们更容易做，且自身有结构性价值
+
+- **TD-v3-1 上游 creative_history lineage retrofit** — v3.0 旗舰 CreativeHistoryTracker 的最后一公里（script→sts→shot hash stamping）。v5.0 后 asset bus 是 Python 原生 + 每个 phase input/output slot 契约干净，几十行就能闭环"改剧本自动定位受影响镜头"。不做就一直缺这把刀。
+- **hermes-agent dashboard 内嵌管线可视化** — 以前要靠 openclaw 走 :10588 canvas；现在管线是 hermes-agent 原生 skill，直接挂 dashboard plugin 即可，甚至可替代部分 :10588 依赖。
+
+### B. 待需求触发 — 技术上不难（gold_team.py 加 task type 或 kais_aigc 加 client），但要看实际分发场景
+
+- **多模型 A/B 测试**（Runway/Kling/Sora 同镜头并跑选优）— 真做对比评测时再开
+- **多平台导出**（抖音 9:16 / B站 16:9 / YouTube 横屏）— 真发多平台时再开
+- **多语言 dubbing**（HeyGen）— 真做出海时再开
+- **字幕生成 + 烧录 + 多语言 SRT** — 真需要字幕时再开
+
+> 不要现在画饼。等"我真的需要发 B 站 / 做英文版 / 对比 Kling"那天再各开一个 phase，比提前画 backlog 强。
+
+### C. 砍掉 — v5.0 后已冗余或不该挂在这里
+
+- ~~**独立 lip sync phase**（sync.so / HeyGen）~~ — Seedance 2.0 已经在 p11_video_render 内建，独立 phase 是 v3.0 时代的 fallback 思路，现在冗余。
+- ~~**分布式多机部署**~~ — 这是 kais-aigc-platform 的事，不是 hermes-agent 的事；单 operator 用 ComfyUI primary + auxiliary 已够。要做应放到 platform 仓库的 roadmap，不该挂在 movie-agent v6.0。
 
 ## Out of Scope (v5.0)
 

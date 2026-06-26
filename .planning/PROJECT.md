@@ -126,15 +126,21 @@ hermes-agent/
 
 ## Next Milestone Goals (v6.0+)
 
-待规划。候选项(v5.0 完成后再考虑):
-- 上游 creative_history lineage retrofit(TD-v3-1,unblock full Git-for-AIGC-movies)
-- 多模型 A/B 测试(Runway/Kling/Sora 同镜头并跑选优)
-- 多平台导出(抖音 9:16 / B站 16:9 / YouTube 横屏)
-- 多语言 dubbing(HeyGen 175+ 语言)
-- 字幕生成 + 烧录 + 多语言 SRT
-- 独立 lip sync phase(sync.so / HeyGen,作为 Seedance fallback)
-- 分布式多机部署
-- hermes-agent dashboard 内嵌管线可视化(kanban 集成)
+v5.0 ship 后（2026-06-26）重新分档。详见 [REQUIREMENTS.md v6.0+ Backlog](./REQUIREMENTS.md#v60-backlog2026-06-26-v50-ship-后重新分档)。
+
+### v6.0 保留（结构性价值，v5.0 让它们更容易做）
+- **TD-v3-1 上游 creative_history lineage retrofit** — 旗舰 CreativeHistoryTracker 的最后一公里（script→sts→shot hash stamping）
+- **hermes-agent dashboard 内嵌管线可视化** — 替代 :10588 canvas 部分依赖，挂 dashboard plugin 即可
+
+### 待需求触发（不做画饼，等真用到再开 phase）
+- 多模型 A/B（Runway/Kling/Sora）— 真做对比评测时
+- 多平台导出（抖音/B站/YouTube）— 真发多平台时
+- 多语言 dubbing（HeyGen）— 真做出海时
+- 字幕生成 + 多语言 SRT — 真需要字幕时
+
+### 已砍掉（v5.0 后冗余或归属错误）
+- ~~独立 lip sync phase~~ — Seedance 2.0 在 p11 内建，冗余
+- ~~分布式多机部署~~ — 归 kais-aigc-platform 仓库，不挂 movie-agent
 
 ## Principles
 - 零 npm 依赖 — 使用原生 fetch + Node.js 内置模块
