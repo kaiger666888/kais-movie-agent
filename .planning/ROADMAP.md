@@ -99,7 +99,7 @@ Full v5.0 phase details preserved in git history (commit prior to 2026-06-27 v6.
 Plans:
 - [x] 40-01-PLAN.md — AssetBus preview-clips slot + PHASE_REGISTRY p10b stub insertion (low-risk scaffolding; updates V5.0 test_phase_registry_full.py 13→14)
 - [x] 40-02-PLAN.md — PreviewEngine ABC + SlideshowEngine (FFmpeg subprocess) + LTXVideoEngine (mocked httpx POST :9001/api/v1/ltx) + select_engine factory (TDD)
-- [ ] 40-03-PLAN.md — p10b_rapid_preview.py full phase module (replaces 40-01 stub): 3 variants/shot, single-delta enforcement, ThreadPoolExecutor fan-out, episode-level degrade WARN
+- [x] 40-03-PLAN.md — p10b_rapid_preview.py full phase module (replaces 40-01 stub): 3 variants/shot, single-delta enforcement, ThreadPoolExecutor fan-out, episode-level degrade WARN
 - [ ] 40-04-PLAN.md — Verification tests: dual-engine E2E + JSONL format invariants + WARN-level degrade assertion + V5.0 502-test regression guard
 
 **Success Criteria** (what must be TRUE):
@@ -155,7 +155,7 @@ Plans:
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 40. Rapid Preview Tier | 2/4 | In Progress|  |
+| 40. Rapid Preview Tier | 3/4 | In Progress|  |
 | 41. Emotion Recipe Library | 0/TBD | Not started | - |
 | 42. Feedback Ingestion | 0/TBD | Not started | - |
 

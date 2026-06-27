@@ -4,13 +4,13 @@ milestone: v6.0
 milestone_name: Rapid Convergence Loop
 status: executing
 stopped_at: "v6.0 ROADMAP.md created — 3 phases (40-42), 19 REQs mapped 1:1, strict serial 40→41→42. STATE.md updated. Ready for `/gsd:plan-phase 40`."
-last_updated: "2026-06-27T05:09:33.873Z"
+last_updated: "2026-06-27T05:20:07.059Z"
 last_activity: 2026-06-27
 progress:
   total_phases: 3
   completed_phases: 0
   total_plans: 4
-  completed_plans: 2
+  completed_plans: 3
   percent: 0
 ---
 
@@ -26,11 +26,11 @@ See: .planning/PROJECT.md (updated 2026-06-27)
 ## Current Position
 
 Phase: 40 (Rapid Preview Tier) — EXECUTING
-Plan: 3 of 4
+Plan: 4 of 4
 Status: Ready to execute
 Last activity: 2026-06-27
 
-Progress: [█████░░░░░] 50%
+Progress: [████████░░] 75%
 
 ## Performance Metrics
 
@@ -65,6 +65,7 @@ Progress: [█████░░░░░] 50%
 | 42. Feedback Ingestion | 0/TBD | — | — |
 | Phase 40 P01 | 11 min | 3 tasks | 9 files |
 | Phase 40 P02 | 8 min | 3 tasks | 2 files |
+| Phase 40 P03 | 7min | 3 tasks | 3 files |
 
 ## Accumulated Context
 
@@ -93,6 +94,9 @@ Decisions logged in PROJECT.md + REQUIREMENTS.md + gsd-v6.0-rapid-convergence.md
 - [Phase ?]: p10b EXPERT=None + GATE_ID=None — pure orchestration; PreviewEngine strategy replaces expert delegation
 - [Phase ?]: generation_time_ms is LOCALLY-measured wall time via time.monotonic() (INFO #10) — service-reported timing in LTX response body is IGNORED for cross-engine comparability
 - [Phase ?]: LTXVideoEngine faithfully mirrors GoldTeamClient D-09 contract — no innovation on degrade envelope shape
+- [Phase 40]: p10b variant matrix CYCLES all 4 structure params across multi-shot episodes (BLOCKER #4) — shot N uses [STRUCTURE_PARAMS[N%4], [(N+1)%4], [(N+2)%4]] so turning_points_sec is deterministically covered
+- [Phase 40]: p10b preview_skipped flag written to episode-meta AssetBus slot (BLOCKER #1 fix) — episode-meta is the registered AssetBus JSON slot; pipeline-state.json is a separate PipelineStateStore file, NOT an AssetBus slot
+- [Phase 40]: p10b degrade semantics: per-variant silent count, episode-level WARN only on full degrade — mirrors v4.0 no-silent-swallow at episode boundary; per-variant fail is recoverable
 
 ### Pending Todos
 
@@ -130,7 +134,7 @@ v6.0 ready to plan.
 
 ## Session Continuity
 
-Last session: 2026-06-27T05:09:21.616Z
+Last session: 2026-06-27T05:19:14.717Z
 Stopped at: v6.0 ROADMAP.md created — 3 phases (40-42), 19 REQs mapped 1:1, strict serial 40→41→42. STATE.md updated. Ready for `/gsd:plan-phase 40`.
 Resume file: None
 

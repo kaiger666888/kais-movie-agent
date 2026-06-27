@@ -13,10 +13,10 @@
 
 - [x] **RAPID-PREVIEW-01**: 新 phase `p10b_rapid_preview.py` 插入 p10(voice) 与 p11(video_render) 之间,DAG 拓扑正确(p10 → p10b → p11),phase contract 定义清晰(input: voice_assets + keyframes + script_structure;output: rapid_preview_clips + episode_meta)
 - [x] **RAPID-PREVIEW-02**: 引擎支持双轨 — LTX-Video(秒级真实生成)作为主路径,slideshow-style(关键帧 + TTS → FFmpeg 合成 < 10s)作为 fallback。引擎选择走配置 (`KAIS_PREVIEW_ENGINE=ltx|slideshow`)
-- [ ] **RAPID-PREVIEW-03**: 每个 shot 生成 **2-3 个低质量极速预览变体**,每个变体只改一个结构参数(hook 位置 / emotion 序列 / turning point 时序 / ending state),遵守 Notion 红线 #6 控制变量。Variant matrix 在多 shot 剧集上 CYCLE 所有 4 个参数(`STRUCTURE_PARAMS[N mod 4], [(N+1) mod 4], [(N+2) mod 4]`),确保每个参数都被覆盖
+- [x] **RAPID-PREVIEW-03**: 每个 shot 生成 **2-3 个低质量极速预览变体**,每个变体只改一个结构参数(hook 位置 / emotion 序列 / turning point 时序 / ending state),遵守 Notion 红线 #6 控制变量。Variant matrix 在多 shot 剧集上 CYCLE 所有 4 个参数(`STRUCTURE_PARAMS[N mod 4], [(N+1) mod 4], [(N+2) mod 4]`),确保每个参数都被覆盖
 - [x] **RAPID-PREVIEW-04**: AssetBus 新槽 `rapid-preview-clips` (JSONL 格式) 持久化预览变体,字段含 `shot_id / variant_id / structure_delta / clip_path / generation_time_ms / engine`。**槽名 renamed from v3.0-era 文档中的 `preview-clips` 以避免与 SKILL.md p06.5 future-slot 命名空间冲突**;同时新增 `episode-meta` (JSON 格式) 槽用于 episode-level metadata flags (`preview_skipped` 等)
 - [x] **RAPID-PREVIEW-05**: **降级容忍** — 引擎不可达时 fallback 到直接 Seedance(跳过 p10b,正常进 p11),但必须 `WARN` 级别日志 + 在 `episode-meta` AssetBus slot 标记 `preview_skipped=true`(继承 v4.0 降级语义,不允许沉默吞错)
-- [ ] **RAPID-PREVIEW-06**: V5.0 的 4 个红线门(@Audio 强制校验 / asset envelope 原子写 / consistency-guard 阻塞 / Hermes phase contract)在预览层同样生效 — p10b 失败达 max_retries 触发 episode-level fail,不沉默
+- [x] **RAPID-PREVIEW-06**: V5.0 的 4 个红线门(@Audio 强制校验 / asset envelope 原子写 / consistency-guard 阻塞 / Hermes phase contract)在预览层同样生效 — p10b 失败达 max_retries 触发 episode-level fail,不沉默
 - [ ] **RAPID-PREVIEW-07**: 测试覆盖 — mocked LTX-Video API + mocked FFmpeg subprocess,验证 (a) 双引擎路径都产出预览,(b) 降级路径正确报 warning 而非沉默跳过 + flag 落到 `episode-meta` slot(不是 `pipeline-state`),(c) `rapid-preview-clips` JSONL 格式合法,(d) runner 在 full DAG 中正确迭代到 p10b 且 `result["phases"]["p10b_rapid_preview"]` 输出 shape 正确
 
 ### RECIPE-LIB — 配方库 (Emotion Recipe Library)
@@ -78,10 +78,10 @@ v6.0 ship 后重新分档。当前可见候选:
 |-------------|-------|--------|
 | RAPID-PREVIEW-01 | 40 | Complete |
 | RAPID-PREVIEW-02 | 40 | Complete |
-| RAPID-PREVIEW-03 | 40 | Pending |
+| RAPID-PREVIEW-03 | 40 | Complete |
 | RAPID-PREVIEW-04 | 40 | Complete |
 | RAPID-PREVIEW-05 | 40 | Complete |
-| RAPID-PREVIEW-06 | 40 | Pending |
+| RAPID-PREVIEW-06 | 40 | Complete |
 | RAPID-PREVIEW-07 | 40 | Pending |
 | RECIPE-LIB-01 | 41 | Pending |
 | RECIPE-LIB-02 | 41 | Pending |
