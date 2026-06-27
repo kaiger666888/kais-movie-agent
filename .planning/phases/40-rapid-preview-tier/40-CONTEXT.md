@@ -26,10 +26,18 @@ Insert new phase `p10b_rapid_preview` between p10 (voice) and p11 (video_render)
 - Generation parallelism: **ThreadPoolExecutor(max_workers=parallel_shots=4)** — matches p11 pattern (D-36-08); 3 variants × N shots fan out concurrently
 
 ### AssetBus Integration & Degradation
-- preview-clips slot registration: **extend ASSET_SCHEMA in `asset_bus.py`** (append 1 new entry, follows V5.0 plan 36-03 "PRESERVES existing slots — only appends" pattern); V5.0 502 tests stay green
-- preview-clips format: **JSONL append-only** — one line per variant; matches `finetune-dataset` slot pattern (`format: "jsonl"`, uses `append_line()`); fields: `shot_id / variant_id / structure_delta / clip_path / generation_time_ms / engine` per blueprint
+- preview-clips slot registration: **extend ASSET_SCHEMA in `asset_bus.py`** (append 2 new entries, follows V5.0 plan 36-03 "PRESERVES existing slots — only appends" pattern); V5.0 502 tests stay green
+- **Slot name: `rapid-preview-clips`** (NOT `preview-clips` — the latter is already documented in v3.0-era SKILL.md:207,261 for a future p06_5_ltx2_preview phase with JSON semantics; renaming avoids namespace collision)
+- rapid-preview-clips format: **JSONL append-only** — one line per variant; matches `finetune-dataset` slot pattern (`format: "jsonl"`, uses `append_line()`); fields: `shot_id / variant_id / structure_delta / clip_path / generation_time_ms / engine` per blueprint
+- **New slot: `episode-meta`** (JSON, writer_phase=p10b_rapid_preview) — for episode-level metadata flags. The `pipeline-state` AssetBus slot does NOT exist (it's a separate `.pipeline-state.json` file managed by PipelineStateStore). Use `episode-meta` AssetBus slot for `preview_skipped: True` flag.
 - p10b module registration: **modify `phases/__init__.py` PHASE_REGISTRY** — insert `p10b_rapid_preview` between `p10_voice` and `p11_video_render`; p11 `depends_on` changes from `["p10_voice"]` to `["p10b_rapid_preview"]`; p10b `depends_on: ["p10_voice"]`
-- Degradation signaling: **`logger.warning("preview_skipped: ...")` + `episode_meta["preview_skipped"] = True`** written to existing `pipeline-state` slot (no new slot needed); V5.0 502 tests unaffected since p10b is new
+- Degradation signaling: **`logger.warning("preview_skipped: ...")` + `episode_meta["preview_skipped"] = True`** written to new `episode-meta` AssetBus slot; V5.0 502 tests unaffected since p10b is new
+
+### Variant Matrix (refined after plan-checker finding)
+- Variant count: **exactly 3 per shot** (predictable test surface)
+- **Variant matrix cycling**: across consecutive shots, cycle through all 4 structure params so each param gets A/B tested — shot N uses params `[N, N+1, N+2] mod 4` from the 4-param list `[hook_position_sec, emotion_sequence, turning_points_sec, ending_state]`. This ensures all 4 params are deterministically covered across a multi-shot episode.
+- Control variable enforcement: **single-delta per variant** (Notion 红线 #6) — variant N changes exactly ONE param from baseline; `structure_delta` field records which one
+- Test coverage: at least one test asserts `turning_points_sec` appears as a structure_delta key in ≥1 variant across a multi-shot fixture
 
 ### Claude's Discretion
 None — all 4 areas fully resolved via smart discuss.
@@ -55,10 +63,10 @@ None — all 4 areas fully resolved via smart discuss.
 - **Degrade-first**: connection errors / 5xx / timeouts return `{"degraded": True, ...}` envelope; 4xx raises domain error.
 
 ### Integration Points
-- **DAG insertion**: `phases/__init__.py` PHASE_REGISTRY — p11's `depends_on` mutates from `["p10_voice"]` to `["p10b_rapid_preview"]`. Runner.py auto-discovers via `_compute_start_index` (no runner change needed).
-- **AssetBus write**: p10b reads `voice-clips` + `voice-timeline` (from p10) + `e-konte-sheets` (from p09, for keyframes); writes `preview-clips` JSONL.
-- **Episode meta flag**: degraded path writes `preview_skipped: True` to existing `pipeline-state` slot (Phase 33 slot, already exists).
-- **V5.0 502 tests safety**: ASSET_SCHEMA is append-only (no removal); PHASE_REGISTRY insertion is positional (existing entries' indexes shift by 1 but their `id` strings stay stable). p10/p11 themselves unchanged.
+- **DAG insertion**: `phases/__init__.py` PHASE_REGISTRY — p11's `depends_on` mutates from `["p10_voice"]` to `["p10b_rapid_preview"]`. Runner.py auto-discovers via `_compute_start_index` (no runner change needed). Insertion point is between p10 (index 9) and p11 (was index 10, becomes index 11). p08_scene_selection is at index 7 — `test_checkpoint_resume_mid_pipeline` (resumed_from=7, len(result["phases"])==6) still passes because p10b inserts AFTER index 7.
+- **AssetBus write**: p10b reads `voice-clips` + `voice-timeline` (from p10) + `e-konte-sheets` (from p09, for keyframes); writes `rapid-preview-clips` JSONL + `episode-meta` JSON.
+- **Episode meta flag**: degraded path writes `preview_skipped: True` to NEW `episode-meta` AssetBus slot (registered in plan 01).
+- **V5.0 502 tests safety**: ASSET_SCHEMA is append-only (no removal); PHASE_REGISTRY insertion is positional (existing entries' indexes shift by 1 but their `id` strings stay stable). p10/p11 themselves unchanged. **V5.0 hard-coded `== 13` assertions in 4 test files must be updated to `== 14`**: `test_runner_full_dag.py:211` (len(result["phases"])==13 → 14), `test_runner_full_dag.py:455` (len(store.saved)==13 → 14), `test_e2e_degraded.py:308` (13 → 14), `test_canvas_sync_integration.py:300` (13 → 14). Plan 01 grep MUST cover `== 13` patterns broadly, not just `PHASE_REGISTRY` references.
 
 </code_context>
 
