@@ -3,10 +3,10 @@ gsd_state_version: 1.0
 milestone: v6.0
 milestone_name: Rapid Convergence Loop
 status: planning
-last_updated: "2026-06-27T02:11:14.977Z"
+last_updated: "2026-06-27T10:30:00.000Z"
 last_activity: 2026-06-27
 progress:
-  total_phases: 0
+  total_phases: 3
   completed_phases: 0
   total_plans: 0
   completed_plans: 0
@@ -17,17 +17,19 @@ progress:
 
 ## Project Reference
 
-See: .planning/PROJECT.md (updated 2026-06-25)
+See: .planning/PROJECT.md (updated 2026-06-27)
 
 **Core value:** 降级优先的 GPU 任务调度 — 外部服务不可用时系统仍可运行。
-**v6.0 focus:** 补齐「最速收敛闭环」三件套 — 快速预览层 + 配方库 + 数据回流接口。
+**v6.0 focus:** 补齐「最速收敛闭环」三件套 — 快速预览层(p10b) + 配方库(recipe_library) + 数据回流接口(feedback_ingest)。
 
 ## Current Position
 
-Phase: Not started (defining requirements)
+Phase: 40 of 42 (Phase 40: Rapid Preview Tier) — v6.0 only
 Plan: —
-Status: Defining requirements
-Last activity: 2026-06-27 — Milestone v6.0 started
+Status: Ready to plan (roadmap created, awaiting /gsd:plan-phase 40)
+Last activity: 2026-06-27 — v6.0 ROADMAP.md created (3 phases, 19 REQs mapped)
+
+Progress: [░░░░░░░░░░] 0% (v6.0 milestone)
 
 ## Performance Metrics
 
@@ -37,7 +39,7 @@ Last activity: 2026-06-27 — Milestone v6.0 started
 - v4.0 average: ~5-6 min/plan (reference baseline from Phase 26-30)
 - v5.0 average: ~7-8 min/plan (Python rewrite + cross-repo deliverables)
 
-**v5.0 By Phase (final):**
+**v5.0 By Phase (final — archived):**
 
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
@@ -53,42 +55,49 @@ Last activity: 2026-06-27 — Milestone v6.0 started
 
 **v5.0 totals:** 36 plans | ~274 min | 502 tests | 25/25 REQs | ~5500 LOC Python | 0 openclaw refs
 
+**v6.0 By Phase (planned, not started):**
+
+| Phase | Plans | Total | Avg/Plan |
+|-------|-------|-------|----------|
+| 40. Rapid Preview Tier | 0/TBD | — | — |
+| 41. Emotion Recipe Library | 0/TBD | — | — |
+| 42. Feedback Ingestion | 0/TBD | — | — |
+
 ## Accumulated Context
 
 ### Decisions
 
-Decisions logged in PROJECT.md + REQUIREMENTS.md.
-v5.0 key decisions (locked 2026-06-25):
+Decisions logged in PROJECT.md + REQUIREMENTS.md + gsd-v6.0-rapid-convergence.md (blueprint).
 
-- **Skill 位置**: 并入 hermes-agent 仓库 (`hermes-agent/skills/kais-movie-pipeline/`)
-- **代码迁移**: 全部 Python 重写(13 phase + lib/* clients),不做 Node subprocess 桥接(避免双运行时维护成本)
-- **Canvas 去留**: 保留,迁移到 hermes-agent 内部 event hook,不走 openclaw
+**v6.0 key decisions (locked 2026-06-27):**
 
-v5.0 roadmap decisions:
+- **Phase 编号**: 继续 v5.0(Phase 39),v6.0 从 Phase 40 起,不重置
+- **3 phase 严格串行**: 40 → 41 → 42,无 parallel track(blueprint 数据流约束)
+- **p10b 是插入不替换**: 在 p10(voice) 与 p11(video_render) 之间,V5.0 的 502 tests 不能 break
+- **降级容忍 + 红线门继承**: 4 个 V5.0 红线门在预览层同样生效,降级必须 WARN 不沉默
+- **控制变量**: 预览赛马一次只改一个结构参数(Notion 红线 #6)
+- **数据回流不自动改管线**: feedback 只更新配方库评分,人决策优先
+- **配方结构对齐 Phase 40**: emotion-recipe 的 `structure{}` 字段与 p10b 的 structure_delta 对齐,故 41 依赖 40
 
-- **Phase 编号**: 继续 v4.0(Phase 30),v5.0 从 Phase 31 起,不重置
-- **Critical path**: 31 → 32 → 35 → 36 → 38 → 39(main spine);33(state)∥ 34(gates)partial parallel after 31;37(canvas)follows 35
-- **Phase 31 first (foundation)**: 3 plugin 骨架是 32/33/34 三个交付 phase 的填充目标
-- **Phase 32 before 35 (backend before skill)**: GPU-DIRECT 必须先于 HERMES-SKILL
-- **Phase 35 vertical slice (p01-p03 only)**: 风险隔离,先验证全链路再 port 剩余
-- **Phase 36 reference port,非 re-design**: 行为对齐 Node.js lib/* V8.6 handler
+**v5.0 key decisions (archived):**
+
+- Skill 位置并入 hermes-agent (`hermes-agent/skills/kais-movie-pipeline/`)
+- 全部 Python 重写,不做 Node subprocess 桥接
+- Canvas 迁移到 hermes-agent 内部 event hook,不走 openclaw
 
 ### Pending Todos
 
-None. v5.0 milestone complete.
+None for v6.0.
 
 ### Blockers
 
-None. v5.0 shipped.
+None. v6.0 ready to plan.
 
-### Key Risks (v5.0 — closed)
+### Key Risks (v6.0 — active)
 
-All v5.0 risks closed at ship time:
-
-1. ~~Python 重写工作量~~ — closed: 9 phases, 36 plans, ~5500 LOC shipped
-2. ~~delegate_task approval callback 行为~~ — closed: Phase 34 runner_hooks adapter integrates blocking/webhook gate modes
-3. ~~行为对齐验证~~ — closed: Phase 36 reference port + Phase 39 E2E witness
-4. ~~openclaw grep 关键词覆盖~~ — closed: Phase 38 SC#1 + Phase 39 audit §3 re-affirm 0 hits
+1. **p10b DAG 插入不破坏 V5.0 502 tests** — 缓解: p10b 是纯插入,不修改 p10/p11 现有行为;降级路径(fallback to Seedance)保证 V5.0 路径仍可走
+2. **LTX-Video 真实 API 不可用** — 缓解: blueprint Out of Scope 已声明 real-GPU LTX-Video 评测归 operator 侧,v6.0 用 mocked API 验证编排正确性
+3. **配方库消费方未定义** — 缓解: v6.0 只做配方库数据结构 + 查询接口,自动消费留 v7.0+(PROJECT.md Next Milestone Goals 已列)
 
 ## Deferred Items
 
@@ -99,6 +108,7 @@ All v5.0 risks closed at ship time:
 | W-v5-1 | Real-GPU E2E (real ZHIPU_API_KEY + real Seedance audio/video) | Operator-side | v5.0 PROJECT.md Out of Scope |
 | W-v5-2 | Real gold-team task execution (17 task types) | Operator-side | v5.0 PROJECT.md Out of Scope |
 | W-v5-3 | Real canvas platform round-trip | Operator-side | v5.0 PROJECT.md Out of Scope |
+| v6.0+ | 配方库自动消费 (p03 阶段推荐 converged 配方) | Deferred | v6.0 PROJECT.md — 需观察 v6.0 配方库数据沉淀质量 |
 | v6.0+ | 多模型 A/B 测试 (Runway/Kling/Sora) | Deferred | v3.0 roadmap |
 | v6.0+ | 多平台导出 (抖音/B站/YouTube/快手) | Deferred | v3.0 roadmap |
 | v6.0+ | 多语言 dubbing (HeyGen 175+) | Deferred | v3.0 roadmap |
@@ -109,24 +119,22 @@ All v5.0 risks closed at ship time:
 
 ## Session Continuity
 
-Last session: 2026-06-26T09:30:00Z
-Stopped at: v5.0 SHIPPED — Phase 39 verified (4/4 truths), 502 tests pass, 25/25 REQs complete, 0 openclaw refs, v5.0-MILESTONE-AUDIT.md complete.
+Last session: 2026-06-27T10:30:00Z
+Stopped at: v6.0 ROADMAP.md created — 3 phases (40-42), 19 REQs mapped 1:1, strict serial 40→41→42. STATE.md updated. Ready for `/gsd:plan-phase 40`.
 Resume file: None
 
 **Next action:**
 
 ```
-v5.0 milestone complete. Operator next steps:
-  (a) Real-GPU E2E validation (W-v5-1 through W-v5-3) — out of v5.0 scope
-  (b) Begin v6.0+ roadmap planning (TypeScript migration, multi-platform export, etc.)
-  (c) Archive kais-movie-agent repo (operator decision)
+v6.0 roadmap ready. Next:
+  /gsd:plan-phase 40   # Rapid Preview Tier (p10b + dual-engine + preview-clips slot)
 ```
 
 **Critical context to preserve across sessions:**
 
-- v5.0 SHIPPED 2026-06-26 — 9 phases (31-39), 36 plans, 502 tests, 25/25 REQs, ~5500 LOC Python
-- hermes-agent now hosts full kais-movie-pipeline skill + 3 plugins (kais_aigc / pipeline_state / review_gates)
-- openclaw completely decoupled from short-drama creation flow (0 executable-code refs in 4 v5.0 deliverable dirs)
-- canvas sync migrated to hermes-agent Python event subscriber (CanvasSyncSubscriber)
-- kais-movie-agent repo is now a read-only archive (DEPRECATED.md → points to hermes-agent)
-- Real-GPU validation deferred to operator (W-v5-1 through W-v5-3, per PROJECT.md Out of Scope)
+- v6.0 ACTIVE — 3 phases (40-42), 19 REQs, strict serial 40→41→42
+- v5.0 SHIPPED 2026-06-26 — 9 phases (31-39), 36 plans, 502 tests, 25/25 REQs, ~5500 LOC Python (archived, do not modify)
+- hermes-agent hosts kais-movie-pipeline skill + 3 plugins (kais_aigc / pipeline_state / review_gates)
+- openclaw completely decoupled (0 executable-code refs in v5.0 deliverable dirs)
+- v6.0 constraints: p10b is INSERT not replace; 4 red-line gates inherited; degrade must WARN not silent; feedback updates recipe scores only, no auto pipeline modification
+- Blueprint source of truth: .planning/gsd-v6.0-rapid-convergence.md
