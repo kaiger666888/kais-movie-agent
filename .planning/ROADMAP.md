@@ -146,7 +146,7 @@ Plans:
 
 Plans:
 - [x] 42-01-PLAN.md — AssetBus feedback-data + feedback-rejected slots + FeedbackIngestClient skeleton (submit_feedback stub + get_feedback + close lifecycle) (FEEDBACK-INGEST-01/03)
-- [ ] 42-02-PLAN.md — HMAC-SHA256 verification (compare_digest, 5-min window) + 4-stage validation pipeline (sig/schema/semantic/episode) + RecipeLibrary continuous-rate Wilson CI support (FEEDBACK-INGEST-02/04/06)
+- [x] 42-02-PLAN.md — HMAC-SHA256 verification (compare_digest, 5-min window) + 4-stage validation pipeline (sig/schema/semantic/episode) + RecipeLibrary continuous-rate Wilson CI support (FEEDBACK-INGEST-02/04/06)
 - [ ] 42-03-PLAN.md — Starlette + uvicorn HTTP server (POST /api/v1/feedback on KAIS_FEEDBACK_PORT :8091) + start_feedback_server context manager + list_pending_updates method (FEEDBACK-INGEST-01/02)
 - [ ] 42-04-PLAN.md — E2E integration tests (convergence closure) + V5.0/Phase 40/Phase 41 regression guard + STRUCTURAL no-auto-modify-pipeline grep test + Phase SUMMARY (FEEDBACK-INGEST-01/02/03/04/05/06)
 
@@ -169,7 +169,7 @@ Plans:
 |-------|----------------|--------|-----------|
 | 40. Rapid Preview Tier | 4/4 | Complete | 2026-06-27 |
 | 41. Emotion Recipe Library | 4/4 | Complete | 2026-06-27 |
-| 42. Feedback Ingestion | 1/4 | In Progress | - |
+| 42. Feedback Ingestion | 2/4 | In Progress | - |
 
 ### Archived Milestones (v1.0-v5.0)
 

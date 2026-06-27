@@ -3,15 +3,15 @@ gsd_state_version: 1.0
 milestone: v6.0
 milestone_name: Rapid Convergence Loop
 status: executing
-stopped_at: Phase 42 plan 01 SHIPPED — FeedbackIngestClient skeleton (plugins/kais_aigc/feedback_ingest.py) with __init__/get_feedback/submit_feedback stub + 2 new AssetBus JSONL slots (feedback-data + feedback-rejected, writer_phase=feedback_ingest). JSONL_SLOTS frozenset UNCHANGED; V5.0 + Phase 40 + Phase 41 baseline regression-clean (497 tests).
-last_updated: "2026-06-27T12:12:10.000Z"
-last_activity: 2026-06-27 -- Phase 42 plan 01 SHIPPED
+stopped_at: Phase 42 plan 02 SHIPPED — HMAC-SHA256 verification (constant-time compare_digest, NO dev-mode escape) + 4-stage validation pipeline (signature 401 → schema 422 → semantic 400 → episode existence 404) + continuous-binomial-rate Wilson CI support in RecipeLibrary (_wilson_ci accepts float; update_validation use_continuous_rate keyword-only param). 27 new tests, 67 total in 42-02 scope, 497 in broader pipeline_state+kais_aigc sweep.
+last_updated: "2026-06-27T12:22:25.000Z"
+last_activity: 2026-06-27 -- Phase 42 plan 02 SHIPPED
 progress:
   total_phases: 3
   completed_phases: 2
   total_plans: 12
-  completed_plans: 9
-  percent: 75
+  completed_plans: 10
+  percent: 83
 ---
 
 # Project State
@@ -26,11 +26,11 @@ See: .planning/PROJECT.md (updated 2026-06-27)
 ## Current Position
 
 Phase: 42 (Feedback Ingestion) — IN PROGRESS
-Plan: 1 of 4 (plan 01 shipped 2026-06-27; plans 02/03/04 pending)
+Plan: 2 of 4 (plans 01+02 shipped 2026-06-27; plans 03/04 pending)
 Status: Ready to execute next plan
-Last activity: 2026-06-27 -- Phase 42 plan 01 SHIPPED
+Last activity: 2026-06-27 -- Phase 42 plan 02 SHIPPED
 
-Progress: [████████░░] 75%
+Progress: [████████░░] 83%
 
 ## Performance Metrics
 
@@ -56,13 +56,13 @@ Progress: [████████░░] 75%
 
 **v5.0 totals:** 36 plans | ~274 min | 502 tests | 25/25 REQs | ~5500 LOC Python | 0 openclaw refs
 
-**v6.0 By Phase (Phase 40 SHIPPED, 41 SHIPPED, 42 plan 01 shipped, 42-02+ pending):**
+**v6.0 By Phase (Phase 40 SHIPPED, 41 SHIPPED, 42 plans 01+02 shipped, 42-03+04 pending):**
 
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
 | 40. Rapid Preview Tier | 4/4 | ~33min | ~8min |
 | 41. Emotion Recipe Library | 4/4 | ~94min | ~24min (plans 01-04) |
-| 42. Feedback Ingestion | 1/TBD | ~5min | ~5min (plan 01 only) |
+| 42. Feedback Ingestion | 2/TBD | ~12min | ~6min (plans 01+02) |
 
 **Phase 40 detail (shipped 2026-06-27):**
 
@@ -83,11 +83,12 @@ Progress: [████████░░] 75%
 | Phase 41 P01 | ~22min | 3 tasks | 5 files |
 | Phase 41 P02 | 25m | 4 tasks | 3 files |
 
-**Phase 42 detail (plan 01 shipped 2026-06-27):**
+**Phase 42 detail (plans 01+02 shipped 2026-06-27):**
 
 | Plan | Title | Duration | Tests Added |
 |------|-------|----------|-------------|
 | 42-01 | FeedbackIngestClient skeleton + feedback-data/feedback-rejected AssetBus slots | ~5 min | 21 (11 slot + 10 skeleton) |
+| 42-02 | HMAC verification + 4-stage validation pipeline + continuous-rate Wilson CI | ~7 min | 27 (9 continuous-CI + 18 validation; plus Phase 41 Test 14 realignment) |
 
 ## Accumulated Context
 
@@ -130,6 +131,13 @@ Decisions logged in PROJECT.md + REQUIREMENTS.md + gsd-v6.0-rapid-convergence.md
 - [Phase 42]: KAIS_FEEDBACK_PORT default 8091 — sibling to gold-team :8002 and review-platform :8090 so a single host can run all three services without port conflicts
 - [Phase 42]: Constructor takes recipe_library: Any (duck-typed) rather than hard-importing RecipeLibrary — prevents a potential import cycle if RecipeLibrary ever imports this module
 - [Phase 42]: Phase 41 + Phase 35 snapshot tests (EXPECTED_SLOTS + JSONL list) extended rather than preserved as-is — they asserted exact-set equality with pre-Phase-42 state, and the append-only contract necessarily extends that set
+- [Phase 42-02]: HMAC verification ALWAYS requires KAIS_FEEDBACK_SECRET — NO dev-mode escape (deliberate divergence from V5.0 review_platform which accepts all callbacks when secret unset; Phase 42 is production-facing)
+- [Phase 42-02]: HMAC verification happens BEFORE json.loads — deliberate DoS mitigation (reject invalid signatures without burning CPU on potentially-malicious JSON)
+- [Phase 42-02]: hmac.compare_digest for constant-time signature compare — NEVER == (threat T-42-03 spoofing mitigation)
+- [Phase 42-02]: Structural invariant — RecipeLibrary.update_validation NEVER touched on signature/schema/semantic rejections; only after all 4 pipeline stages pass (Test 17/17b verify)
+- [Phase 42-02]: update_validation(use_continuous_rate=True) added as keyword-only with default False — CONTEXT.md-authorized widening of Phase 41's LOCKED signature; default preserves int-passed path with zero regression
+- [Phase 42-02]: get_recipe_by_episode returns None on unknown (does NOT raise KeyError) — best-effort lookup, distinct from get_recipe semantics to support the 404 flow
+- [Phase 42-02]: Continuous-rate Wilson CI mathematically correct — Wilson score interval is well-defined for any continuous p in [0,1] (CONTEXT.md specifics); Phase 41 _wilson_ci math body unchanged, only type annotations widened to int | float
 
 ### Pending Todos
 
@@ -167,15 +175,15 @@ v6.0 ready to plan.
 
 ## Session Continuity
 
-Last session: 2026-06-27T12:12:10.000Z
-Stopped at: Phase 42 plan 01 SHIPPED — FeedbackIngestClient skeleton (plugins/kais_aigc/feedback_ingest.py) with __init__/get_feedback + submit_feedback stub envelope + close/__enter__/__exit__ lifecycle + 2 new AssetBus JSONL slots (feedback-data + feedback-rejected, writer_phase=feedback_ingest, JSONL_SLOTS frozenset UNCHANGED). 21 new tests, 497 pipeline_state+kais_aigc combined sweep passing, V5.0 + Phase 40 + Phase 41 regression clean.
+Last session: 2026-06-27T12:22:25.000Z
+Stopped at: Phase 42 plan 02 SHIPPED — HMAC-SHA256 verification (constant-time compare_digest, NO dev-mode escape, requires sha256= prefix) + 4-stage validation pipeline (signature 401 → schema 422 → semantic 400 → episode existence 404) + continuous-rate Wilson CI support (_wilson_ci accepts int|float; update_validation gains keyword-only use_continuous_rate: bool = False, default preserves Phase 41 int-path). 27 new tests (67 total in 42-02 scope, 497 in broader pipeline_state+kais_aigc sweep). Structural invariant: RecipeLibrary.update_validation NEVER touched on rejection (only the read-only get_recipe_by_episode touches self._rl on the rejection path, only at stage 4).
 Resume file: None
 
 **Next action:**
 
 ```
-Phase 42 plan 01 done. Next:
-  /gsd:plan-phase 42 --plan 02   # HMAC verification + 4-stage validation pipeline + Wilson CI continuous-rate support
+Phase 42 plan 02 done. Next:
+  /gsd:plan-phase 42 --plan 03   # Starlette + uvicorn HTTP server + POST /api/v1/feedback handler + start_feedback_server context manager + list_pending_updates method
 ```
 
 **Critical context to preserve across sessions:**
