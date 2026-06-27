@@ -94,7 +94,13 @@ Full v5.0 phase details preserved in git history (commit prior to 2026-06-27 v6.
 **Goal**: 在 V5.0 13 步管线中插入 p10b rapid_preview phase — 每 shot 生成 2-3 个秒级低质量极速预览变体供结构参数 A/B 赛马,引擎不可达时降级到直接 Seedance 但必须 WARN 而非沉默吞错,V5.0 的 4 个红线门在预览层同样生效
 **Depends on**: Phase 39 (V5.0 shipped — 13 phase Python 管线就位,AssetBus V3 typed slots 框架可扩展,consistency-guard 阻塞语义可用)
 **Requirements**: RAPID-PREVIEW-01, RAPID-PREVIEW-02, RAPID-PREVIEW-03, RAPID-PREVIEW-04, RAPID-PREVIEW-05, RAPID-PREVIEW-06, RAPID-PREVIEW-07
-**Plans**: TBD
+**Plans**: 4 plans (4 waves, strict serial — brownfield regression safety requires each plan's tests to pass before the next plan starts)
+
+Plans:
+- [ ] 40-01-PLAN.md — AssetBus preview-clips slot + PHASE_REGISTRY p10b stub insertion (low-risk scaffolding; updates V5.0 test_phase_registry_full.py 13→14)
+- [ ] 40-02-PLAN.md — PreviewEngine ABC + SlideshowEngine (FFmpeg subprocess) + LTXVideoEngine (mocked httpx POST :9001/api/v1/ltx) + select_engine factory (TDD)
+- [ ] 40-03-PLAN.md — p10b_rapid_preview.py full phase module (replaces 40-01 stub): 3 variants/shot, single-delta enforcement, ThreadPoolExecutor fan-out, episode-level degrade WARN
+- [ ] 40-04-PLAN.md — Verification tests: dual-engine E2E + JSONL format invariants + WARN-level degrade assertion + V5.0 502-test regression guard
 
 **Success Criteria** (what must be TRUE):
 1. `p10b_rapid_preview.py` 作为新 phase 插入 p10(voice) 与 p11(video_render) 之间,DAG 拓扑正确(p10 → p10b → p11),phase contract 定义清晰(input: voice_assets + keyframes + script_structure;output: preview_clips) — 引擎双轨切换(LTX-Video 主路径 / slideshow fallback)走 `KAIS_PREVIEW_ENGINE` env var (RAPID-PREVIEW-01, RAPID-PREVIEW-02)
@@ -149,7 +155,7 @@ Full v5.0 phase details preserved in git history (commit prior to 2026-06-27 v6.
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 40. Rapid Preview Tier | 0/TBD | Not started | - |
+| 40. Rapid Preview Tier | 0/4 | Planned (4 waves, strict serial) | - |
 | 41. Emotion Recipe Library | 0/TBD | Not started | - |
 | 42. Feedback Ingestion | 0/TBD | Not started | - |
 
