@@ -118,7 +118,13 @@ Plans:
 **Goal**: 把 V5.0 `creative-history` 中散落的 script_auditor 5 维评分结构化为可复用的 emotion-recipe JSONL 配方库,提供 5 个核心方法 + 3 种查询模式 + 完整溯源,为 Phase 42 feedback 更新配方评分提供数据结构基础
 **Depends on**: Phase 40 (p10b rapid_preview 就位 — structure_delta 字段定义了配方的结构参数空间,emotion-recipe 的 `structure{}` 字段与之对齐)
 **Requirements**: RECIPE-LIB-01, RECIPE-LIB-02, RECIPE-LIB-03, RECIPE-LIB-04, RECIPE-LIB-05, RECIPE-LIB-06
-**Plans**: TBD
+**Plans**: 4 plans (4 waves, strict serial — brownfield; each plan builds on the prior: 01 scaffolds slot + 3 methods, 02 adds extraction + update_validation + Wilson CI, 03 adds query_by_structure, 04 verifies end-to-end + V5.0 regression)
+
+Plans:
+- [ ] 41-01-PLAN.md — AssetBus emotion-recipe slot registration + RecipeLibrary skeleton (create_recipe / get_recipe / list_recipes + slugify + recipe_id sequencing) (RECIPE-LIB-01/02/03/05/06)
+- [ ] 41-02-PLAN.md — 5-dim creative-history extraction (RECIPE-LIB-04) + Wilson CI pure-stdlib helper + update_validation method with Phase 42 contract signature (RECIPE-LIB-01)
+- [ ] 41-03-PLAN.md — query_by_structure with cosine+jaccard similarity (0.7*cos + 0.3*jac, pure stdlib) — completes RECIPE-LIB-01 (5/5 methods) + RECIPE-LIB-05 (similarity query)
+- [ ] 41-04-PLAN.md — End-to-end integration tests (convergence loop) + V5.0/Phase 40 regression guard (676-test baseline preserved) + Phase SUMMARY
 
 **Success Criteria** (what must be TRUE):
 1. `plugins/pipeline_state/recipe_library.py` 实现 RecipeLibrary 类,提供 **5 个核心方法**:`create_recipe / get_recipe / list_recipes / update_validation / query_by_structure`,作为 pipeline_state plugin 的新 module (RECIPE-LIB-01)
@@ -156,7 +162,7 @@ Plans:
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 40. Rapid Preview Tier | 3/4 | In Progress|  |
-| 41. Emotion Recipe Library | 0/TBD | Not started | - |
+| 41. Emotion Recipe Library | 0/4 | Not started | - |
 | 42. Feedback Ingestion | 0/TBD | Not started | - |
 
 ### Archived Milestones (v1.0-v5.0)
