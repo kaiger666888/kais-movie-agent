@@ -4,13 +4,13 @@ milestone: v6.0
 milestone_name: Rapid Convergence Loop
 status: executing
 stopped_at: "v6.0 ROADMAP.md created — 3 phases (40-42), 19 REQs mapped 1:1, strict serial 40→41→42. STATE.md updated. Ready for `/gsd:plan-phase 40`."
-last_updated: "2026-06-27T04:43:51.695Z"
-last_activity: 2026-06-27 -- Phase 40 planning complete
+last_updated: "2026-06-27T04:58:18.106Z"
+last_activity: 2026-06-27
 progress:
   total_phases: 3
   completed_phases: 0
   total_plans: 4
-  completed_plans: 0
+  completed_plans: 1
   percent: 0
 ---
 
@@ -25,12 +25,12 @@ See: .planning/PROJECT.md (updated 2026-06-27)
 
 ## Current Position
 
-Phase: 40 of 42 (Phase 40: Rapid Preview Tier) — v6.0 only
-Plan: —
+Phase: 40 (Rapid Preview Tier) — EXECUTING
+Plan: 2 of 4
 Status: Ready to execute
-Last activity: 2026-06-27 -- Phase 40 planning complete
+Last activity: 2026-06-27
 
-Progress: [░░░░░░░░░░] 0% (v6.0 milestone)
+Progress: [███░░░░░░░] 25%
 
 ## Performance Metrics
 
@@ -63,6 +63,7 @@ Progress: [░░░░░░░░░░] 0% (v6.0 milestone)
 | 40. Rapid Preview Tier | 0/TBD | — | — |
 | 41. Emotion Recipe Library | 0/TBD | — | — |
 | 42. Feedback Ingestion | 0/TBD | — | — |
+| Phase 40 P01 | 11 min | 3 tasks | 9 files |
 
 ## Accumulated Context
 
@@ -85,6 +86,10 @@ Decisions logged in PROJECT.md + REQUIREMENTS.md + gsd-v6.0-rapid-convergence.md
 - Skill 位置并入 hermes-agent (`hermes-agent/skills/kais-movie-pipeline/`)
 - 全部 Python 重写,不做 Node subprocess 桥接
 - Canvas 迁移到 hermes-agent 内部 event hook,不走 openclaw
+- [Phase ?]: Slot name 'rapid-preview-clips' (NOT 'preview-clips') — avoids SKILL.md p06.5 collision (BLOCKER #5)
+- [Phase ?]: Slot name 'episode-meta' (NOT 'pipeline-state') — pipeline-state.json is separate PipelineStateStore file (BLOCKER #1)
+- [Phase ?]: JSONL_SLOTS frozenset left UNCHANGED — dispatch uses ASSET_SCHEMA[slot].format
+- [Phase ?]: p10b EXPERT=None + GATE_ID=None — pure orchestration; PreviewEngine strategy replaces expert delegation
 
 ### Pending Todos
 
@@ -92,7 +97,9 @@ None for v6.0.
 
 ### Blockers
 
-None. v6.0 ready to plan.
+v6.0 ready to plan.
+
+- Pre-existing failure (out of scope): test_no_openclaw_references_in_phase_37_deliverables fails due to UNCOMMITTED canvas_sync.py sqlite references (lines 406, 417, 426). Not caused by Phase 40-01. User should commit or revert canvas_sync.py changes separately.
 
 ### Key Risks (v6.0 — active)
 
@@ -120,7 +127,7 @@ None. v6.0 ready to plan.
 
 ## Session Continuity
 
-Last session: 2026-06-27T10:30:00Z
+Last session: 2026-06-27T04:57:58.310Z
 Stopped at: v6.0 ROADMAP.md created — 3 phases (40-42), 19 REQs mapped 1:1, strict serial 40→41→42. STATE.md updated. Ready for `/gsd:plan-phase 40`.
 Resume file: None
 
