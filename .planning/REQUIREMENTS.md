@@ -17,7 +17,7 @@
 - [x] **RAPID-PREVIEW-04**: AssetBus 新槽 `rapid-preview-clips` (JSONL 格式) 持久化预览变体,字段含 `shot_id / variant_id / structure_delta / clip_path / generation_time_ms / engine`。**槽名 renamed from v3.0-era 文档中的 `preview-clips` 以避免与 SKILL.md p06.5 future-slot 命名空间冲突**;同时新增 `episode-meta` (JSON 格式) 槽用于 episode-level metadata flags (`preview_skipped` 等)
 - [x] **RAPID-PREVIEW-05**: **降级容忍** — 引擎不可达时 fallback 到直接 Seedance(跳过 p10b,正常进 p11),但必须 `WARN` 级别日志 + 在 `episode-meta` AssetBus slot 标记 `preview_skipped=true`(继承 v4.0 降级语义,不允许沉默吞错)
 - [x] **RAPID-PREVIEW-06**: V5.0 的 4 个红线门(@Audio 强制校验 / asset envelope 原子写 / consistency-guard 阻塞 / Hermes phase contract)在预览层同样生效 — p10b 失败达 max_retries 触发 episode-level fail,不沉默
-- [ ] **RAPID-PREVIEW-07**: 测试覆盖 — mocked LTX-Video API + mocked FFmpeg subprocess,验证 (a) 双引擎路径都产出预览,(b) 降级路径正确报 warning 而非沉默跳过 + flag 落到 `episode-meta` slot(不是 `pipeline-state`),(c) `rapid-preview-clips` JSONL 格式合法,(d) runner 在 full DAG 中正确迭代到 p10b 且 `result["phases"]["p10b_rapid_preview"]` 输出 shape 正确
+- [x] **RAPID-PREVIEW-07**: 测试覆盖 — mocked LTX-Video API + mocked FFmpeg subprocess,验证 (a) 双引擎路径都产出预览,(b) 降级路径正确报 warning 而非沉默跳过 + flag 落到 `episode-meta` slot(不是 `pipeline-state`),(c) `rapid-preview-clips` JSONL 格式合法,(d) runner 在 full DAG 中正确迭代到 p10b 且 `result["phases"]["p10b_rapid_preview"]` 输出 shape 正确
 
 ### RECIPE-LIB — 配方库 (Emotion Recipe Library)
 
@@ -82,7 +82,7 @@ v6.0 ship 后重新分档。当前可见候选:
 | RAPID-PREVIEW-04 | 40 | Complete |
 | RAPID-PREVIEW-05 | 40 | Complete |
 | RAPID-PREVIEW-06 | 40 | Complete |
-| RAPID-PREVIEW-07 | 40 | Pending |
+| RAPID-PREVIEW-07 | 40 | Complete |
 | RECIPE-LIB-01 | 41 | Pending |
 | RECIPE-LIB-02 | 41 | Pending |
 | RECIPE-LIB-03 | 41 | Pending |

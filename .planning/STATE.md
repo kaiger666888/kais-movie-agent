@@ -3,15 +3,15 @@ gsd_state_version: 1.0
 milestone: v6.0
 milestone_name: Rapid Convergence Loop
 status: executing
-stopped_at: "v6.0 ROADMAP.md created — 3 phases (40-42), 19 REQs mapped 1:1, strict serial 40→41→42. STATE.md updated. Ready for `/gsd:plan-phase 40`."
-last_updated: "2026-06-27T05:20:07.059Z"
+stopped_at: "Phase 40 (Rapid Preview Tier) COMPLETE — 4/4 plans done, 7/7 RAPID-PREVIEW REQs satisfied, 676 tests pass (V5.0 baseline 502 + 174 Phase 40 additions). Ready for `/gsd:plan-phase 41`."
+last_updated: "2026-06-27T06:30:00.000Z"
 last_activity: 2026-06-27
 progress:
   total_phases: 3
-  completed_phases: 0
+  completed_phases: 1
   total_plans: 4
-  completed_plans: 3
-  percent: 0
+  completed_plans: 4
+  percent: 33
 ---
 
 # Project State
@@ -25,12 +25,12 @@ See: .planning/PROJECT.md (updated 2026-06-27)
 
 ## Current Position
 
-Phase: 40 (Rapid Preview Tier) — EXECUTING
-Plan: 4 of 4
-Status: Ready to execute
+Phase: 41 (Emotion Recipe Library) — NEXT
+Plan: 0 of ? (not yet planned)
+Status: Phase 40 shipped, ready to plan Phase 41
 Last activity: 2026-06-27
 
-Progress: [████████░░] 75%
+Progress: [██████░░░░] 67% (Phase 40 of 42 shipped)
 
 ## Performance Metrics
 
@@ -56,16 +56,24 @@ Progress: [████████░░] 75%
 
 **v5.0 totals:** 36 plans | ~274 min | 502 tests | 25/25 REQs | ~5500 LOC Python | 0 openclaw refs
 
-**v6.0 By Phase (planned, not started):**
+**v6.0 By Phase (Phase 40 SHIPPED, 41-42 pending):**
 
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
-| 40. Rapid Preview Tier | 0/TBD | — | — |
+| 40. Rapid Preview Tier | 4/4 | ~33min | ~8min |
 | 41. Emotion Recipe Library | 0/TBD | — | — |
 | 42. Feedback Ingestion | 0/TBD | — | — |
-| Phase 40 P01 | 11 min | 3 tasks | 9 files |
-| Phase 40 P02 | 8 min | 3 tasks | 2 files |
-| Phase 40 P03 | 7min | 3 tasks | 3 files |
+
+**Phase 40 detail (shipped 2026-06-27):**
+
+| Plan | Title | Duration | Tests Added |
+|------|-------|----------|-------------|
+| 40-01 | AssetBus preview-clips slot + PHASE_REGISTRY p10b stub | 11 min | ~20 |
+| 40-02 | PreviewEngine ABC + SlideshowEngine + LTXVideoEngine | 8 min | ~26 |
+| 40-03 | p10b_rapid_preview.py full phase module + degrade WARN | 7 min | ~89 |
+| 40-04 | Cross-cutting integration tests + V5.0 regression guard | ~7 min | 39 |
+
+**Phase 40 totals:** 4 plans | ~33 min | 676 tests (V5.0 baseline 502 + 174 Phase 40 additions) | 7/7 RAPID-PREVIEW-XX REQs satisfied | 0 openclaw refs (no production code touched Phase 37 deliverables) | 1 pre-existing out-of-scope failure (test_no_openclaw_references_in_phase_37_deliverables, canvas_sync sqlite refs)
 
 ## Accumulated Context
 

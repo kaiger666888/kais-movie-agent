@@ -100,7 +100,7 @@ Plans:
 - [x] 40-01-PLAN.md — AssetBus preview-clips slot + PHASE_REGISTRY p10b stub insertion (low-risk scaffolding; updates V5.0 test_phase_registry_full.py 13→14)
 - [x] 40-02-PLAN.md — PreviewEngine ABC + SlideshowEngine (FFmpeg subprocess) + LTXVideoEngine (mocked httpx POST :9001/api/v1/ltx) + select_engine factory (TDD)
 - [x] 40-03-PLAN.md — p10b_rapid_preview.py full phase module (replaces 40-01 stub): 3 variants/shot, single-delta enforcement, ThreadPoolExecutor fan-out, episode-level degrade WARN
-- [ ] 40-04-PLAN.md — Verification tests: dual-engine E2E + JSONL format invariants + WARN-level degrade assertion + V5.0 502-test regression guard
+- [x] 40-04-PLAN.md — Verification tests: dual-engine E2E + JSONL format invariants + WARN-level degrade assertion + V5.0 502-test regression guard
 
 **Success Criteria** (what must be TRUE):
 1. `p10b_rapid_preview.py` 作为新 phase 插入 p10(voice) 与 p11(video_render) 之间,DAG 拓扑正确(p10 → p10b → p11),phase contract 定义清晰(input: voice_assets + keyframes + script_structure;output: preview_clips) — 引擎双轨切换(LTX-Video 主路径 / slideshow fallback)走 `KAIS_PREVIEW_ENGINE` env var (RAPID-PREVIEW-01, RAPID-PREVIEW-02)
