@@ -1,5 +1,30 @@
 # Milestones
 
+## v6.0 Rapid Convergence Loop (Shipped: 2026-06-27)
+
+**Phases completed:** 3 phases (Phase 40-42), 12 plans, 19 REQs (RAPID-PREVIEW ×7, RECIPE-LIB ×6, FEEDBACK-INGEST ×6), 802 tests passing (+300 v6.0 incremental on V5.0 502 baseline)
+
+**First-principles goal:** 在注意力经济的约束下,以趋近于零的边际成本,完成情绪方程的最速收敛求解与资产化沉淀
+
+**Key accomplishments:**
+- **快速预览层** — p10b rapid_preview phase 插入 V5.0 13 步管线 (p10→p10b→p11),PreviewEngine ABC 双轨策略 (SlideshowEngine FFmpeg + LTXVideoEngine httpx mock),每 shot 3 个 single-delta 变体 (Notion 红线 #6 控制变量),cycling matrix 覆盖 4 个结构参数
+- **配方库** — RecipeLibrary 5 核心方法 (create/get/list/update_validation/query_by_structure) + emotion-recipe JSONL 16-字段 schema + Wilson 纯 stdlib CI + 3 查询模式 (genre/structure similarity/validation status)
+- **数据回流接口** — FeedbackIngestClient + Starlette HTTP server (POST /api/v1/feedback) + HMAC-SHA256 验证 + 4-stage validation pipeline (signature/schema/semantic/episode) + feedback-data/feedback-rejected JSONL slots
+- **最速收敛闭环** — extract_structure_from_episode → recipe_library.create_recipe → feedback_ingest HTTP POST → RecipeLibrary.update_validation (continuous-rate Wilson CI) → converged flag (sample_size≥10 AND CI spread≤10%)
+- **结构性"绝不自动改管线"** — feedback_ingest.py 零 import p10b/runner/preview_engine,grep 测试在每个 commit 强制执行 (FEEDBACK-INGEST-05)
+- **5 个新 AssetBus slots** (rapid-preview-clips, episode-meta, emotion-recipe, feedback-data, feedback-rejected) append-only 注册,JSONL_SLOTS frozenset 不变
+- **降级容忍 + 红线门继承** — V5.0 的 4 个红线门在预览层生效,降级 WARN 不沉默 (Phase 40 CR-01 fix: runner JSONL dispatch)
+
+**Audit status:** tech_debt (19/19 REQs satisfied, 0 blockers, 3 warnings — all documented as intentional operator-side concerns or v7.0+ deferred; mirrors v3.0/v5.0 pattern)
+
+**Files shipped:** ~2900 LOC production code (4 new modules + 1 phase module) + 5 new AssetBus slots + 359 new tests
+
+**Pre-existing out-of-scope failure (NOT v6.0):** `test_no_openclaw_references_in_phase_37_deliverables` — canvas_sync.py sqlite refs from V8.6 phaseIndex effort (tracked in deferred-items.md)
+
+**v7.0+ backlog:** TD-v3-1 lineage retrofit / dashboard 内嵌可视化 / recipe auto-application to p10b / multi-model A/B / multi-platform export / multi-language dubbing
+
+---
+
 ## v5.0 Hermes-Native Migration (Shipped: 2026-06-26)
 
 **Phases completed:** 9 phases (Phase 31-39), 36 plans, 25 REQs (HERMES-SKILL ×5, GPU-DIRECT ×6, GATE-NATIVE ×5, CANVAS-IN-HERMES ×4, OPENCLAW-REMOVE ×5), 502 tests passing
