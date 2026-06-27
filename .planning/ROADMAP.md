@@ -81,9 +81,9 @@ Full v5.0 phase details preserved in git history (commit prior to 2026-06-27 v6.
 
 **Data flow (per blueprint):** 调研萃取 → 配方建模 → 定向赛马 → 数据收敛 → 资产化沉淀 — strict serial, no parallel tracks.
 
-- [ ] **Phase 40: Rapid Preview Tier** — p10b rapid_preview phase inserted between p10/p11 + dual-engine (LTX-Video / slideshow) + preview-clips AssetBus slot + 2-3 variants per shot (control-variable A/B)
-- [ ] **Phase 41: Emotion Recipe Library** — recipe_library.py (5 methods) + emotion-recipe JSONL slot + script_auditor 5-dim structured extraction + query interface (genre/structure/validation) + provenance
-- [ ] **Phase 42: Feedback Ingestion** — feedback_ingest.py + POST /api/v1/feedback (HMAC) + feedback-data JSONL slot + RecipeLibrary.update_validation trigger + NO auto pipeline modification + data validation
+- [x] **Phase 40: Rapid Preview Tier** — p10b rapid_preview phase inserted between p10/p11 + dual-engine (LTX-Video / slideshow) + preview-clips AssetBus slot + 2-3 variants per shot (control-variable A/B)
+- [x] **Phase 41: Emotion Recipe Library** — recipe_library.py (5 methods) + emotion-recipe JSONL slot + script_auditor 5-dim structured extraction + query interface (genre/structure/validation) + provenance
+- [x] **Phase 42: Feedback Ingestion** — feedback_ingest.py + POST /api/v1/feedback (HMAC) + feedback-data JSONL slot + RecipeLibrary.update_validation trigger + NO auto pipeline modification + data validation
 
 **Critical path (v6.0):** 40 → 41 → 42 (strict serial — Phase 41 needs Phase 40's structure_delta, Phase 42 needs Phase 41's recipe validation fields).
 
@@ -148,7 +148,7 @@ Plans:
 - [x] 42-01-PLAN.md — AssetBus feedback-data + feedback-rejected slots + FeedbackIngestClient skeleton (submit_feedback stub + get_feedback + close lifecycle) (FEEDBACK-INGEST-01/03)
 - [x] 42-02-PLAN.md — HMAC-SHA256 verification (compare_digest, 5-min window) + 4-stage validation pipeline (sig/schema/semantic/episode) + RecipeLibrary continuous-rate Wilson CI support (FEEDBACK-INGEST-02/04/06)
 - [x] 42-03-PLAN.md — Starlette + uvicorn HTTP server (POST /api/v1/feedback on KAIS_FEEDBACK_PORT :8091) + start_feedback_server context manager + list_pending_updates method (FEEDBACK-INGEST-01/02)
-- [ ] 42-04-PLAN.md — E2E integration tests (convergence closure) + V5.0/Phase 40/Phase 41 regression guard + STRUCTURAL no-auto-modify-pipeline grep test + Phase SUMMARY (FEEDBACK-INGEST-01/02/03/04/05/06)
+- [x] 42-04-PLAN.md — E2E integration tests (convergence closure) + V5.0/Phase 40/Phase 41 regression guard + STRUCTURAL no-auto-modify-pipeline grep test + Phase SUMMARY (FEEDBACK-INGEST-01/02/03/04/05/06)
 
 **Success Criteria** (what must be TRUE):
 1. `plugins/kais_aigc/feedback_ingest.py` 实现 FeedbackIngestClient 类,提供 **3 个核心方法**:`submit_feedback / get_feedback / list_pending_updates`,作为 kais_aigc plugin 的新 module (FEEDBACK-INGEST-01)
@@ -169,7 +169,7 @@ Plans:
 |-------|----------------|--------|-----------|
 | 40. Rapid Preview Tier | 4/4 | Complete | 2026-06-27 |
 | 41. Emotion Recipe Library | 4/4 | Complete | 2026-06-27 |
-| 42. Feedback Ingestion | 3/4 | In Progress|  |
+| 42. Feedback Ingestion | 4/4 | Complete | 2026-06-27 |
 
 ### Archived Milestones (v1.0-v5.0)
 
