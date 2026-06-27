@@ -2,15 +2,15 @@
 gsd_state_version: 1.0
 milestone: v6.0
 milestone_name: Rapid Convergence Loop
-status: executing
-stopped_at: "Phase 40 (Rapid Preview Tier) COMPLETE — 4/4 plans done, 7/7 RAPID-PREVIEW REQs satisfied, 676 tests pass (V5.0 baseline 502 + 174 Phase 40 additions). Ready for `/gsd:plan-phase 41`."
-last_updated: "2026-06-27T06:30:00.000Z"
+status: 41-01 RecipeLibrary skeleton shipped; ready for 41-02 update_validation + Wilson CI
+stopped_at: Phase 41 plan 01 SHIPPED — RecipeLibrary skeleton (create_recipe / get_recipe / list_recipes, 3 of 5 core methods) + emotion-recipe AssetBus JSONL slot registered (writer_phase=recipe_library). 46 new tests, 227 pipeline_state total passing, V5.0 + Phase 40 regression clean.
+last_updated: "2026-06-27T10:34:29.203Z"
 last_activity: 2026-06-27
 progress:
   total_phases: 3
   completed_phases: 1
-  total_plans: 4
-  completed_plans: 4
+  total_plans: 8
+  completed_plans: 5
   percent: 33
 ---
 
@@ -25,12 +25,12 @@ See: .planning/PROJECT.md (updated 2026-06-27)
 
 ## Current Position
 
-Phase: 41 (Emotion Recipe Library) — NEXT
-Plan: 0 of ? (not yet planned)
-Status: Phase 40 shipped, ready to plan Phase 41
+Phase: 41 (Emotion Recipe Library) — IN PROGRESS
+Plan: 1 of ? (plan 01 shipped 2026-06-27; 02-04 pending planning)
+Status: 41-01 RecipeLibrary skeleton shipped; ready for 41-02 update_validation + Wilson CI
 Last activity: 2026-06-27
 
-Progress: [██████░░░░] 67% (Phase 40 of 42 shipped)
+Progress: [███████░░░] 75%
 
 ## Performance Metrics
 
@@ -56,12 +56,12 @@ Progress: [██████░░░░] 67% (Phase 40 of 42 shipped)
 
 **v5.0 totals:** 36 plans | ~274 min | 502 tests | 25/25 REQs | ~5500 LOC Python | 0 openclaw refs
 
-**v6.0 By Phase (Phase 40 SHIPPED, 41-42 pending):**
+**v6.0 By Phase (Phase 40 SHIPPED, 41 plan 01 shipped, 41-02+42 pending):**
 
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
 | 40. Rapid Preview Tier | 4/4 | ~33min | ~8min |
-| 41. Emotion Recipe Library | 0/TBD | — | — |
+| 41. Emotion Recipe Library | 1/TBD | ~22min | ~22min (plan 01 only) |
 | 42. Feedback Ingestion | 0/TBD | — | — |
 
 **Phase 40 detail (shipped 2026-06-27):**
@@ -74,6 +74,13 @@ Progress: [██████░░░░] 67% (Phase 40 of 42 shipped)
 | 40-04 | Cross-cutting integration tests + V5.0 regression guard | ~7 min | 39 |
 
 **Phase 40 totals:** 4 plans | ~33 min | 676 tests (V5.0 baseline 502 + 174 Phase 40 additions) | 7/7 RAPID-PREVIEW-XX REQs satisfied | 0 openclaw refs (no production code touched Phase 37 deliverables) | 1 pre-existing out-of-scope failure (test_no_openclaw_references_in_phase_37_deliverables, canvas_sync sqlite refs)
+
+**Phase 41 detail (plan 01 shipped 2026-06-27):**
+
+| Plan | Title | Duration | Tests Added |
+|------|-------|----------|-------------|
+| 41-01 | RecipeLibrary skeleton (create/get/list) + emotion-recipe AssetBus slot | ~22 min | 46 (24 slot regression + 22 library) |
+| Phase 41 P01 | ~22min | 3 tasks | 5 files |
 
 ## Accumulated Context
 
@@ -105,6 +112,10 @@ Decisions logged in PROJECT.md + REQUIREMENTS.md + gsd-v6.0-rapid-convergence.md
 - [Phase 40]: p10b variant matrix CYCLES all 4 structure params across multi-shot episodes (BLOCKER #4) — shot N uses [STRUCTURE_PARAMS[N%4], [(N+1)%4], [(N+2)%4]] so turning_points_sec is deterministically covered
 - [Phase 40]: p10b preview_skipped flag written to episode-meta AssetBus slot (BLOCKER #1 fix) — episode-meta is the registered AssetBus JSON slot; pipeline-state.json is a separate PipelineStateStore file, NOT an AssetBus slot
 - [Phase 40]: p10b degrade semantics: per-variant silent count, episode-level WARN only on full degrade — mirrors v4.0 no-silent-swallow at episode boundary; per-variant fail is recoverable
+- [Phase ?]: Phase 41-01: validation.confidence_interval stored as human-readable string '±N%' (not ci_lower/ci_upper floats)
+- [Phase ?]: Phase 41-01: _slugify empty-slug fallback to literal 'recipe' (all-Chinese genre → recipe_id 'recipe-001' rather than '-001')
+- [Phase ?]: Phase 41-01: get_recipe raises KeyError on unknown recipe_id (pure library code, programmer errors raise — mirrors creative_history.py)
+- [Phase ?]: Phase 41-01: RecipeLibrary re-exported via __init__.py for namespace discovery but NOT added to _TOOLS tuple (library class, not a tool handler)
 
 ### Pending Todos
 
@@ -142,15 +153,15 @@ v6.0 ready to plan.
 
 ## Session Continuity
 
-Last session: 2026-06-27T05:19:14.717Z
-Stopped at: v6.0 ROADMAP.md created — 3 phases (40-42), 19 REQs mapped 1:1, strict serial 40→41→42. STATE.md updated. Ready for `/gsd:plan-phase 40`.
+Last session: 2026-06-27T10:50:00.000Z
+Stopped at: Phase 41 plan 01 SHIPPED — RecipeLibrary skeleton (create_recipe / get_recipe / list_recipes, 3 of 5 core methods) + emotion-recipe AssetBus JSONL slot registered (writer_phase=recipe_library). 46 new tests, 227 pipeline_state total passing, V5.0 + Phase 40 regression clean.
 Resume file: None
 
 **Next action:**
 
 ```
-v6.0 roadmap ready. Next:
-  /gsd:plan-phase 40   # Rapid Preview Tier (p10b + dual-engine + preview-clips slot)
+Phase 41 plan 01 done. Next:
+  /gsd:plan-phase 41 --plan 02   # update_validation (Wilson CI + converged flag + extract_structure_from_episode)
 ```
 
 **Critical context to preserve across sessions:**
