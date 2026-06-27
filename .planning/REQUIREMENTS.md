@@ -1,125 +1,107 @@
-# Requirements: v5.0 Hermes-Native Migration
+# Requirements: v6.0 Rapid Convergence Loop
 
-**Defined:** 2026-06-25
-**Core Value:** hermes-agent 单一编排引擎 — 13 步短剧管线成为 hermes-agent 原生 skill,直连 kais-aigc-platform,openclaw 完全退出短剧创作流程。
-**Milestone:** v5.0 — Phases 31-39 (9 phases)
+**Defined:** 2026-06-27
+**Core Value:** 在 V5.0 13 步管线之上补齐「最速收敛闭环」 — 快速预览层 + 配方库 + 数据回流接口,完成情绪方程的最速收敛求解与资产化沉淀。
+**Milestone:** v6.0 — Phases 40-42 (3 phases)
+**Blueprint:** [gsd-v6.0-rapid-convergence.md](./gsd-v6.0-rapid-convergence.md)
 
-## v5.0 Requirements
+## v6.0 Requirements
 
-需求分 5 大族,覆盖 v5.0 的全部交付面。每个 REQ-ID 映射到恰好一个 phase(见 Traceability)。
+需求分 3 大族,覆盖 v6.0 的全部交付面。每个 REQ-ID 映射到恰好一个 phase(见 Traceability)。
 
-### HERMES-SKILL — 顶层编排 skill 落地
+### RAPID-PREVIEW — 快速预览层 (p10b rapid_preview)
 
-- [x] **HERMES-SKILL-01**: `hermes-agent/skills/kais-movie-pipeline/SKILL.md` 存在,带合法 YAML frontmatter(name/description/version/prerequisites/metadata.hermes.related_skills),正文定义 13 步 DAG + 触发词 + 与 15 个 movie-experts 的协作图
-- [x] **HERMES-SKILL-02**: Python runner(`pipeline/runner.py`)实现 13 phase 顺序执行 + checkpoint resume + episode 级并行(parallel_shots: 4 保持 v2.0 行为)
-- [~] **HERMES-SKILL-03** (p01-p03 complete in Phase 35; p04-p13 = Phase 36): 13 个 phase 模块(`pipeline/phases/p01_hook_topic.py` 到 `p13_delivery.py`)各自:从 asset bus 读输入 → 调 movie-expert(通过 `delegate_task`)→ 写输出到 asset bus → 触发审核门(如配置)
-- [x] **HERMES-SKILL-04**: skill 被 hermes-agent loader 发现,可通过 `/kais-movie-pipeline` slash command 或 `skill_view(name="kais-movie-pipeline")` 工具调用
-- [x] **HERMES-SKILL-05**: `references/` 下产出 4 篇参考文档:pipeline-dag.md(13 步依赖图)、review-gates.md(8 gate 规范)、asset-bus-schema.md(slot 类型+生命周期)、expert-mapping.md(phase ↔ movie-expert 映射表)
+- [ ] **RAPID-PREVIEW-01**: 新 phase `p10b_rapid_preview.py` 插入 p10(voice) 与 p11(video_render) 之间,DAG 拓扑正确(p10 → p10b → p11),phase contract 定义清晰(input: voice_assets + keyframes + script_structure;output: preview_clips)
+- [ ] **RAPID-PREVIEW-02**: 引擎支持双轨 — LTX-Video(秒级真实生成)作为主路径,slideshow-style(关键帧 + TTS → FFmpeg 合成 < 10s)作为 fallback。引擎选择走配置 (`KAIS_PREVIEW_ENGINE=ltx|slideshow`)
+- [ ] **RAPID-PREVIEW-03**: 每个 shot 生成 **2-3 个低质量极速预览变体**,每个变体只改一个结构参数(hook 位置 / emotion 序列 / turning point 时序 / ending state),遵守 Notion 红线 #6 控制变量
+- [ ] **RAPID-PREVIEW-04**: AssetBus 新槽 `preview-clips` (JSONL 格式) 持久化预览变体,字段含 `shot_id / variant_id / structure_delta / clip_path / generation_time_ms / engine`
+- [ ] **RAPID-PREVIEW-05**: **降级容忍** — 引擎不可达时 fallback 到直接 Seedance(跳过 p10b,正常进 p11),但必须 `WARN` 级别日志 + 在 episode 级 metadata 标记 `preview_skipped=true`(继承 v4.0 降级语义,不允许沉默吞错)
+- [ ] **RAPID-PREVIEW-06**: V5.0 的 4 个红线门(@Audio 强制校验 / asset envelope 原子写 / consistency-guard 阻塞 / Hermes phase contract)在预览层同样生效 — p10b 失败达 max_retries 触发 episode-level fail,不沉默
+- [ ] **RAPID-PREVIEW-07**: 测试覆盖 — mocked LTX-Video API + mocked FFmpeg subprocess,验证 (a) 双引擎路径都产出预览,(b) 降级路径正确报 warning 而非沉默跳过,(c) preview-clips JSONL 格式合法
 
-### GPU-DIRECT — kais-aigc-platform Python 客户端
+### RECIPE-LIB — 配方库 (Emotion Recipe Library)
 
-- [x] **GPU-DIRECT-01**: `plugins/kais_aigc/gold_team.py` 实现 GoldTeamClient — POST `:8002/api/v1/tasks` + X-API-Key 认证 + 17 task type(image_draw/image_refine/video_final/wan_i2v/tts_zh/tts_en/tts_bilingual/upscale/face_restore/image_pulid/controlnet_depth/image_to_3d/image_to_3d_mv 等) + async polling + batch + SSE events + 降级
-- [x] **GPU-DIRECT-02**: `plugins/kais_aigc/review_platform.py` 实现 ReviewPlatformClient — JWT bearer 认证 + POST `/api/v1/reviews` + GET `/api/v1/reviews/{id}` 状态轮询 + HMAC-SHA256 callback 验签 + 5min timestamp window
-- [x] **GPU-DIRECT-03**: `plugins/kais_aigc/canvas.py` 实现 CanvasClient — HTTP API v2(`:10588/api/canvas/v2/save-v2`)+ loadGraph 只读 + degrade-tolerant(保留 v4.0 PIPE-INTEGRITY-01 修复,无 sqlite 直写)
-- [x] **GPU-DIRECT-04**: `plugins/kais_aigc/jimeng.py` 实现 JimengClient — jimeng-free-api `:5100` + 6 subcommand(text2image/image2image/multimodal2video/multiframe2video/frames2video/image_upscale) + session rotation + exponential backoff(替代已 deprecated 的 dreamina CLI)
-- [x] **GPU-DIRECT-05**: 4 个 client 都有 degrade-mode(服务不可达 → warn + 跳过/fallback,不阻塞管线),配置走 env vars(KAIS_GOLD_TEAM_URL / KAIS_REVIEW_URL / KAIS_CANVAS_URL / KAIS_JIMENG_URL + 对应 API key/JWT secret),测试覆盖 mocked HTTP
-- [x] **GPU-DIRECT-06**: `kais_aigc` plugin 在 hermes-agent plugin loader 注册成功,暴露统一工具面(kais_gold_team_submit / kais_review_submit / kais_canvas_sync / kais_jimeng_call),orchestration skill 可通过 hermes-agent tool dispatch 调用
+- [ ] **RECIPE-LIB-01**: `plugins/pipeline_state/recipe_library.py` 实现 — 提供 RecipeLibrary 类(create_recipe / get_recipe / list_recipes / update_validation / query_by_structure 5 个核心方法)
+- [ ] **RECIPE-LIB-02**: emotion-recipe JSONL 格式严格符合蓝图 schema:`recipe_id / version / genre / structure{hook_position_sec, emotion_sequence, turning_points_sec, emotion_drop_level, ending_state} / validation{platform, completion_rate, confidence_interval, sample_size, converged} / provenance{source_episode, created, last_validated}`
+- [ ] **RECIPE-LIB-03**: AssetBus 新槽 `emotion-recipe` (JSONL, **追加式**,append-only 不覆盖) 持久化配方。同 recipe_id 多版本通过 version 字段区分,查询默认返回 latest version
+- [ ] **RECIPE-LIB-04**: 从 V5.0 已有的 `creative-history` slot 中,把 script_auditor 5 维评分(emotion_curve / hook_strength / pacing / character_consistency / cliffhanger)结构化抽取成 emotion-recipe 配方(每集一条配方 + 结构参数 traceable 到原 creative-history 记录)
+- [ ] **RECIPE-LIB-05**: 配方查询接口 — 按 genre(都市奇幻·轻喜剧等)/ by structure similarity(给定结构参数找最相似配方)/ by validation status(converged=true 的"已验证配方"优先)三种查询模式
+- [ ] **RECIPE-LIB-06**: 配方溯源 — 每条配方可追溯 source_episode → creative-history record → 原 script + 5维评分。`recipe_id` 命名规则 `<genre-slug>-<seq>`(如 `urban-fantasy-001`)
 
-### GATE-NATIVE — HIL 审核门框架
+### FEEDBACK-INGEST — 数据回流接口 (Feedback Ingestion)
 
-- [x] **GATE-NATIVE-01**: `plugins/review_gates/gate.py` 定义 Gate 生命周期(submit → wait → resolve),支持 blocking(pipeline 暂停等待)/ webhook(HMAC callback)/ polling(主动拉)三种模式
-- [x] **GATE-NATIVE-02**: V8.6 管线的 8 个审核门定义为 YAML/JSON 配置(gate_id / phase / asset-bus slots to lock / reviewer role / timeout_sec / callback_url / retry_policy)
-- [x] **GATE-NATIVE-03**: Gate 框架与 hermes-agent delegate_task approval callback 集成 — blocking gate 暂停 pipeline runner,webhook gate 通过 review-platform HMAC 回调驱动 resume
-- [x] **GATE-NATIVE-04**: Gate 决议(approve / reject / contest)写回 asset bus(`review-outcomes` slot),触发下一 phase 或回滚到指定 phase(reject with suggested_action)
-- [x] **GATE-NATIVE-05**: Gate 失败达 max_retries 触发 episode-level fail(继承 v4.0 PIPE-GUARD-01 的 CONSISTENCY_BLOCKED 阻塞语义,不再沉默吞错)
+- [ ] **FEEDBACK-INGEST-01**: `plugins/kais_aigc/feedback_ingest.py` 实现 — 提供 FeedbackIngestClient 类(submit_feedback / get_feedback / list_pending_updates 3 个核心方法)
+- [ ] **FEEDBACK-INGEST-02**: HTTP endpoint `POST /api/v1/feedback` 接收平台数据,request schema:`episode_id / platform(douyin|bilibili|youtube) / metrics{completion_rate, interaction_rate, follow_rate} / measured_at`。HMAC-SHA256 签名验证(继承 V5.0 review-platform 模式)
+- [ ] **FEEDBACK-INGEST-03**: AssetBus 新槽 `feedback-data` (JSONL, 追加式) 持久化原始 feedback。字段含 `feedback_id / episode_id / platform / metrics / received_at / signature_valid`
+- [ ] **FEEDBACK-INGEST-04**: Feedback 接收后**触发 RecipeLibrary.update_validation()** — 更新对应配方的 completion_rate / confidence_interval(基于 sample_size 的 Wilson 区间)/ sample_size++ / converged flag(达 sample_size≥10 且置信区间收敛到 ±5% 内时 converged=true)
+- [ ] **FEEDBACK-INGEST-05**: **不自动修改管线行为** — feedback 只更新配方库评分,绝不直接调用 p10b 改变 structure_delta。配方消费方(operator / 下次创作决策)读取配方库做决策,系统不自动应用 — 人决策优先
+- [ ] **FEEDBACK-INGEST-06**: 数据校验 — 拒绝异常 input(metrics 超出 [0,1] 区间 / 未知 platform / episode_id 不存在 / signature 校验失败),拒绝时返回 4xx + 写入 `feedback-rejected` 日志,**绝不污染配方库**(继承 v4.0 consistency-guard 阻塞语义)
 
-### CANVAS-IN-HERMES — Canvas sync 迁入 hermes
+## v7.0+ Backlog (2026-06-27 v6.0 启动后重新分档)
 
-- [x] **CANVAS-IN-HERMES-01**: canvas sync hook 从 Node.js `lib/canvas-sync-hook.js` 迁移到 hermes-agent event subscriber(Python),发布/订阅通过 hermes-agent 内部 event bus
-- [x] **CANVAS-IN-HERMES-02**: canvas sync 在两个时机触发:(a) phase 完成(asset bus 写入新 slot),(b) gate 决议(approve 后写入正式节点)— 不再走 openclaw Toonflow
-- [x] **CANVAS-IN-HERMES-03**: canvas client 仅走 HTTP API v2(`:10588/api/canvas/v2/save-v2`),不直读 sqlite(保留 v4.0 PIPE-INTEGRITY-01 修复),不可达时 degrade warn
-- [x] **CANVAS-IN-HERMES-04** (verified 2026-06-26 — Phase 39 PASSED): E2E 验证 — openclaw 进程未运行时,phase 完成 / gate 通过后 :10588 仍能收到 canvas 更新(证明完全脱离 openclaw) — `test_e2e_degraded.py::test_e2e_canvas_subscriber_fires_without_openclaw` asserts `save_canvas.call_count >= 13`
+v6.0 ship 后重新分档。当前可见候选:
 
-### OPENCLAW-REMOVE — 彻底解耦 + 清理
+### A. v7.0 结构性候选(v6.0 让它们更容易做)
+- **TD-v3-1 上游 creative_history lineage retrofit** — v3.0 旗舰的最后一公里(script→sts→shot hash stamping)
+- **hermes-agent dashboard 内嵌管线可视化** — 替代 :10588 canvas 部分依赖
+- **配方库自动消费** — v6.0 RECIPE-LIB 跑通后,可在 p03 script_design 阶段自动推荐 converged 配方(operator 可 override)。需观察 v6.0 配方库数据沉淀质量再决定。
 
-- [x] **OPENCLAW-REMOVE-01** (verified 2026-06-26 — Phase 38 PASSED): `grep -ri "openclaw\|OpenClaw\|sessions_spawn(runtime=\"acp\")\|Toonflow"` 在 `hermes-agent/skills/kais-movie-pipeline/`、`hermes-agent/plugins/kais_aigc/`、`hermes-agent/plugins/pipeline_state/`、`hermes-agent/plugins/review_gates/` 下 0 命中
-- [x] **OPENCLAW-REMOVE-02** (verified 2026-06-26 — Phase 38 PASSED): `kais-movie-agent/DEPRECATED.md` 更新为 v5.0 final deprecation notice,指向 hermes-agent 新位置 + 迁移指南
-- [x] **OPENCLAW-REMOVE-03** (verified 2026-06-26 — Phase 38 PASSED): v5.0 所有交付物无 Node.js runtime 依赖(纯 Python + hermes-agent runtime),`package.json` 不再被新代码引用
-- [x] **OPENCLAW-REMOVE-04** (verified 2026-06-26 — Phase 39 PASSED): E2E 测试 — openclaw 进程 OFF + gold-team/review/jimeng 服务 mock,跑通 13 phase 产出 `master.mp4`(degraded mode,继承 v4.0 PIPE-COMPOSE-01) — `test_e2e_degraded.py::test_e2e_degraded_full_dag_produces_master_mp4`
-- [x] **OPENCLAW-REMOVE-05** (verified 2026-06-26 — Phase 39 PASSED): `.planning/milestones/v5.0-MILESTONE-AUDIT.md` 文档化 0 openclaw 引用 + 解耦验证清单 + 9 phase 验收 trace
+### B. 待需求触发 — 技术上不难,但要看实际分发场景
+- 多模型 A/B(Runway/Kling/Sora) — 真做对比评测时
+- 多平台导出(抖音 9:16 / B站 16:9 / YouTube 横屏) — 真发多平台时
+- 多语言 dubbing(HeyGen) — 真做出海时
+- 字幕生成 + 烧录 + 多语言 SRT — 真需要字幕时
 
-## v6.0+ Backlog（2026-06-26 v5.0 ship 后重新分档）
+> 不要现在画饼。等"我真的需要发 B 站 / 做英文版 / 对比 Kling"那天再各开一个 phase。
 
-v5.0 让架构变干净了（Python 原生 + plugin 化 + hermes-agent skill），原 backlog 需要按新架构重新判断价值。三档分类：
+### C. 已砍掉(v5.0 后冗余或归属错误)
+- ~~独立 lip sync phase~~ — Seedance 2.0 在 p11 内建,冗余
+- ~~分布式多机部署~~ — 归 kais-aigc-platform 仓库
 
-### A. v6.0 保留 — v5.0 让它们更容易做，且自身有结构性价值
-
-- **TD-v3-1 上游 creative_history lineage retrofit** — v3.0 旗舰 CreativeHistoryTracker 的最后一公里（script→sts→shot hash stamping）。v5.0 后 asset bus 是 Python 原生 + 每个 phase input/output slot 契约干净，几十行就能闭环"改剧本自动定位受影响镜头"。不做就一直缺这把刀。
-- **hermes-agent dashboard 内嵌管线可视化** — 以前要靠 openclaw 走 :10588 canvas；现在管线是 hermes-agent 原生 skill，直接挂 dashboard plugin 即可，甚至可替代部分 :10588 依赖。
-
-### B. 待需求触发 — 技术上不难（gold_team.py 加 task type 或 kais_aigc 加 client），但要看实际分发场景
-
-- **多模型 A/B 测试**（Runway/Kling/Sora 同镜头并跑选优）— 真做对比评测时再开
-- **多平台导出**（抖音 9:16 / B站 16:9 / YouTube 横屏）— 真发多平台时再开
-- **多语言 dubbing**（HeyGen）— 真做出海时再开
-- **字幕生成 + 烧录 + 多语言 SRT** — 真需要字幕时再开
-
-> 不要现在画饼。等"我真的需要发 B 站 / 做英文版 / 对比 Kling"那天再各开一个 phase，比提前画 backlog 强。
-
-### C. 砍掉 — v5.0 后已冗余或不该挂在这里
-
-- ~~**独立 lip sync phase**（sync.so / HeyGen）~~ — Seedance 2.0 已经在 p11_video_render 内建，独立 phase 是 v3.0 时代的 fallback 思路，现在冗余。
-- ~~**分布式多机部署**~~ — 这是 kais-aigc-platform 的事，不是 hermes-agent 的事；单 operator 用 ComfyUI primary + auxiliary 已够。要做应放到 platform 仓库的 roadmap，不该挂在 movie-agent v6.0。
-
-## Out of Scope (v5.0)
+## Out of Scope (v6.0)
 
 | Feature | Reason |
 |---------|--------|
-| 保留 Node.js lib/* 作为长期生产路径 | v5.0 完成后 kais-movie-agent 归档,不再演进 |
-| Node.js subprocess 桥接(混合方案) | 用户明确选择全部 Python 重写,避免双运行时维护成本 |
-| 真实 GPU E2E 验证(operator 侧) | 继承自 v3.0/v4.0,degraded E2E 已足够验证编排正确性 |
-| 重写 15 个 movie-experts | 已存在于 hermes-agent/skills/movie-experts/,无需迁移 |
-| TypeScript 迁移 / CI/CD | v5.0 范围已满,留给 v6.0+ |
-| 重写 kais-aigc-platform 服务本身 | 平台保持现状,v5.0 只重写客户端 |
+| 改动 V5.0 13 步结构(p10b 是插入,不替换 p11) | 蓝图约束 #2 — 不破坏已 ship 的 502 tests |
+| 配方库自动应用到管线 | 蓝图约束 — feedback 只更新评分,人决策优先 |
+| 真实平台 OAuth 集成(抖音/B站 API) | v6.0 只定义 feedback 接收接口,真实平台对接走 operator 手工导入或 v7.0+ |
+| Real-GPU LTX-Video 评测 + 阈值校准 | operator 侧,degraded mocked API 已足够验证编排正确性 |
+| 多平台多账号分发系统 | v6.0 只做"数据回流"侧,不做"发布"侧 |
+| 重新设计 4 个红线门 | 蓝图约束 #3 — 直接继承 V5.0,不重设计 |
+| 预览变体的人工选择 UI | 走 operator CLI(继承 V5.0 bin/finetune-review.js 模式),不做 web UI |
 
 ## Traceability
 
-每个 requirement 恰好映射到一个 phase。Phase 31-39 共 9 个 phase。
+每个 requirement 恰好映射到一个 phase。Phase 40-42 共 3 个 phase。
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| HERMES-SKILL-01 | 35 | Complete (verified 2026-06-26) |
-| HERMES-SKILL-02 | 35 | Complete (verified 2026-06-26 — 353 tests pass) |
-| HERMES-SKILL-03 | 35 (p01-p03) + 36 (p04-p13) | Complete (verified 2026-06-26 — full 13-phase DAG, 445 tests) |
-| HERMES-SKILL-04 | 35 | Complete (verified 2026-06-26) |
-| HERMES-SKILL-05 | 35 (skeleton) + 36 (refined) | Complete (verified 2026-06-26 — 4 refs refined to full form) |
-| GPU-DIRECT-01 | 32 | Complete |
-| GPU-DIRECT-02 | 32 | Complete |
-| GPU-DIRECT-03 | 32 | Complete |
-| GPU-DIRECT-04 | 32 | Complete |
-| GPU-DIRECT-05 | 32 | Complete |
-| GPU-DIRECT-06 | 31 (loader) + 32 (clients wired) | Complete |
-| GATE-NATIVE-01 | 34 | Complete |
-| GATE-NATIVE-02 | 34 | Complete |
-| GATE-NATIVE-03 | 34 | Complete |
-| GATE-NATIVE-04 | 34 | Complete |
-| GATE-NATIVE-05 | 34 | Complete |
-| CANVAS-IN-HERMES-01 | 37 | Complete |
-| CANVAS-IN-HERMES-02 | 37 | Complete |
-| CANVAS-IN-HERMES-03 | 32 (client) + 37 (hook) | Complete |
-| CANVAS-IN-HERMES-04 | 39 (E2E verify) | Complete (verified 2026-06-26) |
-| OPENCLAW-REMOVE-01 | 38 | Complete (verified 2026-06-26) |
-| OPENCLAW-REMOVE-02 | 38 | Complete (verified 2026-06-26) |
-| OPENCLAW-REMOVE-03 | 38 | Complete (verified 2026-06-26) |
-| OPENCLAW-REMOVE-04 | 39 | Complete (verified 2026-06-26) |
-| OPENCLAW-REMOVE-05 | 39 | Complete (verified 2026-06-26) |
+| RAPID-PREVIEW-01 | 40 | Pending |
+| RAPID-PREVIEW-02 | 40 | Pending |
+| RAPID-PREVIEW-03 | 40 | Pending |
+| RAPID-PREVIEW-04 | 40 | Pending |
+| RAPID-PREVIEW-05 | 40 | Pending |
+| RAPID-PREVIEW-06 | 40 | Pending |
+| RAPID-PREVIEW-07 | 40 | Pending |
+| RECIPE-LIB-01 | 41 | Pending |
+| RECIPE-LIB-02 | 41 | Pending |
+| RECIPE-LIB-03 | 41 | Pending |
+| RECIPE-LIB-04 | 41 | Pending |
+| RECIPE-LIB-05 | 41 | Pending |
+| RECIPE-LIB-06 | 41 | Pending |
+| FEEDBACK-INGEST-01 | 42 | Pending |
+| FEEDBACK-INGEST-02 | 42 | Pending |
+| FEEDBACK-INGEST-03 | 42 | Pending |
+| FEEDBACK-INGEST-04 | 42 | Pending |
+| FEEDBACK-INGEST-05 | 42 | Pending |
+| FEEDBACK-INGEST-06 | 42 | Pending |
 
 **Coverage:**
-- v5.0 requirements: 25 total
-- Mapped to phases: 25
+- v6.0 requirements: 19 total (RAPID-PREVIEW ×7, RECIPE-LIB ×6, FEEDBACK-INGEST ×6)
+- Mapped to phases: 19
 - Unmapped: 0 ✓
-- Phase coverage: 31 (foundation) → 32 (backend) → 33 (state) → 34 (gates) → 35 (skill skeleton) → 36 (full port) → 37 (canvas) → 38 (decouple) → 39 (audit)
+- Phase coverage: 40 (rapid preview) → 41 (recipe library) → 42 (feedback ingestion) — 串行依赖,无 parallel track
 
 ---
-*Requirements defined: 2026-06-25*
-*Last updated: 2026-06-26 after Phase 39 verification — v5.0 SHIPPED (25/25 REQs complete)*
+*Requirements defined: 2026-06-27*
+*Blueprint source: [gsd-v6.0-rapid-convergence.md](./gsd-v6.0-rapid-convergence.md)*
