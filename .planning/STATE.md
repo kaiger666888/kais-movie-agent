@@ -3,15 +3,15 @@ gsd_state_version: 1.0
 milestone: v6.0
 milestone_name: Rapid Convergence Loop
 status: executing
-stopped_at: Phase 42 plan 02 SHIPPED — HMAC-SHA256 verification (constant-time compare_digest, NO dev-mode escape) + 4-stage validation pipeline (signature 401 → schema 422 → semantic 400 → episode existence 404) + continuous-binomial-rate Wilson CI support in RecipeLibrary (_wilson_ci accepts float; update_validation use_continuous_rate keyword-only param). 27 new tests, 67 total in 42-02 scope, 497 in broader pipeline_state+kais_aigc sweep.
-last_updated: "2026-06-27T12:22:25.000Z"
-last_activity: 2026-06-27 -- Phase 42 plan 02 SHIPPED
+stopped_at: "Phase 42 plan 03 SHIPPED — Starlette + uvicorn HTTP server wiring: list_pending_updates operator-side queue reader (newest-first by received_at, default limit 10) + _build_starlette_app pure ASGI factory wiring POST /api/v1/feedback + start_feedback_server @contextmanager running uvicorn in daemon thread (handle yields .client/.base_url/.server, graceful shutdown via should_exit + thread.join) + __main__ CLI block using uvicorn.run on main thread so SIGINT/SIGTERM propagate. 16 new tests (401 in Phase 42 + Phase 41 sweep). Production CLI uses uvicorn.run blocking; context manager used only for test cleanup (CONTEXT.md LOCKED decision)."
+last_updated: "2026-06-27T12:35:00.000Z"
+last_activity: 2026-06-27
 progress:
   total_phases: 3
   completed_phases: 2
   total_plans: 12
-  completed_plans: 10
-  percent: 83
+  completed_plans: 11
+  percent: 92
 ---
 
 # Project State
@@ -26,11 +26,11 @@ See: .planning/PROJECT.md (updated 2026-06-27)
 ## Current Position
 
 Phase: 42 (Feedback Ingestion) — IN PROGRESS
-Plan: 2 of 4 (plans 01+02 shipped 2026-06-27; plans 03/04 pending)
-Status: Ready to execute next plan
-Last activity: 2026-06-27 -- Phase 42 plan 02 SHIPPED
+Plan: 3 of 4 (plans 01+02 shipped 2026-06-27; plans 03/04 pending)
+Status: Ready to execute
+Last activity: 2026-06-27
 
-Progress: [████████░░] 83%
+Progress: [█████████░] 92%
 
 ## Performance Metrics
 
@@ -56,13 +56,13 @@ Progress: [████████░░] 83%
 
 **v5.0 totals:** 36 plans | ~274 min | 502 tests | 25/25 REQs | ~5500 LOC Python | 0 openclaw refs
 
-**v6.0 By Phase (Phase 40 SHIPPED, 41 SHIPPED, 42 plans 01+02 shipped, 42-03+04 pending):**
+**v6.0 By Phase (Phase 40 SHIPPED, 41 SHIPPED, 42 plans 01+02+03 shipped, 42-04 pending):**
 
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
 | 40. Rapid Preview Tier | 4/4 | ~33min | ~8min |
 | 41. Emotion Recipe Library | 4/4 | ~94min | ~24min (plans 01-04) |
-| 42. Feedback Ingestion | 2/TBD | ~12min | ~6min (plans 01+02) |
+| 42. Feedback Ingestion | 3/TBD | ~17min | ~6min (plans 01+02+03) |
 
 **Phase 40 detail (shipped 2026-06-27):**
 
@@ -83,12 +83,13 @@ Progress: [████████░░] 83%
 | Phase 41 P01 | ~22min | 3 tasks | 5 files |
 | Phase 41 P02 | 25m | 4 tasks | 3 files |
 
-**Phase 42 detail (plans 01+02 shipped 2026-06-27):**
+**Phase 42 detail (plans 01+02+03 shipped 2026-06-27):**
 
 | Plan | Title | Duration | Tests Added |
 |------|-------|----------|-------------|
 | 42-01 | FeedbackIngestClient skeleton + feedback-data/feedback-rejected AssetBus slots | ~5 min | 21 (11 slot + 10 skeleton) |
 | 42-02 | HMAC verification + 4-stage validation pipeline + continuous-rate Wilson CI | ~7 min | 27 (9 continuous-CI + 18 validation; plus Phase 41 Test 14 realignment) |
+| 42-03 | Starlette HTTP server + start_feedback_server + list_pending_updates + __main__ CLI | ~5 min | 16 (server lifecycle + HTTP status matrix + env resolution) |
 
 ## Accumulated Context
 
@@ -138,6 +139,10 @@ Decisions logged in PROJECT.md + REQUIREMENTS.md + gsd-v6.0-rapid-convergence.md
 - [Phase 42-02]: update_validation(use_continuous_rate=True) added as keyword-only with default False — CONTEXT.md-authorized widening of Phase 41's LOCKED signature; default preserves int-passed path with zero regression
 - [Phase 42-02]: get_recipe_by_episode returns None on unknown (does NOT raise KeyError) — best-effort lookup, distinct from get_recipe semantics to support the 404 flow
 - [Phase 42-02]: Continuous-rate Wilson CI mathematically correct — Wilson score interval is well-defined for any continuous p in [0,1] (CONTEXT.md specifics); Phase 41 _wilson_ci math body unchanged, only type annotations widened to int | float
+- [Phase 42-03]: Lazy import of starlette/uvicorn INSIDE _build_starlette_app / start_feedback_server / _run_cli — preserves 42-01/42-02 callers' fast import path; V5.0 deps remain hard-required only when the HTTP surface is actually used
+- [Phase 42-03]: @contextlib.contextmanager (NOT a custom __enter__/__exit__ class) for start_feedback_server — simpler, less code, identical semantics for the test-cleanup use case
+- [Phase 42-03]: Production CLI (_run_cli) uses uvicorn.run on the MAIN thread (NOT the context manager) — daemon thread would not receive SIGINT/SIGTERM; CONTEXT.md LOCKED "serve_forever in production, context manager for test cleanup"
+- [Phase 42-03]: Route handler strips internal http_status key from JSON response body — keeps API contract clean ({status, feedback_id, recipe_id}) and prevents internal-state leakage (T-42-13 info-disclosure mitigation)
 
 ### Pending Todos
 
@@ -147,7 +152,7 @@ None for v6.0.
 
 v6.0 ready to plan.
 
-- Pre-existing failure (out of scope): test_no_openclaw_references_in_phase_37_deliverables fails due to UNCOMMITTED canvas_sync.py sqlite references (lines 406, 417, 426). Not caused by Phase 40-01. User should commit or revert canvas_sync.py changes separately.
+- Pre-existing failure (out of scope): test_no_openclaw_references_in_phase_37_deliverables fails due to UNCOMMITTED canvas_sync.py sqlite references (lines 406, 417, 426). Not caused by Phase 40-01 / 42-03. User should commit or revert canvas_sync.py changes separately. See .planning/phases/42-feedback-ingestion/deferred-items.md.
 
 ### Key Risks (v6.0 — active)
 
@@ -175,15 +180,15 @@ v6.0 ready to plan.
 
 ## Session Continuity
 
-Last session: 2026-06-27T12:22:25.000Z
-Stopped at: Phase 42 plan 02 SHIPPED — HMAC-SHA256 verification (constant-time compare_digest, NO dev-mode escape, requires sha256= prefix) + 4-stage validation pipeline (signature 401 → schema 422 → semantic 400 → episode existence 404) + continuous-rate Wilson CI support (_wilson_ci accepts int|float; update_validation gains keyword-only use_continuous_rate: bool = False, default preserves Phase 41 int-path). 27 new tests (67 total in 42-02 scope, 497 in broader pipeline_state+kais_aigc sweep). Structural invariant: RecipeLibrary.update_validation NEVER touched on rejection (only the read-only get_recipe_by_episode touches self._rl on the rejection path, only at stage 4).
+Last session: 2026-06-27T12:35:00.000Z
+Stopped at: Phase 42 plan 03 SHIPPED — Starlette + uvicorn HTTP server wiring for FeedbackIngestClient. list_pending_updates operator-side queue reader + _build_starlette_app pure ASGI factory + start_feedback_server @contextmanager (daemon thread + graceful shutdown via should_exit + thread.join) + __main__ CLI block (uvicorn.run on main thread for SIGINT/SIGTERM propagation). 16 new tests, 401 total in Phase 42 + Phase 41 sweep. Production CLI uses blocking serve_forever (CONTEXT.md LOCKED); context manager only for test cleanup.
 Resume file: None
 
 **Next action:**
 
 ```
-Phase 42 plan 02 done. Next:
-  /gsd:plan-phase 42 --plan 03   # Starlette + uvicorn HTTP server + POST /api/v1/feedback handler + start_feedback_server context manager + list_pending_updates method
+Phase 42 plan 03 done. Next:
+  /gsd:plan-phase 42 --plan 04   # (presumed) cross-cutting integration tests + structural invariants (no pipeline auto-modify, no openclaw refs in feedback_ingest.py, end-to-end feedback → recipe_library → convergence flow)
 ```
 
 **Critical context to preserve across sessions:**

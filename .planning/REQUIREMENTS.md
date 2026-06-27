@@ -31,7 +31,7 @@
 ### FEEDBACK-INGEST — 数据回流接口 (Feedback Ingestion)
 
 - [x] **FEEDBACK-INGEST-01** (skeleton — plan 42-01): `plugins/kais_aigc/feedback_ingest.py` 实现 — 提供 FeedbackIngestClient 类(submit_feedback / get_feedback 已就位,list_pending_updates 待 42-03)
-- [ ] **FEEDBACK-INGEST-02** (HMAC + schema landed — plan 42-02; HTTP wrapper pending 42-03): HTTP endpoint `POST /api/v1/feedback` 接收平台数据,request schema:`episode_id / platform(douyin|bilibili|youtube) / metrics{completion_rate, interaction_rate, follow_rate} / measured_at`。HMAC-SHA256 签名验证(继承 V5.0 review-platform 模式)
+- [x] **FEEDBACK-INGEST-02** (HMAC + schema landed — plan 42-02; HTTP wrapper pending 42-03): HTTP endpoint `POST /api/v1/feedback` 接收平台数据,request schema:`episode_id / platform(douyin|bilibili|youtube) / metrics{completion_rate, interaction_rate, follow_rate} / measured_at`。HMAC-SHA256 签名验证(继承 V5.0 review-platform 模式)
 - [x] **FEEDBACK-INGEST-03** (slot registered — plan 42-01): AssetBus 新槽 `feedback-data` (JSONL, 追加式) 持久化原始 feedback。字段含 `feedback_id / episode_id / platform / metrics / received_at / signature_valid`(槽已注册,字段写入逻辑在 42-02)
 - [x] **FEEDBACK-INGEST-04** (plan 42-02): Feedback 接收后**触发 RecipeLibrary.update_validation()** — 更新对应配方的 completion_rate / confidence_interval(基于 sample_size 的 Wilson 区间)/ sample_size++ / converged flag(达 sample_size≥10 且置信区间收敛到 ±5% 内时 converged=true)。**42-02 ships continuous-rate Wilson CI path** (`use_continuous_rate=True` — passed += cr, total += 1.0 per feedback)
 - [ ] **FEEDBACK-INGEST-05**: **不自动修改管线行为** — feedback 只更新配方库评分,绝不直接调用 p10b 改变 structure_delta。配方消费方(operator / 下次创作决策)读取配方库做决策,系统不自动应用 — 人决策优先
