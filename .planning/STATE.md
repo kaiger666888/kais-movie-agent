@@ -1,17 +1,16 @@
 ---
 gsd_state_version: 1.0
-milestone: v5.0-shipped
-milestone_name: Hermes-Native Migration (shipped)
-status: shipped
-stopped_at: "v5.0 SHIPPED — Phase 39 verified (4/4 truths passed), 502 tests pass, 25/25 REQs complete, 0 openclaw refs, v5.0-MILESTONE-AUDIT.md complete. Milestone closed."
-last_updated: "2026-06-26T09:30:00.000Z"
-last_activity: 2026-06-26 — v5.0 ship-ready
+milestone: v6.0
+milestone_name: Rapid Convergence Loop
+status: planning
+last_updated: "2026-06-27T02:11:14.977Z"
+last_activity: 2026-06-27
 progress:
-  total_phases: 9
-  completed_phases: 9
-  total_plans: 36
-  completed_plans: 36
-  percent: 100
+  total_phases: 0
+  completed_phases: 0
+  total_plans: 0
+  completed_plans: 0
+  percent: 0
 ---
 
 # Project State
@@ -21,21 +20,14 @@ progress:
 See: .planning/PROJECT.md (updated 2026-06-25)
 
 **Core value:** 降级优先的 GPU 任务调度 — 外部服务不可用时系统仍可运行。
-**v5.0 focus:** kais-movie-agent 13 步短剧管线整体迁入 hermes-agent 成为原生 skill,彻底清除 openclaw 编排层。
+**v6.0 focus:** 补齐「最速收敛闭环」三件套 — 快速预览层 + 配方库 + 数据回流接口。
 
 ## Current Position
 
-Phase: v5.0 SHIPPED | Status: Milestone complete | Last activity: 2026-06-26 — v5.0 ship-ready
-Plan: 36/36 complete across 9 phases (Phase 31-39)
-Status: v5.0 Hermes-Native Migration SHIPPED. 502 tests passing, 25/25 REQs satisfied, 0 openclaw references, ~5500 LOC Python shipped. hermes-agent now hosts full kais-movie-pipeline skill + 3 plugins (kais_aigc / pipeline_state / review_gates); openclaw decoupled.
-Last activity: 2026-06-26 — Phase 39 verified (4/4 truths passed), v5.0-MILESTONE-AUDIT.md complete, milestone closed.
-
-**Progress bar:**
-
-```
-v5.0: [████████████████████] 9/9 phases (100%) — SHIPPED
-       31........................39
-```
+Phase: Not started (defining requirements)
+Plan: —
+Status: Defining requirements
+Last activity: 2026-06-27 — Milestone v6.0 started
 
 ## Performance Metrics
 
@@ -92,6 +84,7 @@ None. v5.0 shipped.
 ### Key Risks (v5.0 — closed)
 
 All v5.0 risks closed at ship time:
+
 1. ~~Python 重写工作量~~ — closed: 9 phases, 36 plans, ~5500 LOC shipped
 2. ~~delegate_task approval callback 行为~~ — closed: Phase 34 runner_hooks adapter integrates blocking/webhook gate modes
 3. ~~行为对齐验证~~ — closed: Phase 36 reference port + Phase 39 E2E witness
