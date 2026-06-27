@@ -142,7 +142,13 @@ Plans:
 **Goal**: 补齐「最速收敛闭环」最后一环 — 接收平台完播率/互动率/追播率数据,写入 feedback-data JSONL 并触发 RecipeLibrary.update_validation 更新配方评分(Wilson 区间 + converged flag);**绝不自动修改管线行为**,人决策优先
 **Depends on**: Phase 41 (RecipeLibrary.update_validation 方法就位 — feedback 接收后调用此方法更新 completion_rate / confidence_interval / sample_size / converged flag)
 **Requirements**: FEEDBACK-INGEST-01, FEEDBACK-INGEST-02, FEEDBACK-INGEST-03, FEEDBACK-INGEST-04, FEEDBACK-INGEST-05, FEEDBACK-INGEST-06
-**Plans**: TBD
+**Plans**: 4 plans (4 waves, strict serial — brownfield regression safety; each plan builds on the prior: 01 scaffolds slots + client skeleton, 02 adds HMAC + 4-stage validation + continuous Wilson CI, 03 adds Starlette server + start_feedback_server + list_pending_updates, 04 verifies E2E closure + V5.0/40/41 regression guard + structural no-p10b-import check)
+
+Plans:
+- [ ] 42-01-PLAN.md — AssetBus feedback-data + feedback-rejected slots + FeedbackIngestClient skeleton (submit_feedback stub + get_feedback + close lifecycle) (FEEDBACK-INGEST-01/03)
+- [ ] 42-02-PLAN.md — HMAC-SHA256 verification (compare_digest, 5-min window) + 4-stage validation pipeline (sig/schema/semantic/episode) + RecipeLibrary continuous-rate Wilson CI support (FEEDBACK-INGEST-02/04/06)
+- [ ] 42-03-PLAN.md — Starlette + uvicorn HTTP server (POST /api/v1/feedback on KAIS_FEEDBACK_PORT :8091) + start_feedback_server context manager + list_pending_updates method (FEEDBACK-INGEST-01/02)
+- [ ] 42-04-PLAN.md — E2E integration tests (convergence closure) + V5.0/Phase 40/Phase 41 regression guard + STRUCTURAL no-auto-modify-pipeline grep test + Phase SUMMARY (FEEDBACK-INGEST-01/02/03/04/05/06)
 
 **Success Criteria** (what must be TRUE):
 1. `plugins/kais_aigc/feedback_ingest.py` 实现 FeedbackIngestClient 类,提供 **3 个核心方法**:`submit_feedback / get_feedback / list_pending_updates`,作为 kais_aigc plugin 的新 module (FEEDBACK-INGEST-01)
@@ -163,7 +169,7 @@ Plans:
 |-------|----------------|--------|-----------|
 | 40. Rapid Preview Tier | 3/4 | In Progress|  |
 | 41. Emotion Recipe Library | 3/4 | In Progress|  |
-| 42. Feedback Ingestion | 0/TBD | Not started | - |
+| 42. Feedback Ingestion | 0/4 | Plans defined | - |
 
 ### Archived Milestones (v1.0-v5.0)
 
