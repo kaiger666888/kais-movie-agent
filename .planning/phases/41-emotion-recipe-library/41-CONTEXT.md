@@ -23,18 +23,36 @@ Build `plugins/pipeline_state/recipe_library.py` — a structured emotion-recipe
   - `update_validation(recipe_id, platform, completion_rate, sample_size_delta=1) -> dict` — appends new version row with bumped version int + recomputed Wilson CI + converged flag
   - `query_by_structure(structure_query, top_k=5, min_score=0.7) -> list[tuple[dict, float]]` — returns top-K similar recipes with score
 - Structure similarity algorithm: **Cosine similarity over numerical fields** (hook_position_sec, turning_points_sec timestamps + emotion_drop_level as 3-dim vector) **+ Jaccard over emotion_sequence list** (treat as set, |A∩B|/|A∪B|); final score = `0.7 * cosine + 0.3 * jaccard` (weight numerical over categorical). Return matches with score ≥ `min_score` (default 0.7).
+  - **Algorithm refinement (WARNING #4, plan-checker revision pass 2):** `turning_points_sec` is a `list[int]` in the structure schema, but cosine similarity requires fixed-length vectors. The list is COMPRESSED to a scalar mean (`mean(turning_points_sec)`) before being placed in the 3-dim cosine vector `[hook_position_sec, mean(turning_points_sec), emotion_drop_level]`. This is a deliberate compression choice — the mean preserves the "average beat density" signal while keeping the vector 3-dimensional (avoiding variable-length padding). Default `min_score=0.7` filters to well-matched recipes only; operators can lower it for broader recall. The Jaccard component (over `emotion_sequence`) is unaffected by this compression since Jaccard operates on sets natively.
 - Version handling: **Append-only with version int per recipe_id** — `update_validation` ALWAYS appends a new row with `version = latest + 1`; old versions preserved for audit (never mutated); `get_recipe` defaults to latest version; query/list operations return only latest per recipe_id by default
 
 ### Creative History Extraction & Convergence Logic
-- **5-dim score → structure mapping** (direct 1:1, documented in module docstring):
 
-  | script_auditor 5-dim field | emotion-recipe structure{} field | Mapping logic |
-  |---------------------------|----------------------------------|---------------|
-  | `emotion_curve` (list[str]) | `emotion_sequence` (list[str]) | direct copy |
-  | `hook_strength` (float 0-1, timestamp) | `hook_position_sec` (int seconds) | `int(hook_strength * 15)` — 15s reference window |
-  | `pacing` (list[float] in [0,1]) | `turning_points_sec` (list[int] seconds) | `[int(p * 60) for p in pacing]` — 60s reference window |
-  | `character_consistency` (float 0-1) | `emotion_drop_level` (int 1-5) | `int(character_consistency * 5) + 1` — 5-level bucket |
-  | `cliffhanger` (str: "resolved"\|"new_suspense"\|"cliffhanger") | `ending_state` (str) | direct copy (validate against enum) |
+**DATA SOURCE PIVOT (locked 2026-06-27 after plan-checker BLOCKER #1):**
+
+V5.0 `creative-history` slot contains hash-stamping lineage records (`{asset_slot, asset_id, source_hashes, content_hash, timestamp}`) — NOT creative content. The 5-dim scores and structural data assumed by the blueprint live in DIFFERENT slots:
+
+- **`story-framework` slot** (p02_outline output) — has the structural data:
+  - `mcmahon_arc`: story archetype string (e.g., "man_in_a_hole")
+  - `snowflake_artifacts.anchor_validation`: timestamp string like "Catalyst ~7.5s ✓ / Midpoint ~37s ✓ / All Is Lost ~55s ✓"
+  - `snyder_beats_summary`: list of beat descriptions with timestamps
+- **`final-audit` slot** (p06 output) — has 5-dim scalar scores `D1_narrative, D2_emotion, D3_hook, D4_character, D5_completion` (0-20 scale)
+
+**Updated structure{} extraction (from `story-framework` + `final-audit`):**
+
+  | emotion-recipe structure{} field | Source | Mapping logic |
+  |----------------------------------|--------|---------------|
+  | `hook_position_sec` (int seconds) | `story-framework.snowflake_artifacts.anchor_validation` | Parse "Catalyst ~Ns" → int(N); fallback to first snyder_beats timestamp |
+  | `emotion_sequence` (list[str]) | `story-framework.mcmahon_arc` | Lookup table per arc type: `man_in_a_hole → ["hope","descent","crisis","recovery"]`, `rags_to_riches → ["low","rise","peak","fall"]`, etc. (5-6 common arcs) |
+  | `turning_points_sec` (list[int]) | `story-framework.snowflake_artifacts.anchor_validation` | Parse all "X ~Ns" timestamps → list of ints |
+  | `emotion_drop_level` (int 1-5) | `final-audit.scores.D2_emotion` (0-20) | `int((20 - D2) / 4) + 1` clamped [1,5] (lower D2 score = bigger drop) |
+  | `ending_state` (str) | `final-audit.scores.D5_completion` | `D5 >= 16 → "resolved"`, `D5 >= 12 → "new_suspense"`, else `"cliffhanger"` |
+
+**`extract_structure_from_episode(episode_id)` is a HELPER, not critical path:**
+- Reads `story-framework` + `final-audit` slots, applies above mapping, returns structure dict
+- Operators can call this for convenience OR pass explicit structure{} to `create_recipe()` for override
+- If either slot is missing or malformed, helper returns None and logs WARNING (does not raise)
+- Episode-level aggregation: each episode produces ONE recipe (no per-shot fan-out)
 
 - **Wilson confidence interval**: pure stdlib `math` module, formula:
   ```python
@@ -69,7 +87,9 @@ None — both areas fully resolved via smart discuss.
 - **`/data/workspace/hermes-agent/plugins/pipeline_state/creative_history.py`** — direct sibling template. Shows AssetBus-injected constructor pattern, sync API, pure-stdlib hash computation, append-only history semantics. Phase 41's `recipe_library.py` will mirror this module's structure line-for-line (constants → helpers → class).
 - **`/data/workspace/hermes-agent/plugins/pipeline_state/asset_bus.py`** — already has `append_line()` / `read_lines()` methods for JSONL slots. Phase 41 needs to register ONE new slot `emotion-recipe` in ASSET_SCHEMA (JSONL format, writer_phase=`recipe_library` — Phase 41 owns the slot, NOT p10b). Phase 40 already proved this pattern works (`rapid-preview-clips` slot).
 - **`/data/workspace/hermes-agent/plugins/pipeline_state/__init__.py`** — plugin exports. Add `RecipeLibrary` to `__all__` after implementation.
-- **V5.0 `creative-history` slot** — already registered in ASSET_SCHEMA (Phase 33). Phase 41 READS this slot via `asset_bus.read("creative-history")` to extract 5-dim scores. Format: `{shots: [...], version: number}` — Phase 41 maps `shots[].script_auditor_scores` (per-shot 5-dim) to recipe `structure{}` (episode-level aggregate).
+- **V5.0 `story-framework` slot** (p02_outline output, already in ASSET_SCHEMA) — Phase 41 READS this for structural data: `mcmahon_arc`, `snowflake_artifacts.anchor_validation` timestamps, `snyder_beats_summary`. Format per existing artifact: `{value: {story_kernel: {...}, snowflake_artifacts: {...}, snyder_beats_summary: [...]}, ...}`
+- **V5.0 `final-audit` slot** (p06 output, already in ASSET_SCHEMA) — Phase 41 READS this for 5-dim scalar quality scores `D1_narrative, D2_emotion, D3_hook, D4_character, D5_completion` (0-20 scale each). Format per existing artifact: `{value: {scores: {D1_narrative: 17, ...}, total_score: 80, ...}}`
+- **V5.0 `creative-history` slot** — Phase 41 does NOT read this. Original blueprint assumption that creative-history contained script_auditor scores was incorrect (plan-checker BLOCKER #1, verified 2026-06-27). creative-history remains hash-stamping lineage only.
 
 ### Established Patterns
 - **AssetBus JSONL slot schema**: `{file: "X.jsonl", format: "jsonl", description: "...", writer_phase: "...", reader_phases: [...]}`. The `rapid-preview-clips` slot from Phase 40 is the canonical recent example.
@@ -80,7 +100,7 @@ None — both areas fully resolved via smart discuss.
 
 ### Integration Points
 - **AssetBus write**: `recipe_library.RecipeLibrary.create_recipe()` calls `asset_bus.append_line("emotion-recipe", recipe_dict)`. Format follows blueprint schema strictly.
-- **AssetBus read (extraction)**: `RecipeLibrary.extract_from_episode(episode_id)` reads `creative-history` slot via `asset_bus.read("creative-history")`. Aggregates per-shot 5-dim scores into episode-level structure{} fields (mean for hook_strength, list concat for emotion_curve, etc.).
+- **AssetBus read (extraction)**: `RecipeLibrary.extract_structure_from_episode(episode_id)` reads `story-framework` slot (for structure) + `final-audit` slot (for D1-D5 quality scores). Returns structure dict per mapping table in decisions section. Helper is best-effort — if either slot missing/malformed, returns None + WARNING log.
 - **Phase 42 consumption**: `feedback_ingest.FeedbackIngestClient` will call `recipe_library.update_validation(recipe_id, platform, completion_rate)` after each feedback submission. This is the convergence-loop closure.
 - **V5.0 502-test safety**: ASSET_SCHEMA append-only; no existing slot modified. New `emotion-recipe` slot is purely additive.
 
