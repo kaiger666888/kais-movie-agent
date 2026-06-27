@@ -24,7 +24,7 @@
 - [x] **RECIPE-LIB-01**: `plugins/pipeline_state/recipe_library.py` 实现 — 提供 RecipeLibrary 类(create_recipe / get_recipe / list_recipes / update_validation / query_by_structure 5 个核心方法)
 - [x] **RECIPE-LIB-02**: emotion-recipe JSONL 格式严格符合蓝图 schema:`recipe_id / version / genre / structure{hook_position_sec, emotion_sequence, turning_points_sec, emotion_drop_level, ending_state} / validation{platform, completion_rate, confidence_interval, sample_size, converged} / provenance{source_episode, created, last_validated}`
 - [x] **RECIPE-LIB-03**: AssetBus 新槽 `emotion-recipe` (JSONL, **追加式**,append-only 不覆盖) 持久化配方。同 recipe_id 多版本通过 version 字段区分,查询默认返回 latest version
-- [ ] **RECIPE-LIB-04**: 从 V5.0 已有的 `creative-history` slot 中,把 script_auditor 5 维评分(emotion_curve / hook_strength / pacing / character_consistency / cliffhanger)结构化抽取成 emotion-recipe 配方(每集一条配方 + 结构参数 traceable 到原 creative-history 记录)
+- [x] **RECIPE-LIB-04**: 从 V5.0 已有的 `creative-history` slot 中,把 script_auditor 5 维评分(emotion_curve / hook_strength / pacing / character_consistency / cliffhanger)结构化抽取成 emotion-recipe 配方(每集一条配方 + 结构参数 traceable 到原 creative-history 记录)
 - [x] **RECIPE-LIB-05**: 配方查询接口 — 按 genre(都市奇幻·轻喜剧等)/ by structure similarity(给定结构参数找最相似配方)/ by validation status(converged=true 的"已验证配方"优先)三种查询模式
 - [x] **RECIPE-LIB-06**: 配方溯源 — 每条配方可追溯 source_episode → creative-history record → 原 script + 5维评分。`recipe_id` 命名规则 `<genre-slug>-<seq>`(如 `urban-fantasy-001`)
 
@@ -86,7 +86,7 @@ v6.0 ship 后重新分档。当前可见候选:
 | RECIPE-LIB-01 | 41 | Complete |
 | RECIPE-LIB-02 | 41 | Complete |
 | RECIPE-LIB-03 | 41 | Complete |
-| RECIPE-LIB-04 | 41 | Pending |
+| RECIPE-LIB-04 | 41 | Complete |
 | RECIPE-LIB-05 | 41 | Complete |
 | RECIPE-LIB-06 | 41 | Complete |
 | FEEDBACK-INGEST-01 | 42 | Pending |

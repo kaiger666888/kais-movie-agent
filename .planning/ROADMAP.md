@@ -122,7 +122,7 @@ Plans:
 
 Plans:
 - [x] 41-01-PLAN.md — AssetBus emotion-recipe slot registration + RecipeLibrary skeleton (create_recipe / get_recipe / list_recipes + slugify + recipe_id sequencing) (RECIPE-LIB-01/02/03/05/06)
-- [ ] 41-02-PLAN.md — 5-dim creative-history extraction (RECIPE-LIB-04) + Wilson CI pure-stdlib helper + update_validation method with Phase 42 contract signature (RECIPE-LIB-01)
+- [x] 41-02-PLAN.md — 5-dim creative-history extraction (RECIPE-LIB-04) + Wilson CI pure-stdlib helper + update_validation method with Phase 42 contract signature (RECIPE-LIB-01)
 - [ ] 41-03-PLAN.md — query_by_structure with cosine+jaccard similarity (0.7*cos + 0.3*jac, pure stdlib) — completes RECIPE-LIB-01 (5/5 methods) + RECIPE-LIB-05 (similarity query)
 - [ ] 41-04-PLAN.md — End-to-end integration tests (convergence loop) + V5.0/Phase 40 regression guard (676-test baseline preserved) + Phase SUMMARY
 
@@ -162,7 +162,7 @@ Plans:
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 40. Rapid Preview Tier | 3/4 | In Progress|  |
-| 41. Emotion Recipe Library | 1/4 | In Progress|  |
+| 41. Emotion Recipe Library | 2/4 | In Progress|  |
 | 42. Feedback Ingestion | 0/TBD | Not started | - |
 
 ### Archived Milestones (v1.0-v5.0)
