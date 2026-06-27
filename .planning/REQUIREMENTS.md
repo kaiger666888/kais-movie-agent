@@ -30,9 +30,9 @@
 
 ### FEEDBACK-INGEST — 数据回流接口 (Feedback Ingestion)
 
-- [ ] **FEEDBACK-INGEST-01**: `plugins/kais_aigc/feedback_ingest.py` 实现 — 提供 FeedbackIngestClient 类(submit_feedback / get_feedback / list_pending_updates 3 个核心方法)
+- [x] **FEEDBACK-INGEST-01** (skeleton — plan 42-01): `plugins/kais_aigc/feedback_ingest.py` 实现 — 提供 FeedbackIngestClient 类(submit_feedback / get_feedback 已就位,list_pending_updates 待 42-03)
 - [ ] **FEEDBACK-INGEST-02**: HTTP endpoint `POST /api/v1/feedback` 接收平台数据,request schema:`episode_id / platform(douyin|bilibili|youtube) / metrics{completion_rate, interaction_rate, follow_rate} / measured_at`。HMAC-SHA256 签名验证(继承 V5.0 review-platform 模式)
-- [ ] **FEEDBACK-INGEST-03**: AssetBus 新槽 `feedback-data` (JSONL, 追加式) 持久化原始 feedback。字段含 `feedback_id / episode_id / platform / metrics / received_at / signature_valid`
+- [x] **FEEDBACK-INGEST-03** (slot registered — plan 42-01): AssetBus 新槽 `feedback-data` (JSONL, 追加式) 持久化原始 feedback。字段含 `feedback_id / episode_id / platform / metrics / received_at / signature_valid`(槽已注册,字段写入逻辑在 42-02)
 - [ ] **FEEDBACK-INGEST-04**: Feedback 接收后**触发 RecipeLibrary.update_validation()** — 更新对应配方的 completion_rate / confidence_interval(基于 sample_size 的 Wilson 区间)/ sample_size++ / converged flag(达 sample_size≥10 且置信区间收敛到 ±5% 内时 converged=true)
 - [ ] **FEEDBACK-INGEST-05**: **不自动修改管线行为** — feedback 只更新配方库评分,绝不直接调用 p10b 改变 structure_delta。配方消费方(operator / 下次创作决策)读取配方库做决策,系统不自动应用 — 人决策优先
 - [ ] **FEEDBACK-INGEST-06**: 数据校验 — 拒绝异常 input(metrics 超出 [0,1] 区间 / 未知 platform / episode_id 不存在 / signature 校验失败),拒绝时返回 4xx + 写入 `feedback-rejected` 日志,**绝不污染配方库**(继承 v4.0 consistency-guard 阻塞语义)
@@ -89,9 +89,9 @@ v6.0 ship 后重新分档。当前可见候选:
 | RECIPE-LIB-04 | 41 | Complete |
 | RECIPE-LIB-05 | 41 | Complete |
 | RECIPE-LIB-06 | 41 | Complete |
-| FEEDBACK-INGEST-01 | 42 | Pending |
+| FEEDBACK-INGEST-01 | 42 | In Progress (skeleton — 42-01) |
 | FEEDBACK-INGEST-02 | 42 | Pending |
-| FEEDBACK-INGEST-03 | 42 | Pending |
+| FEEDBACK-INGEST-03 | 42 | In Progress (slot registered — 42-01) |
 | FEEDBACK-INGEST-04 | 42 | Pending |
 | FEEDBACK-INGEST-05 | 42 | Pending |
 | FEEDBACK-INGEST-06 | 42 | Pending |

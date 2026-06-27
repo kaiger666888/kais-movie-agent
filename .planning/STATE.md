@@ -3,15 +3,15 @@ gsd_state_version: 1.0
 milestone: v6.0
 milestone_name: Rapid Convergence Loop
 status: executing
-stopped_at: Phase 41 plan 01 SHIPPED — RecipeLibrary skeleton (create_recipe / get_recipe / list_recipes, 3 of 5 core methods) + emotion-recipe AssetBus JSONL slot registered (writer_phase=recipe_library). 46 new tests, 227 pipeline_state total passing, V5.0 + Phase 40 regression clean.
-last_updated: "2026-06-27T12:07:20.005Z"
-last_activity: 2026-06-27 -- Phase 42 planning complete
+stopped_at: Phase 42 plan 01 SHIPPED — FeedbackIngestClient skeleton (plugins/kais_aigc/feedback_ingest.py) with __init__/get_feedback/submit_feedback stub + 2 new AssetBus JSONL slots (feedback-data + feedback-rejected, writer_phase=feedback_ingest). JSONL_SLOTS frozenset UNCHANGED; V5.0 + Phase 40 + Phase 41 baseline regression-clean (497 tests).
+last_updated: "2026-06-27T12:12:10.000Z"
+last_activity: 2026-06-27 -- Phase 42 plan 01 SHIPPED
 progress:
   total_phases: 3
   completed_phases: 2
   total_plans: 12
-  completed_plans: 8
-  percent: 67
+  completed_plans: 9
+  percent: 75
 ---
 
 # Project State
@@ -25,10 +25,10 @@ See: .planning/PROJECT.md (updated 2026-06-27)
 
 ## Current Position
 
-Phase: 41 (Emotion Recipe Library) — IN PROGRESS
-Plan: 3 of 4 (plans 01/02/03 shipped 2026-06-27; 04 pending)
-Status: Ready to execute
-Last activity: 2026-06-27 -- Phase 42 planning complete
+Phase: 42 (Feedback Ingestion) — IN PROGRESS
+Plan: 1 of 4 (plan 01 shipped 2026-06-27; plans 02/03/04 pending)
+Status: Ready to execute next plan
+Last activity: 2026-06-27 -- Phase 42 plan 01 SHIPPED
 
 Progress: [████████░░] 75%
 
@@ -56,13 +56,13 @@ Progress: [████████░░] 75%
 
 **v5.0 totals:** 36 plans | ~274 min | 502 tests | 25/25 REQs | ~5500 LOC Python | 0 openclaw refs
 
-**v6.0 By Phase (Phase 40 SHIPPED, 41 plan 01 shipped, 41-02+42 pending):**
+**v6.0 By Phase (Phase 40 SHIPPED, 41 SHIPPED, 42 plan 01 shipped, 42-02+ pending):**
 
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
 | 40. Rapid Preview Tier | 4/4 | ~33min | ~8min |
-| 41. Emotion Recipe Library | 1/TBD | ~22min | ~22min (plan 01 only) |
-| 42. Feedback Ingestion | 0/TBD | — | — |
+| 41. Emotion Recipe Library | 4/4 | ~94min | ~24min (plans 01-04) |
+| 42. Feedback Ingestion | 1/TBD | ~5min | ~5min (plan 01 only) |
 
 **Phase 40 detail (shipped 2026-06-27):**
 
@@ -75,13 +75,19 @@ Progress: [████████░░] 75%
 
 **Phase 40 totals:** 4 plans | ~33 min | 676 tests (V5.0 baseline 502 + 174 Phase 40 additions) | 7/7 RAPID-PREVIEW-XX REQs satisfied | 0 openclaw refs (no production code touched Phase 37 deliverables) | 1 pre-existing out-of-scope failure (test_no_openclaw_references_in_phase_37_deliverables, canvas_sync sqlite refs)
 
-**Phase 41 detail (plan 01 shipped 2026-06-27):**
+**Phase 41 detail (plans 01-04 shipped 2026-06-27):**
 
 | Plan | Title | Duration | Tests Added |
 |------|-------|----------|-------------|
 | 41-01 | RecipeLibrary skeleton (create/get/list) + emotion-recipe AssetBus slot | ~22 min | 46 (24 slot regression + 22 library) |
 | Phase 41 P01 | ~22min | 3 tasks | 5 files |
 | Phase 41 P02 | 25m | 4 tasks | 3 files |
+
+**Phase 42 detail (plan 01 shipped 2026-06-27):**
+
+| Plan | Title | Duration | Tests Added |
+|------|-------|----------|-------------|
+| 42-01 | FeedbackIngestClient skeleton + feedback-data/feedback-rejected AssetBus slots | ~5 min | 21 (11 slot + 10 skeleton) |
 
 ## Accumulated Context
 
@@ -120,6 +126,10 @@ Decisions logged in PROJECT.md + REQUIREMENTS.md + gsd-v6.0-rapid-convergence.md
 - [Phase ?]: DATA SOURCE PIVOT: RecipeLibrary reads story-framework + final-audit (NOT creative-history)
 - [Phase ?]: Wilson CI pure stdlib (math.sqrt only)
 - [Phase ?]: update_validation signature LOCKED for Phase 42
+- [Phase 42]: FeedbackIngestClient ships submit_feedback as a documented stub envelope {status: 'not_implemented', reason: '...'} in plan 42-01 — lets callers/tests pin the skeleton surface without coupling to 42-02/42-03 internals
+- [Phase 42]: KAIS_FEEDBACK_PORT default 8091 — sibling to gold-team :8002 and review-platform :8090 so a single host can run all three services without port conflicts
+- [Phase 42]: Constructor takes recipe_library: Any (duck-typed) rather than hard-importing RecipeLibrary — prevents a potential import cycle if RecipeLibrary ever imports this module
+- [Phase 42]: Phase 41 + Phase 35 snapshot tests (EXPECTED_SLOTS + JSONL list) extended rather than preserved as-is — they asserted exact-set equality with pre-Phase-42 state, and the append-only contract necessarily extends that set
 
 ### Pending Todos
 
@@ -157,15 +167,15 @@ v6.0 ready to plan.
 
 ## Session Continuity
 
-Last session: 2026-06-27T10:43:04.475Z
-Stopped at: Phase 41 plan 01 SHIPPED — RecipeLibrary skeleton (create_recipe / get_recipe / list_recipes, 3 of 5 core methods) + emotion-recipe AssetBus JSONL slot registered (writer_phase=recipe_library). 46 new tests, 227 pipeline_state total passing, V5.0 + Phase 40 regression clean.
+Last session: 2026-06-27T12:12:10.000Z
+Stopped at: Phase 42 plan 01 SHIPPED — FeedbackIngestClient skeleton (plugins/kais_aigc/feedback_ingest.py) with __init__/get_feedback + submit_feedback stub envelope + close/__enter__/__exit__ lifecycle + 2 new AssetBus JSONL slots (feedback-data + feedback-rejected, writer_phase=feedback_ingest, JSONL_SLOTS frozenset UNCHANGED). 21 new tests, 497 pipeline_state+kais_aigc combined sweep passing, V5.0 + Phase 40 + Phase 41 regression clean.
 Resume file: None
 
 **Next action:**
 
 ```
-Phase 41 plan 01 done. Next:
-  /gsd:plan-phase 41 --plan 02   # update_validation (Wilson CI + converged flag + extract_structure_from_episode)
+Phase 42 plan 01 done. Next:
+  /gsd:plan-phase 42 --plan 02   # HMAC verification + 4-stage validation pipeline + Wilson CI continuous-rate support
 ```
 
 **Critical context to preserve across sessions:**
