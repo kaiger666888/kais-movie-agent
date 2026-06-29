@@ -174,7 +174,7 @@ Original rationale: see MEMORY entry `project_pipeline-audit_2026-06-23.md`.
 | **Hermes**    | Parameter decision / audit           | Optional         | `http://localhost:8080`       |
 | **Jimeng**    | Seedance 2.0 omni_reference 终版视频 | **Yes** (real)   | (via API key)                 |
 | **Review platform** | Remote review gates            | Optional         | `http://192.168.71.140:8090`  |
-| **Canvas**    | Auto-sync to infinite canvas         | Optional         | `http://192.168.71.176:10588`|
+| **Canvas**    | Auto-sync to infinite canvas         | Optional         | `http://localhost:10588`|
 | **Telegram**  | Pipeline notifications               | Optional         | (env vars)                    |
 
 Optional services fall back to degraded paths when unreachable — the pipeline

@@ -65,7 +65,7 @@ async function runCommand(opts) {
 
   // Canvas 自动同步
   const canvasSync = createCanvasSync({
-    baseUrl: process.env.CANVAS_BASE_URL || 'http://192.168.71.176:10588',
+    baseUrl: process.env.CANVAS_BASE_URL || 'http://localhost:10588',
     projectId,
     episodesId: parseInt(process.env.CANVAS_EPISODES_ID || '1', 10),
     agentName: 'kais-movie-agent',
@@ -117,7 +117,7 @@ async function resumeCommand(opts) {
 
   // Canvas 自动同步
   const canvasSync = createCanvasSync({
-    baseUrl: process.env.CANVAS_BASE_URL || 'http://192.168.71.176:10588',
+    baseUrl: process.env.CANVAS_BASE_URL || 'http://localhost:10588',
     projectId,
     episodesId: parseInt(process.env.CANVAS_EPISODES_ID || '1', 10),
     agentName: 'kais-movie-agent',
