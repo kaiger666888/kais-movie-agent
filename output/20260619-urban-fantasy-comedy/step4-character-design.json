@@ -1,0 +1,113 @@
+{
+  "character_designs": {
+    "su_nian": {
+      "base_description": "27岁中国女性。中长发（齐肩微卷，自然棕色带一点栗色挑染），中分偏分。鹅蛋脸，皮肤白净但眼下有轻微倦意，左眼下方有一颗很小的泪痣。眉形自然弧度，不修。眼睛偏圆，瞳色深棕，眼神清醒但藏着疲惫。鼻梁挺直，唇色偏淡，不浓妆。面部轮廓柔和但下颌线利落，兼具亲和感与职业感。身高约165cm，体态偏瘦但不是骨感，肩线平直。",
+      "costumes": [
+        {
+          "name": "职场干练",
+          "episodes": ["EP1", "EP2", "EP4"],
+          "face": "中长发别在耳后，露出耳朵。妆容干净：浅色底妆、自然眉、大地色眼影、裸粉色唇膏。脸色略白，显瘦和疲惫。泪痣可见。",
+          "clothing": "深灰藏蓝色西装外套（Oversize修身款，单扣，落肩袖），内搭白色细条纹衬衫（领口解开一颗扣子），下身黑色高腰直筒西裤（九分长度）。鞋子：黑色尖头乐福鞋，低跟。整体风格参考《以家人之名》中程霄喵的通勤穿搭，都市冷淡但不过度正式。",
+          "accessories": "左手腕银色极简手表（细表带），右手中指一枚细银戒。随身挎包：黑色皮质公文包，不大但有结构感。手机壳是奶奶送的旧款——半透明硅胶壳，里面夹了一张奶奶年轻时的泛黄小照片。",
+          "expression_baseline": "礼貌微笑但眼角没笑意，专注工作时眉头微蹙，独处时嘴角下垂。整体表情偏克制、封闭。",
+          "color_palette": ["#4A5568 深灰蓝（西装主色）", "#F7FAFC 白（衬衫）", "#1A202C 黑（西裤/鞋）", "#A0AECB 冷灰（整体氛围色）"],
+          "style_reference": "《她》中Samantha的都市孤独感 × 《以家人之名》程霄喵的通勤造型。冷调、克制、高效外壳。",
+          "dreamina_prompt_suggestion": "Chinese woman 27yo, medium brown shoulder-length wavy hair, oval face, small beauty mark under left eye, light makeup, wearing navy oversized blazer over white striped shirt, black slim trousers, silver watch, tired but composed expression, soft studio lighting, headshot portrait, realistic, 8k, cinematic"
+        },
+        {
+          "name": "居家日常",
+          "episodes": ["EP3", "EP5", "EP7"],
+          "face": "头发随意散落，用抓夹随便夹一半，碎发散在脸侧。素颜，皮肤状态真实（可能有一点嘴唇干裂）。暖光下脸色偏暖，眼下倦意更明显。泪痣可见。",
+          "clothing": "宽松奶白色圆领短袖T恤（纯棉，领口略微松垮洗旧了），下身深灰色棉质短裤（膝盖上方）。脚上穿灰蓝色条纹棉袜（没穿鞋，在家地板上）。整体风格像《纽约,纽约》中私底下的角色——松弛、随意、有点自暴自弃但不邋遢。",
+          "accessories": "旧手机壳（半透明，里夹照片）随手放在茶几上。手腕上没有手表。身上没有多余装饰。背景中冰箱门上贴着泛黄的奶奶手写菜谱（用可爱磁吸贴着）。",
+          "expression_baseline": "表情多变：对着音箱说话时会自然笑出来（天真柔软的一面），刷手机时面无表情空洞，想起奶奶时眼神放空。在家时表情最真实。",
+          "color_palette": ["#FAF5F0 暖白（T恤）", "#4A5568 深灰（短裤）", "#CBD5E0 灰蓝（袜子）", "#FEEBC8 暖橘（环境氛围光/音箱呼吸灯映照）"],
+          "style_reference": "《小森林》中市子的居家状态 × 《她》中Theodore在家独处的松弛感。暖调、私密、真实。",
+          "dreamina_prompt_suggestion": "Chinese woman 27yo, brown wavy hair half clipped messily, oval face beauty mark under left eye, no makeup bare skin, wearing oversized white cotton T-shirt and grey shorts, striped socks barefoot, sitting at home warm lighting, relaxed vulnerable expression, soft golden ambient light, realistic portrait, cinematic"
+        },
+        {
+          "name": "温暖新生",
+          "episodes": ["EP8"],
+          "face": "头发干净柔顺地放下来，可能刚洗过，发丝自然有光泽。妆容比日常稍认真：腮红淡粉、唇色是自然的玫瑰色。脸色有血色，眼神清亮但温柔，泪痣依然可见。整个面部状态从疲惫转向释然。",
+          "clothing": "天蓝色亚麻材质衬衫（奶奶生前推荐的，中长款，袖子卷到小臂两圈，扣子系到第二颗）。下身米白色高腰棉麻阔腿裤。赤脚踩在木质地板上。整体风格像《时空恋旅人》结尾Tim穿着那件蓝色衬衫——轻盈、有仪式感但不过分隆重。",
+          "accessories": "不再戴手表和戒指。旧手机壳换成了新的透明壳，但奶奶的照片移到了钱包里。手里可能拿着一束白雏菊。",
+          "expression_baseline": "嘴角有自然上扬的弧度，眼神温柔而坚定。不是大笑，是那种经历风雨后平静的微笑。看向窗外或远方，有希望感。",
+          "color_palette": ["#90CDF4 天蓝（衬衫，奶奶色调）", "#FEFCBF 米白（裤子）", "#F6E05E 暖黄（阳光环境光）", "#68D391 嫩绿（新生的隐喻色）"],
+          "style_reference": "《时空恋旅人》Tim结尾蓝色衬衫造型 × 《情书》中藤井树穿校服的纯净感。蓝白色调、轻盈、有新生仪式感。",
+          "dreamina_prompt_suggestion": "Chinese woman 27yo, smooth brown shoulder-length hair flowing, oval face beauty mark left eye, natural rosy makeup, wearing sky blue linen shirt sleeves rolled up, cream white wide linen pants, barefoot on wooden floor, gentle hopeful smile looking into distance, warm sunlight, cinematic soft focus, realistic portrait, 8k"
+        }
+      ]
+    },
+    "grandma_zhou": {
+      "description": "78岁中国女性，退休小学语文老师。形象温暖朴素，有文化底蕴但不刻意。出现在回忆闪回中，画面自带暖黄色调（怀旧滤镜感）。",
+      "face": "银白短发（烫了小卷，整齐干净），脸型圆润偏方（年轻时是方圆脸），皮肤有皱纹但气色好。眉毛弯弯的，眼睛不大但笑起来弯成月牙，眼角有深深的笑纹。鼻梁矮扁，嘴唇薄，笑的时候露出一颗银色门牙。说话时嘴角上扬，整个人散发慈祥气质。",
+      "clothing": "深酒红色棉麻立领盘扣上衣（中式改良款），下身黑色宽松长裤，脚上黑色布鞋。衣服朴素但整洁，领口别一枚小小的珍珠胸针（是年轻时当老师的习惯）。围一条米白色薄围巾（北方回忆中可能戴）。",
+      "expression": "永远是微笑的，说话时眉眼弯弯，偶尔皱眉是假装生气（宠溺式）。看苏念时眼神里全是温柔。教导时手指比划，很有老师范儿。",
+      "dreamina_prompt_suggestion": "Chinese grandmother 78yo, short white curly hair, round gentle face, warm wrinkled smile eyes, wearing dark burgundy Chinese style mandarin collar top with pearl brooch, black cloth shoes, kind loving expression, nostalgic warm golden lighting, realistic portrait, cinematic"
+    },
+    "lin_ke": {
+      "description": "20多岁中国女性，苏念的同事兼朋友。外表时尚开朗但眼神偶尔透出心思重的深度。每次出现都带着丑橘（一种外表粗糙但很甜的橘子）。个子比苏念矮一点，性格外向。",
+      "clothing": "日常偏休闲时髦：浅卡其色oversized风衣外套（春秋）、内搭杏色高领针织衫、下身深蓝色直筒牛仔裤、白色帆布鞋（Converse风格）。配饰：银色耳环（小圆圈）、手腕上一个编织手绳。背包是帆布托特包，里面露出丑橘的橘色。",
+      "dreamina_prompt_suggestion": "Chinese woman mid-20s, shoulder-length black hair with curtain bangs, petite, wearing beige oversized trench coat over cream turtleneck, blue jeans, white sneakers, silver hoop earrings, cheerful but thoughtful expression, carrying canvas tote bag with tangerine peeking out, modern casual fashion, realistic portrait"
+    },
+    "xiao_chen": {
+      "description": "20出头中国男性（或女性，偏中性化），社区志愿者。开朗热心，阳光型年轻人。帮助奶奶学用电脑/智能手机。气质朴素接地气。",
+      "clothing": "红色或橙色志愿者马甲（印着社区服务logo），内搭白色T恤，下身深蓝色运动裤或牛仔裤，运动鞋。衣服不太合身（大一码的感觉）。胸前挂着志愿者工牌。",
+      "dreamina_prompt_suggestion": "Chinese young adult early 20s androgynous, short neat black hair, bright friendly smile, wearing red community volunteer vest over white T-shirt, blue jeans, sneakers, volunteer ID badge, helpful warm expression, indoor community center lighting, realistic portrait"
+    }
+  },
+  "ai_speaker": {
+    "description": "智能音箱是本片核心视觉道具，也是连接苏念与已故奶奶的奇幻媒介。设计需要极简、温暖、有呼吸感。",
+    "form": "纯白色哑光圆柱体，高约15cm，直径约8cm。顶部是触控面板（斜面微弧），没有可见按钮或接口。底部有细微的织物纹理（浅灰色编织布），增加家居融入感。材质是哑光陶瓷质感，不是光滑塑料。整体极简，像一个白色的小花瓶或烛台。",
+    "light_behavior": "橘色暖光呼吸灯是音箱的'情绪表达'。待机时缓慢呼吸（4秒一个周期，柔和渐亮渐暗）。'奶奶人格'激活时呼吸频率加快到2秒，亮度增加，颜色从橘色偏移到暖金色。高强度情绪（回忆闪回/告别场景）时光晕扩散到音箱周围，像萤火虫般的微光粒子飘散。关闭时渐暗5秒，留一点微弱的橘色余光。",
+    "dreamina_prompt_suggestion": "minimalist white matte cylindrical smart speaker, ceramic texture, soft woven fabric base, warm amber breathing light glowing from top, small floating orange light particles around it, on wooden shelf, cozy apartment interior, shallow depth of field, cinematic warm lighting, product photography style, 8k"
+  },
+  "color_system": {
+    "warm_tone": {
+      "description": "苏念公寓暖色调——日常居家场景，营造私密、安全感、温暖的氛围",
+      "palette": [
+        "#FEEBC8 暖杏（主要环境光）",
+        "#FBD38D 蜂蜜金（音箱呼吸灯主色）",
+        "#FAF5F0 暖白（墙面/布料）",
+        "#C4A882 木质棕（地板/家具）",
+        "#E2C6A6 奶茶色（沙发/抱枕）",
+        "#ED8936 暖橘（点缀色，冰箱磁吸/旧照片边框）"
+      ],
+      "mood": "温暖、私密、有呼吸感的包裹感，像奶奶家厨房的味道"
+    },
+    "cool_tone": {
+      "description": "苏念职场/冷情绪冷色调——工作场景和情感封闭期，传达压抑、高效、孤独",
+      "palette": [
+        "#4A5568 深灰蓝（主色调）",
+        "#2D3748 炭灰（办公家具）",
+        "#E2E8F0 冷白（天花/墙面）",
+        "#63B3ED 冷蓝（屏幕光）",
+        "#A0AECB 雾灰（环境空气感）",
+        "#1A202C 深黑（细节/阴影）"
+      ],
+      "mood": "冷调、克制、高效但空洞，像深夜写字楼玻璃窗外的城市灯光"
+    },
+    "fantasy_tone": {
+      "description": "奇幻元素色调——AI音箱的橘光、记忆碎片、萤火虫微光等超现实视觉元素",
+      "palette": [
+        "#ED8936 暖橘光（音箱呼吸灯核心色）",
+        "#FBD38D 金色光晕（光线扩散）",
+        "#F6E05E 萤火黄（微光粒子）",
+        "#FC8181 暖粉（回忆闪回中偶尔闪过的记忆色）",
+        "#FEEBC8 柔光白（整体奇幻氛围基底）",
+        "#38B2AC 薄荷青（偶尔出现的对比色，用于'新生'暗示）"
+      ],
+      "mood": "柔和奇幻、温暖超现实，像梦境边缘和现实之间的薄纱，不是科幻冷光，是有温度的光"
+    }
+  },
+  "visual_consistency_notes": {
+    "su_nian_anchor_features": [
+      "泪痣（左眼下方）—— 全造型一致，是苏念最核心的面部辨识特征",
+      "中长发棕色微卷 —— 长度和卷度可以有变化但整体长度和颜色不变",
+      "鹅蛋脸+下颌线利落 —— 脸型不变，是AI锚点的基础",
+      "肤色白净 —— 各造型的肤色基调一致"
+    ],
+    "scene_mood_transition": "EP1-2 冷调为主 → EP3-5 冷暖交替（居家暖/职场冷） → EP6-7 暖调增强+奇幻光元素增多 → EP8 暖调为主+晨光新色调",
+    "grandma_visual_treatment": "回忆闪回用暖黄色调、轻微柔焦、胶片颗粒感，与苏念现代场景形成时代质感对比"
+  }
+}
