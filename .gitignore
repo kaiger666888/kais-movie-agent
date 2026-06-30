@@ -17,3 +17,23 @@ lib/bgm-selector.js
 
 # Phase 24 cross-episode eval: generated calibration reports (operator reruns on real pairs)
 test/cross-episode-eval/calibration-report.json
+
+# Pipeline runtime state / generated task manifests
+.pipeline-assets/
+.pipeline-state.json
+.stage-meta.json
+audio-stems.json
+video_tasks.json
+video_preview_tasks.json
+master.mp4
+web-preview.mp4
+
+# Pipeline run outputs (large, regenerable)
+pipeline-runs/
+runs/
+
+# Project working data (large per-project artifacts, not source-of-truth)
+projects/
+
+# Lip-sync: generated report (operator reruns run-lip-sync-test.js)
+test/lip-sync-samples/lip-sync-report.json
