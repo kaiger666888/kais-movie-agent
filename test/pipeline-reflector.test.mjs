@@ -379,6 +379,21 @@ describe('PipelineReflector', () => {
     });
   });
 
+  describe('readAllSuggestions()', () => {
+    it('returns all rows regardless of status', async () => {
+      const r = new PipelineReflector(tmpDir);
+      const file = join(tmpDir, '.pipeline-assets', 'reflection-suggestions.jsonl');
+      await mkdir(join(tmpDir, '.pipeline-assets'), { recursive: true });
+      await writeFile(file, [
+        JSON.stringify({ id: 'a', status: 'pending' }),
+        JSON.stringify({ id: 'b', status: 'applied' }),
+        JSON.stringify({ id: 'c', status: 'rejected' }),
+      ].join('\n') + '\n');
+      const all = await r.readAllSuggestions();
+      assert.strictEqual(all.length, 3);
+    });
+  });
+
   describe('run()', () => {
     it('aggregate -> reflect -> storeSuggestions returns count', async () => {
       const payload = {
